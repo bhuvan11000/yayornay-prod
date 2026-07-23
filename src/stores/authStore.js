@@ -24,31 +24,41 @@ export const useAuthStore = create((set, get) => ({
    * Checks for existing session and fetches user profile.
    */
   initialize: async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (session) {
-      try {
-        const res = await fetch('/.netlify/functions/login', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          set({
-            session,
-            user: data.user,
-            rewardStatus: data.rewardStatus,
-            loading: false,
-          });
-          return;
-        }
-      } catch (err) {
-        console.error('Failed to fetch profile on init:', err);
+    try {
+      if (!supabase) {
+        console.warn('Supabase not configured — skipping auth init');
+        set({ loading: false });
+        return;
       }
+
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session) {
+        try {
+          const res = await fetch('/.netlify/functions/login', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            set({
+              session,
+              user: data.user,
+              rewardStatus: data.rewardStatus,
+              loading: false,
+            });
+            return;
+          }
+        } catch (err) {
+          console.error('Failed to fetch profile on init:', err);
+        }
+      }
+    } catch (err) {
+      console.error('Auth init error:', err);
     }
 
     set({ loading: false });
@@ -74,7 +84,13 @@ export const useAuthStore = create((set, get) => ({
    * Log out the current user.
    */
   logout: async () => {
-    await supabase.auth.signOut();
+    try {
+      if (supabase) {
+        await supabase.auth.signOut();
+      }
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
     set({ user: null, session: null, rewardStatus: null });
   },
 }));
