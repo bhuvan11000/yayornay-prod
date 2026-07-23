@@ -2,11 +2,6 @@ import { verifyAuth } from './_shared/auth.js';
 import { corsHeaders } from './_shared/cors.js';
 import { supabaseAdmin } from './_shared/supabase.js';
 
-/**
- * POST /api/sell
- * Sell prediction shares back to the AMM.
- * Calls the PostgreSQL sell_shares function for atomic safety.
- */
 export default async (req, context) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders, status: 204 });
@@ -31,7 +26,6 @@ export default async (req, context) => {
       });
     }
 
-    // Call the PostgreSQL function
     const { data, error } = await supabaseAdmin.rpc('sell_shares', {
       p_user_id: user.id,
       p_prediction_id: prediction_id,

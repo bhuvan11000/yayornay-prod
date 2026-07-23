@@ -1,13 +1,10 @@
 import { verifyAuth } from './_shared/auth.js';
 import { corsHeaders } from './_shared/cors.js';
 import { supabaseAdmin } from './_shared/supabase.js';
+import { checkAchievements } from './_shared/achievements.js';
+import { updateQuestProgress } from './_shared/quests.js';
+import { checkLevelUp } from './_shared/levels.js';
 
-/**
- * POST /api/predict
- * Place a prediction on a market.
- * Calls the PostgreSQL place_prediction function for atomic safety.
- * Post-transaction: checks achievements, updates quests, checks level-up.
- */
 export default async (req, context) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders, status: 204 });
@@ -25,7 +22,6 @@ export default async (req, context) => {
     const body = await req.json();
     const { market_id, position, coins, confidence } = body;
 
-    // Validate input
     if (!market_id || !position || !coins || !confidence) {
       return new Response(JSON.stringify({ error: 'Missing required fields' }), {
         status: 400,
@@ -54,7 +50,6 @@ export default async (req, context) => {
       });
     }
 
-    // Call the PostgreSQL function
     const { data, error } = await supabaseAdmin.rpc('place_prediction', {
       p_user_id: user.id,
       p_market_id: market_id,
@@ -65,13 +60,44 @@ export default async (req, context) => {
 
     if (error) throw error;
 
-    // TODO: Post-transaction checks (non-blocking, can fail without data corruption)
-    // - checkAchievements(user.id, 'predict', { market_id, position, coins, confidence })
-    // - updateQuestProgress(user.id, 'predict', { ... })
-    // - checkAndUpdateBettingStreak(user.id)
-    // - checkLevelUp(user.id)
+    let achievements = [];
+    let completedQuests = [];
+    let levelUp = null;
 
-    return new Response(JSON.stringify(data), {
+    try {
+      achievements = await checkAchievements(user.id, 'predict', {
+        market_id,
+        position,
+        coins,
+        confidence,
+      });
+    } catch (err) {
+      console.error('Achievement check failed (non-blocking):', err.message);
+    }
+
+    try {
+      completedQuests = await updateQuestProgress(user.id, 'predict', {
+        category: data.category,
+        confidence,
+      });
+    } catch (err) {
+      console.error('Quest update failed (non-blocking):', err.message);
+    }
+
+    try {
+      levelUp = await checkLevelUp(user.id, data.user_xp, data.user_level || 1);
+    } catch (err) {
+      console.error('Level-up check failed (non-blocking):', err.message);
+    }
+
+    const response = {
+      ...data,
+      achievements,
+      completedQuests,
+      levelUp,
+    };
+
+    return new Response(JSON.stringify(response), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
