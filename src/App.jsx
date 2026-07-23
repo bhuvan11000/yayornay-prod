@@ -1,10 +1,14 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect, lazy, Suspense } from 'react';
+import { useEffect } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
+import { AppLayout } from './components/layout/AppLayout';
+import { PageSkeleton } from './components/ui/Skeleton';
 
-// Lazy-loaded pages for code splitting
+// ── Lazy-loaded pages (code splitting) ──
+const Auth = lazy(() => import('./pages/Auth'));
 const Home = lazy(() => import('./pages/Home'));
 const Markets = lazy(() => import('./pages/Markets'));
 const MarketDetail = lazy(() => import('./pages/MarketDetail'));
@@ -16,8 +20,8 @@ const Quests = lazy(() => import('./pages/Quests'));
 const Achievements = lazy(() => import('./pages/Achievements'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Admin = lazy(() => import('./pages/Admin'));
-const Auth = lazy(() => import('./pages/Auth'));
 
+// ── Query Client ──
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -32,59 +36,14 @@ const queryClient = new QueryClient({
   },
 });
 
-function PageLoader() {
-  return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '60vh',
-      color: 'var(--text-muted)',
-    }}>
-      Loading...
-    </div>
-  );
-}
-
 /**
- * App layout wrapper with header.
- * TODO: Add Header component with nav, coin balance, rank badge, avatar.
+ * Suspense wrapper with skeleton fallback for lazy-loaded route pages.
  */
-function AppLayout({ children }) {
+function LazyPage({ Component }) {
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: '100vh',
-    }}>
-      {/* TODO: Add Header component */}
-      <header style={{
-        height: '64px',
-        borderBottom: '1px solid var(--border-subtle)',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 var(--space-6)',
-        background: 'var(--bg-secondary)',
-      }}>
-        <nav style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--space-6)',
-          width: '100%',
-          maxWidth: '1200px',
-          margin: '0 auto',
-        }}>
-          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Predict Arena</span>
-          <span className="text-muted text-sm" style={{ marginLeft: 'auto' }}>
-            Header nav links coming soon
-          </span>
-        </nav>
-      </header>
-
-      <main style={{ flex: 1 }}>
-        {children}
-      </main>
-    </div>
+    <Suspense fallback={<PageSkeleton />}>
+      <Component />
+    </Suspense>
   );
 }
 
@@ -98,36 +57,50 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/auth" element={<Auth />} />
+        <Routes>
+          {/* ── Public Routes ── */}
+          <Route
+            path="/auth"
+            element={
+              <Suspense fallback={<PageSkeleton />}>
+                <Auth />
+              </Suspense>
+            }
+          />
 
-            {/* Protected routes with app layout */}
-            <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-              <Route path="/" element={<Home />} />
-              <Route path="/markets" element={<Markets />} />
-              <Route path="/markets/:id" element={<MarketDetail />} />
-              <Route path="/community" element={<Community />} />
-              <Route path="/community/propose" element={<CommunityPropose />} />
-              <Route path="/leaderboard" element={<Leaderboard />} />
-              <Route path="/profile/:username" element={<Profile />} />
-              <Route path="/quests" element={<Quests />} />
-              <Route path="/achievements" element={<Achievements />} />
-              <Route path="/settings" element={<Settings />} />
-            </Route>
-
-            {/* Admin-only route */}
-            <Route path="/admin" element={
-              <ProtectedRoute adminOnly>
-                <AppLayout><Admin /></AppLayout>
+          {/* ── Protected Routes (App Shell) ── */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
               </ProtectedRoute>
-            } />
+            }
+          >
+            <Route index element={<LazyPage Component={Home} />} />
+            <Route path="markets" element={<LazyPage Component={Markets} />} />
+            <Route path="markets/:id" element={<LazyPage Component={MarketDetail} />} />
+            <Route path="community" element={<LazyPage Component={Community} />} />
+            <Route path="community/propose" element={<LazyPage Component={CommunityPropose} />} />
+            <Route path="leaderboard" element={<LazyPage Component={Leaderboard} />} />
+            <Route path="profile/:username" element={<LazyPage Component={Profile} />} />
+            <Route path="quests" element={<LazyPage Component={Quests} />} />
+            <Route path="achievements" element={<LazyPage Component={Achievements} />} />
+            <Route path="settings" element={<LazyPage Component={Settings} />} />
 
-            {/* Catch-all redirect */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
+            {/* ── Admin Route (admin-only check) ── */}
+            <Route
+              path="admin"
+              element={
+                <ProtectedRoute adminOnly>
+                  <LazyPage Component={Admin} />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+
+          {/* ── Catch-all Redirect ── */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </BrowserRouter>
     </QueryClientProvider>
   );
