@@ -1,0 +1,65 @@
+# ── Design Specification Documents (excluded from version control) ──
+# These markdown files contain detailed project specs/plans. They are
+# kept in the repo directory for reference but not tracked in git.
+database_auth_ui.md
+gamified_prediction_market_plan.md
+polls_deep_dive.md
+tech_architecture.md
+website_mechanics_lowlevel.md
+
+# ── Dependencies ──
+node_modules/
+.pnp
+.pnp.js
+
+# ── Build Output ──
+dist/
+build/
+
+# ── Environment Variables ──
+.env
+.env.local
+.env.production
+.env.development
+.env.example       # (the example template should NOT be sensitive, but keeping it out is safer)
+
+# ── Logs ──
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Editor & IDE ──
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Netlify ──
+.netlify/
+.netlify/state.json
+
+# ── OS Files ──
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ── TypeScript (if added later) ──
+*.tsbuildinfo
+
+# ── Coverage (testing) ──
+coverage/
+.nyc_output/
+
+# ── Misc ──
+*.pem
+.cache/
+tmp/
+temp/
