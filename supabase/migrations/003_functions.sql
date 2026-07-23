@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION calculate_shares(
   q_yes REAL,
   q_no REAL,
   b REAL,
-  position TEXT,
+  p_position TEXT,
   coins REAL
 ) RETURNS REAL AS $$
 DECLARE
@@ -27,7 +27,7 @@ DECLARE
   current_q REAL;
   other_q REAL;
 BEGIN
-  IF position = 'yes' THEN
+  IF p_position = 'yes' THEN
     current_q := q_yes;
     other_q := q_no;
   ELSE

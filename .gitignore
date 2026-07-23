@@ -41,6 +41,7 @@ Thumbs.db
 # ── Netlify ──
 .netlify/
 .netlify/state.json
+deno.lock
 
 # ── OS Files ──
 .DS_Store
