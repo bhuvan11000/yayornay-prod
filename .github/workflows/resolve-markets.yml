@@ -1,0 +1,17 @@
+name: Resolve Expired Markets
+on:
+  schedule:
+    - cron: '0 */2 * * *'  # Every 2 hours
+  workflow_dispatch:
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger market resolution
+        run: |
+          curl -X POST "${{ secrets.NETLIFY_SITE_URL }}/api/resolve" \
+            -H "Content-Type: application/json" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            --fail-with-body \
+            --max-time 60

@@ -1,0 +1,17 @@
+name: Season Transition
+on:
+  schedule:
+    - cron: '0 0 1 * *'  # 1st of each month at 00:00 UTC
+  workflow_dispatch:
+
+jobs:
+  transition:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger season transition
+        run: |
+          curl -X POST "${{ secrets.NETLIFY_SITE_URL }}/api/season-transition" \
+            -H "Content-Type: application/json" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            --fail-with-body \
+            --max-time 60

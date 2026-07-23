@@ -1,0 +1,18 @@
+name: Reset Quests
+on:
+  schedule:
+    - cron: '0 0 * * *'    # Midnight UTC daily (daily quest cleanup)
+    - cron: '0 0 * * 1'    # Monday midnight UTC (weekly quest cleanup)
+  workflow_dispatch:
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger quest reset
+        run: |
+          curl -X POST "${{ secrets.NETLIFY_SITE_URL }}/api/reset-quests" \
+            -H "Content-Type: application/json" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            --fail-with-body \
+            --max-time 30
