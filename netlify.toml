@@ -6,24 +6,14 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# SPA fallback — all routes serve index.html
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  conditions = {Role = ["admin"]}
-
 # API function routing
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
 
-# SPA catch-all (must be last)
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# SPA catch-all is in public/_redirects (only active in production builds,
+# not during netlify dev — Vite handles SPA routing in development)
 
 [functions]
   node_bundler = "esbuild"

@@ -1,0 +1,4 @@
+# SPA catch-all — serve index.html for all unmatched routes
+# This file is only processed in production builds (dist/),
+# NOT during `netlify dev` — Vite handles SPA routing in development
+/*  /index.html  200
