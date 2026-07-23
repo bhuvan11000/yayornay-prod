@@ -3,6 +3,18 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+
+  server: {
+    port: 5173,
+    proxy: {
+      // Forward Netlify Function requests to the local functions server
+      '/.netlify/functions': {
+        target: 'http://localhost:9999',
+        changeOrigin: true,
+      },
+    },
+  },
+
   build: {
     outDir: 'dist',
     sourcemap: false,
