@@ -19,3 +19,53 @@
   flex-direction: column;
   gap: var(--space-4);
 }
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.viewAll {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--accent-blue);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.viewAll:hover {
+  color: var(--accent-blue-hover);
+}
+
+.trendingRow {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.trendingCard {
+  flex: 0 0 320px;
+  scroll-snap-align: start;
+}
+
+.trendingGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .trendingGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .trendingGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
