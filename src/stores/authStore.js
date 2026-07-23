@@ -4,14 +4,17 @@ import { supabase } from '../config/supabase';
 /**
  * Auth state store using Zustand.
  *
- * See database_auth_ui.md Part 2 (Authentication) for the full
- * implementation reference.
- *
- * This store manages:
+ * Manages:
  * - User profile (from public.users)
  * - Supabase auth session
  * - Loading state during initialization
  * - Daily reward eligibility status
+ *
+ * Supabase JS client auto-handles:
+ * - Storing refresh token in localStorage
+ * - Keeping access token in memory
+ * - Auto-refreshing access token before expiry
+ * - Emitting onAuthStateChange events
  */
 export const useAuthStore = create((set, get) => ({
   user: null,
@@ -21,7 +24,7 @@ export const useAuthStore = create((set, get) => ({
 
   /**
    * Initialize the auth store on app mount.
-   * Checks for existing session and fetches user profile.
+   * Checks for existing session and subscribes to auth state changes.
    */
   initialize: async () => {
     try {
@@ -34,31 +37,77 @@ export const useAuthStore = create((set, get) => ({
       const { data: { session } } = await supabase.auth.getSession();
 
       if (session) {
-        try {
-          const res = await fetch('/.netlify/functions/login', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${session.access_token}`,
-              'Content-Type': 'application/json',
-            },
-          });
-
-          if (res.ok) {
-            const data = await res.json();
-            set({
-              session,
-              user: data.user,
-              rewardStatus: data.rewardStatus,
-              loading: false,
-            });
-            return;
-          }
-        } catch (err) {
-          console.error('Failed to fetch profile on init:', err);
-        }
+        await get().handleSession(session);
+      } else {
+        set({ loading: false });
       }
+
+      // Subscribe to auth state changes (login, logout, token refresh)
+      supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_OUT') {
+          set({ user: null, session: null, rewardStatus: null });
+        } else if (event === 'TOKEN_REFRESHED') {
+          set({ session });
+        } else if (event === 'SIGNED_IN' && session) {
+          get().handleSession(session);
+        }
+      });
     } catch (err) {
       console.error('Auth init error:', err);
+      set({ loading: false });
+    }
+  },
+
+  /**
+   * Process an existing session: call login endpoint to get user profile.
+   * Called both on init and on SIGNED_IN events.
+   */
+  handleSession: async (session) => {
+    try {
+      const res = await fetch('/.netlify/functions/login', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (res.status === 404) {
+        // Profile doesn't exist yet — first sign-up, call onboard
+        const onboardRes = await fetch('/.netlify/functions/onboard', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (onboardRes.ok) {
+          const onboardData = await onboardRes.json();
+          set({
+            session,
+            user: onboardData.user,
+            rewardStatus: {
+              can_claim: true,
+              is_active: false,
+              rank: 'Unranked',
+            },
+            loading: false,
+          });
+          return;
+        }
+      } else if (res.ok) {
+        const data = await res.json();
+        set({
+          session,
+          user: data.user,
+          rewardStatus: data.rewardStatus,
+          loading: false,
+        });
+        return;
+      }
+    } catch (err) {
+      console.error('Failed to handle session:', err);
     }
 
     set({ loading: false });
@@ -74,7 +123,7 @@ export const useAuthStore = create((set, get) => ({
 
   /**
    * Update reward status.
-   * @param {object} status - { can_claim, is_active, last_claim }
+   * @param {object} status
    */
   setRewardStatus: (status) => {
     set({ rewardStatus: status });

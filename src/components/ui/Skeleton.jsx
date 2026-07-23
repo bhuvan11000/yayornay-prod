@@ -21,3 +21,24 @@ export function Skeleton({ width, height, variant = 'text' }) {
     />
   );
 }
+
+/**
+ * PageSkeleton — Full-page loading skeleton.
+ * Shows a header bar + 3 card-shaped placeholders with shimmer.
+ * Used by ProtectedRoute while auth state is loading.
+ */
+export function PageSkeleton() {
+  return (
+    <div className={styles.pageSkeleton}>
+      {/* Header skeleton */}
+      <div className={styles.pageSkeletonHeader} />
+
+      {/* Content area */}
+      <div className={styles.pageSkeletonContent}>
+        <Skeleton variant="card" />
+        <Skeleton variant="card" />
+        <Skeleton variant="card" />
+      </div>
+    </div>
+  );
+}

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, lazy, Suspense } from 'react';
 import { useAuthStore } from './stores/authStore';
+import { ProtectedRoute } from './components/layout/ProtectedRoute';
 
 // Lazy-loaded pages for code splitting
 const Home = lazy(() => import('./pages/Home'));
@@ -43,28 +44,6 @@ function PageLoader() {
       Loading...
     </div>
   );
-}
-
-/**
- * Protected route wrapper.
- * Redirects to /auth if not logged in.
- */
-function ProtectedRoute({ children, adminOnly = false }) {
-  const { user, loading } = useAuthStore();
-
-  if (loading) {
-    return <PageLoader />;
-  }
-
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  if (adminOnly && user.email !== import.meta.env.VITE_ADMIN_EMAIL) {
-    return <Navigate to="/" replace />;
-  }
-
-  return children;
 }
 
 /**
