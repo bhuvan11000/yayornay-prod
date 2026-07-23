@@ -6,6 +6,7 @@
   "description": "A gamified prediction market game where you bet virtual coins on real-world outcomes, climb ranks, and prove you can see the future.",
   "scripts": {
     "dev": "vite",
+    "dev:netlify": "netlify dev --command \"npm run dev\"",
     "build": "vite build",
     "preview": "vite preview"
   },

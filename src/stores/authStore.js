@@ -122,13 +122,14 @@ export const useAuthStore = create((set, get) => ({
         return;
       }
     } catch (err) {
-      console.warn('Netlify function unavailable, using direct Supabase fallback:', err.message);
+      console.warn('Netlify function unavailable, trying direct Supabase query:', err.message);
     }
 
-    // 2. Fallback: query Supabase directly (works in dev without Netlify Dev)
+    // 2. Fallback: query Supabase directly (development without Netlify Dev)
+    //    Only reads — we never write from the client (no INSERT/UPDATE policies).
+    //    For first-time sign-ups, the onboard Netlify function must be available.
     try {
       if (supabase) {
-        // Try to fetch existing profile
         const { data: userData, error: fetchError } = await supabase
           .from('users')
           .select('*')
@@ -139,54 +140,24 @@ export const useAuthStore = create((set, get) => ({
           set({
             session,
             user: userData,
-            loading: false,
-          });
-          return;
-        }
-
-        // Profile doesn't exist — try to create one (first sign-up)
-        const shortId = session.user.id.substring(0, 6);
-        const username = `Player_${shortId}`;
-
-        const { data: newUser, error: insertError } = await supabase
-          .from('users')
-          .insert({
-            id: session.user.id,
-            username,
-            avatar_url: null,
-            level: 1,
-            xp: 0,
-            coins: 1000,
-            rank: 'Unranked',
-            total_predictions: 0,
-            correct_predictions: 0,
-            accuracy: 0.0,
-            net_profit: 0,
-            betting_streak: 0,
-            longest_streak: 0,
-            last_bet_date: null,
-            last_login: new Date().toISOString(),
-            last_reward_claim: null,
-          })
-          .select()
-          .single();
-
-        if (newUser && !insertError) {
-          set({
-            session,
-            user: newUser,
             rewardStatus: {
               can_claim: true,
               is_active: false,
-              rank: 'Unranked',
+              rank: userData.rank,
             },
             loading: false,
           });
           return;
         }
+
+        // User not found in public.users — they need the onboard function.
+        console.warn(
+          'No user profile found in database. ' +
+          'For first-time sign-up, run: netlify dev'
+        );
       }
     } catch (err) {
-      console.error('Direct Supabase fallback also failed:', err);
+      console.error('Direct Supabase query fallback failed:', err);
     }
 
     set({ loading: false });
