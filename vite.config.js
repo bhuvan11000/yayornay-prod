@@ -5,7 +5,8 @@ export default defineConfig({
   plugins: [react()],
 
   server: {
-    port: 5173,
+    port: 5190,
+    strictPort: true,
     proxy: {
       // Forward Netlify Function requests to the local functions server
       '/.netlify/functions': {
