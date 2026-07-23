@@ -1,16 +1,23 @@
 import { useParams, useNavigate } from 'react-router';
 import { useMarket } from '../hooks/useMarket';
+import { usePredictions } from '../hooks/usePredictions';
+import { useAuthStore } from '../stores/authStore';
 import { CategoryTag } from '../components/ui/CategoryTag';
 import { MarketStatus } from '../components/market/MarketStatus';
 import { PriceChart } from '../components/market/PriceChart';
+import { PredictionForm } from '../components/market/PredictionForm';
+import { SellForm } from '../components/market/SellForm';
 import { PageSkeleton } from '../components/ui/Skeleton';
-import { formatTimeRemaining, formatCoins, formatDate, formatDateTime, pluralize } from '../lib/format';
+import { formatTimeRemaining, formatCoins, formatDateTime, pluralize } from '../lib/format';
 import styles from './MarketDetail.module.css';
 
 export default function MarketDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data, isLoading, isError, error } = useMarket(id);
+  const user = useAuthStore((s) => s.user);
+
+  const { data, isLoading, isError, error, refetch } = useMarket(id);
+  const { data: userPredictions, isLoading: predsLoading } = usePredictions({ marketId: id });
 
   if (isLoading) return <PageSkeleton />;
 
@@ -29,6 +36,7 @@ export default function MarketDetail() {
   }
 
   const { market, priceHistory, distribution } = data;
+
   const yesDist = distribution?.find((d) => d.position === 'yes');
   const noDist = distribution?.find((d) => d.position === 'no');
   const yesPlayers = yesDist?.count || 0;
@@ -37,20 +45,20 @@ export default function MarketDetail() {
   const noPct = noDist?.percentage || 0;
   const totalPlayers = (yesDist?.count || 0) + (noDist?.count || 0);
 
+  const pendingPredictions = userPredictions?.filter((p) => p.result === 'pending') || [];
+  const hasPredicted = pendingPredictions.length > 0;
+
+  const handlePredictionSuccess = () => {
+    refetch();
+  };
+
   const renderRightColumn = () => {
     switch (market.status) {
       case 'open':
-        return (
-          <div className={`${styles.sideCard} card`}>
-            <h3 className={styles.sideTitle}>Place Prediction</h3>
-            <p className="text-muted text-sm">
-              Prediction form coming in Session 5
-            </p>
-          </div>
-        );
+        return <PredictionForm market={market} onSuccess={handlePredictionSuccess} />;
       case 'closed':
         return (
-          <div className={`${styles.sideCard} card`}>
+          <div className={`card ${styles.sideCard}`}>
             <h3 className={styles.sideTitle}>Market Closed</h3>
             <p className="text-muted text-sm">
               Market closed. Awaiting resolution.
@@ -59,7 +67,7 @@ export default function MarketDetail() {
         );
       case 'resolved':
         return (
-          <div className={`${styles.sideCard} card`}>
+          <div className={`card ${styles.sideCard}`}>
             <h3 className={styles.sideTitle}>Resolved</h3>
             <div className={styles.resolutionBadge}>
               <span className={market.resolution === 'yes' ? styles.resolvedYes : styles.resolvedNo}>
@@ -75,7 +83,7 @@ export default function MarketDetail() {
         );
       case 'review':
         return (
-          <div className={`${styles.sideCard} card`}>
+          <div className={`card ${styles.sideCard}`}>
             <h3 className={styles.sideTitle}>Under Review</h3>
             <p className="text-muted text-sm">
               This market is under review due to disputes.
@@ -84,7 +92,7 @@ export default function MarketDetail() {
         );
       default:
         return (
-          <div className={`${styles.sideCard} card`}>
+          <div className={`card ${styles.sideCard}`}>
             <MarketStatus status={market.status} />
           </div>
         );
@@ -107,6 +115,18 @@ export default function MarketDetail() {
         <span className={styles.time}>{formatTimeRemaining(market.closes_at)}</span>
         <span className={styles.stat}>{pluralize(market.participant_count || 0, 'player')}</span>
       </div>
+
+      {hasPredicted && (
+        <div className={styles.youPredicted}>
+          You predicted{' '}
+          <strong className={pendingPredictions[0].position === 'yes' ? 'text-yes' : 'text-no'}>
+            {pendingPredictions[0].position.toUpperCase()}
+          </strong>
+          {' — '}
+          {pendingPredictions[0].shares.toFixed(1)} shares @{' '}
+          {Math.round(pendingPredictions[0].entry_price * 100)}c
+        </div>
+      )}
 
       <div className={styles.mainContent}>
         <div className={styles.leftCol}>
@@ -162,13 +182,13 @@ export default function MarketDetail() {
                 <div className={styles.distRow}>
                   <span className="text-yes font-mono">YES</span>
                   <span className="text-secondary text-sm">
-                    {pluralize(yesPlayers || 0, 'player')} ({yesPct}%)
+                    {pluralize(yesPlayers, 'player')} ({yesPct}%)
                   </span>
                 </div>
                 <div className={styles.distRow}>
                   <span className="text-no font-mono">NO</span>
                   <span className="text-secondary text-sm">
-                    {pluralize(noPlayers || 0, 'player')} ({noPct}%)
+                    {pluralize(noPlayers, 'player')} ({noPct}%)
                   </span>
                 </div>
               </div>
@@ -183,7 +203,19 @@ export default function MarketDetail() {
 
       <section className={`card ${styles.section}`}>
         <h3 className={styles.sectionTitle}>Your Positions</h3>
-        <p className="text-muted text-sm">Your positions will appear here once you place predictions.</p>
+        {predsLoading ? (
+          <p className="text-muted text-sm">Loading positions...</p>
+        ) : pendingPredictions.length === 0 ? (
+          <p className="text-muted text-sm">
+            {user ? 'You have no active positions on this market.' : 'Log in to place predictions.'}
+          </p>
+        ) : (
+          <div className={styles.positionsList}>
+            {pendingPredictions.map((pred) => (
+              <SellForm key={pred.id} prediction={pred} market={market} />
+            ))}
+          </div>
+        )}
       </section>
 
       <section className={`card ${styles.section}`}>

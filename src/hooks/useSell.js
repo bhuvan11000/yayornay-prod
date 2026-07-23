@@ -3,16 +3,19 @@ import { api } from '../lib/api';
 import { useAuthStore } from '../stores/authStore';
 import { useUIStore } from '../stores/uiStore';
 
-/**
- * Mutation hook for selling prediction shares.
- */
 export function useSell() {
   const queryClient = useQueryClient();
   const updateUser = useAuthStore((s) => s.updateUser);
+  const user = useAuthStore((s) => s.user);
   const addToast = useUIStore((s) => s.addToast);
 
   return useMutation({
     mutationFn: (data) => api.post('/sell', data),
+
+    onMutate: async (data) => {
+      const previousUser = user ? { ...user } : null;
+      return { previousUser };
+    },
 
     onSuccess: (response) => {
       if (response.user_coins !== undefined) {
@@ -29,7 +32,11 @@ export function useSell() {
       });
     },
 
-    onError: (error) => {
+    onError: (error, variables, context) => {
+      if (context?.previousUser) {
+        updateUser(context.previousUser);
+      }
+
       addToast('error', {
         title: 'Sell Failed',
         message: error.message,

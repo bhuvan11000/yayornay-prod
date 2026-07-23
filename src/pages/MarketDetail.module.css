@@ -183,6 +183,21 @@
   border-radius: var(--radius-sm);
 }
 
+.youPredicted {
+  padding: var(--space-3) var(--space-4);
+  background: var(--accent-blue-muted);
+  border: 1px solid var(--accent-blue);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+.positionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 .errorState {
   display: flex;
   flex-direction: column;
