@@ -5,7 +5,8 @@
   "type": "module",
   "description": "A gamified prediction market game where you bet virtual coins on real-world outcomes, climb ranks, and prove you can see the future.",
   "scripts": {
-    "dev": "concurrently -k -n app,api -c cyan,yellow 'vite' 'netlify functions:serve --port 9999'",
+    "dev": "concurrently -n app,api -c cyan,yellow 'vite' 'netlify functions:serve --port 9999'",
+    "dev:netlify": "vite",
     "dev:frontend": "vite",
     "dev:api": "netlify functions:serve --port 9999",
     "build": "vite build",
