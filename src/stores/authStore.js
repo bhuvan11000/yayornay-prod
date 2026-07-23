@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { supabase } from '../config/supabase';
+import { getRankColor } from '../lib/ranks';
 
 /**
  * Auth state store using Zustand.
@@ -21,6 +22,19 @@ export const useAuthStore = create((set, get) => ({
   session: null,
   loading: true,
   rewardStatus: null,
+
+  /**
+   * Returns true when a user is authenticated (has a profile).
+   */
+  getIsAuthenticated: () => Boolean(get().user),
+
+  /**
+   * Returns CSS color string for the current user's rank.
+   */
+  getRankColor: () => {
+    const user = get().user;
+    return user?.rank ? getRankColor(user.rank) : '#5c6370';
+  },
 
   /**
    * Initialize the auth store on app mount.
