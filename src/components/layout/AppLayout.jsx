@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { ToastContainer } from './ToastContainer';
+import { LevelUpModal } from '../gamification/LevelUpModal';
 import styles from './AppLayout.module.css';
 
 /**
@@ -10,6 +11,7 @@ import styles from './AppLayout.module.css';
  * - Header with navigation, coin balance, rank badge
  * - Main content area via React Router Outlet
  * - Toast notification container
+ * - Level-up modal overlay
  */
 export function AppLayout() {
   return (
@@ -19,6 +21,7 @@ export function AppLayout() {
         <Outlet />
       </main>
       <ToastContainer />
+      <LevelUpModal />
     </div>
   );
 }

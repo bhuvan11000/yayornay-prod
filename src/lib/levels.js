@@ -70,3 +70,14 @@ export const LEVEL_UNLOCKS = {
   8: 'Daily quest slots: 3 → 4',
   10: 'Weekly quest slots: 2 → 3',
 };
+
+/**
+ * Get features unlocked at a given level.
+ * @param {number} userLevel
+ * @returns {string[]}
+ */
+export function getUnlockedFeatures(userLevel) {
+  return Object.entries(LEVEL_UNLOCKS)
+    .filter(([level]) => userLevel >= parseInt(level))
+    .map(([_, feature]) => feature);
+}

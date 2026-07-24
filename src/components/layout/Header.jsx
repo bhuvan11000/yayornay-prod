@@ -14,6 +14,8 @@ import { useAuthStore } from '../../stores/authStore';
 import { formatCoins } from '../../lib/format';
 import { getRankColor, getRankLabel } from '../../lib/ranks';
 import { xpProgress } from '../../lib/levels';
+import { RankBadge } from '../gamification/RankBadge';
+import { XPBar } from '../gamification/XPBar';
 import styles from './Header.module.css';
 
 /**
@@ -110,25 +112,11 @@ export function Header() {
           </div>
 
           {/* Rank Badge */}
-          <div className={styles.rankBadge}>
-            <span
-              className={styles.rankDot}
-              style={{ background: rankColor }}
-            />
-            <span className={styles.rankName}>{getRankLabel(rank)}</span>
-          </div>
+          <RankBadge rank={rank} size="md" showLabel />
 
           {/* XP Progress Bar (desktop only) */}
           <div className={styles.xpBar} title={`Level ${progress.currentLevel} — ${formatCoins(progress.xpInLevel)} / ${formatCoins(progress.xpRequiredForNext)} XP`}>
-            <span className={styles.xpLabel}>
-              Lv.{progress.currentLevel}
-            </span>
-            <div className={styles.xpTrack}>
-              <div
-                className={styles.xpFill}
-                style={{ width: `${Math.round(progress.progress * 100)}%` }}
-              />
-            </div>
+            <XPBar xp={xp} variant="mini" />
           </div>
 
           {/* Streak Counter (if > 0) */}
@@ -272,18 +260,7 @@ export function Header() {
         <div className={styles.sidebarFooter}>
           {/* XP bar (mobile) */}
           <div className={styles.sidebarXpRow}>
-            <span className={styles.sidebarXpLabel}>
-              Level {progress.currentLevel}
-            </span>
-            <div className={styles.xpTrack}>
-              <div
-                className={styles.xpFill}
-                style={{ width: `${Math.round(progress.progress * 100)}%` }}
-              />
-            </div>
-            <span className={styles.sidebarXpText}>
-              {formatCoins(progress.xpInLevel)} / {formatCoins(progress.xpRequiredForNext)} XP
-            </span>
+            <XPBar xp={xp} variant="full" />
           </div>
 
           {/* Streak (mobile) */}
