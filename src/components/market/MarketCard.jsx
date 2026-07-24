@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router';
 import { CategoryTag } from '../ui/CategoryTag';
 import { MarketStatus } from './MarketStatus';
 import { PriceBar } from './PriceBar';
+import { RankBadge } from '../gamification/RankBadge';
 import { formatTimeRemaining, formatCoins, pluralize } from '../../lib/format';
 import styles from './MarketCard.module.css';
 
@@ -25,6 +26,13 @@ export function MarketCard({ market }) {
         </span>
         <span className={styles.time}>{formatTimeRemaining(market.closes_at)}</span>
       </div>
+
+      {market.source === 'community' && market.creator_rank && (
+        <div className={styles.creator}>
+          <span className={styles.creatorLabel}>by {market.creator_username || 'Unknown'}</span>
+          <RankBadge rank={market.creator_rank} size="sm" />
+        </div>
+      )}
 
       <PriceBar yesPrice={market.yes_price} noPrice={market.no_price} />
 
