@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useState, useRef } from 'react';
+import { ArrowUp, Search } from 'lucide-react';
+import { useAuthStore } from '../stores/authStore';
 import { useLeaderboard } from '../hooks/useLeaderboard';
-import { RankBadge } from '../components/gamification/RankBadge';
-import { Skeleton } from '../components/ui/Skeleton';
+import { LeaderboardTable } from '../components/leaderboard/LeaderboardTable';
 import { Tabs } from '../components/ui/Tabs';
-import { formatCoins, formatPercent } from '../lib/format';
-import { getRank } from '../lib/ranks';
+import { Skeleton } from '../components/ui/Skeleton';
+import { formatCoins, formatDate } from '../lib/format';
+import { getRankLabel } from '../lib/ranks';
 import styles from './Leaderboard.module.css';
 
 const TABS = [
@@ -15,85 +16,132 @@ const TABS = [
   { id: 'streak', label: 'Streak' },
 ];
 
-export default function Leaderboard() {
-  const [activeTab, setActiveTab] = useState('coins');
-  const navigate = useNavigate();
-  const { data: rows, isLoading, isError } = useLeaderboard({ metric: activeTab });
+const TIMEFRAMES = [
+  { id: 'all', label: 'All Time' },
+  { id: 'month', label: 'This Month' },
+  { id: 'week', label: 'This Week' },
+];
 
-  const getValue = (row) => {
-    switch (activeTab) {
-      case 'coins': return formatCoins(row.coins);
-      case 'accuracy': return row.accuracy ? formatPercent(row.accuracy) : '—';
-      case 'profit': return `${row.net_profit >= 0 ? '+' : ''}${formatCoins(row.net_profit || 0)}`;
-      case 'streak': return `${row.betting_streak || 0}`;
-      default: return '';
-    }
+const LIMIT = 50;
+
+export default function Leaderboard() {
+  const user = useAuthStore(s => s.user);
+  const [activeTab, setActiveTab] = useState('coins');
+  const [timeframe, setTimeframe] = useState('all');
+  const [page, setPage] = useState(1);
+  const listRef = useRef(null);
+
+  const { data, isLoading, isError } = useLeaderboard({
+    metric: activeTab,
+    timeframe,
+    page,
+    limit: LIMIT,
+  });
+
+  const players = data?.players || [];
+  const totalCount = data?.totalCount || 0;
+  const userRank = data?.userRank ?? null;
+  const totalPages = Math.ceil(totalCount / LIMIT);
+
+  const userOnCurrentPage = players.some(p => p.id === user?.id);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setPage(1);
   };
 
-  const getValueClass = (row) => {
-    if (activeTab === 'profit') {
-      return row.net_profit >= 0 ? 'text-yes' : 'text-no';
-    }
-    if (activeTab === 'streak') {
-      return row.betting_streak > 0 ? 'text-warning' : '';
-    }
-    return '';
+  const handleTimeframeChange = (e) => {
+    setTimeframe(e.target.value);
+    setPage(1);
+  };
+
+  const handleJumpToMyRank = () => {
+    if (!userRank) return;
+    const targetPage = Math.ceil(userRank / LIMIT);
+    setPage(targetPage);
+    setTimeout(() => {
+      listRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   return (
     <div className={styles.page}>
-      <h1 className="text-2xl font-heading">Leaderboard</h1>
-
-      <Tabs
-        tabs={TABS}
-        activeTab={activeTab}
-        onChange={setActiveTab}
-      />
-
-      {isLoading ? (
-        <div className={styles.list}>
-          {Array.from({ length: 10 }).map((_, i) => (
-            <Skeleton key={i} variant="rect" />
-          ))}
+      <div className={styles.header}>
+        <div>
+          <h1 className="text-2xl font-heading">Global Leaderboard</h1>
+          <p className={styles.seasonInfo}>
+            Season <span id="season-number">1</span> — Compete to reach the top
+          </p>
         </div>
-      ) : isError ? (
-        <p className="text-muted text-sm">Failed to load leaderboard.</p>
-      ) : !rows || rows.length === 0 ? (
-        <p className="text-muted text-sm">No players found for this category.</p>
-      ) : (
-        <div className={styles.list}>
-          {rows.map((row, i) => {
-            const rank = getRank(row.coins);
-            return (
-              <div
-                key={row.id}
-                className={styles.row}
-                onClick={() => navigate(`/profile/${row.username}`)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/profile/${row.username}`); }}
-              >
-                <span className={styles.rankNum}>#{i + 1}</span>
+      </div>
 
-                <div className={styles.avatar} style={{ background: 'var(--accent-blue)' }}>
-                  {(row.username || '?').charAt(0).toUpperCase()}
-                </div>
-
-                <div className={styles.info}>
-                  <span className={styles.name}>{row.username}</span>
-                  {activeTab === 'coins' && (
-                    <RankBadge rank={rank} size="sm" showLabel />
-                  )}
-                </div>
-
-                <span className={`${styles.value} ${getValueClass(row)}`}>
-                  {getValue(row)}
-                </span>
-              </div>
-            );
-          })}
+      {/* Current user rank summary */}
+      {user && userRank && (
+        <div className={styles.userSummary}>
+          <div className={styles.summaryMain}>
+            <span className={styles.summaryLabel}>Your Rank</span>
+            <span className={styles.summaryRank}>#{userRank}</span>
+          </div>
+          <div className={styles.summaryMeta}>
+            <span className={styles.summaryStat}>
+              {getRankLabel(user.rank || 'Unranked')}
+            </span>
+            <span className={styles.summaryStat}>
+              {formatCoins(user.coins || 0)} coins
+            </span>
+          </div>
+          {!userOnCurrentPage && totalPages > 1 && (
+            <button className={styles.jumpBtn} onClick={handleJumpToMyRank}>
+              <ArrowUp size={14} />
+              Jump to my rank
+            </button>
+          )}
         </div>
       )}
+
+      {/* Tabs + Time filter */}
+      <div className={styles.controls}>
+        <Tabs tabs={TABS} activeTab={activeTab} onChange={handleTabChange} />
+        <select
+          className={styles.timeSelect}
+          value={timeframe}
+          onChange={handleTimeframeChange}
+        >
+          {TIMEFRAMES.map(tf => (
+            <option key={tf.id} value={tf.id}>{tf.label}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Content */}
+      <div ref={listRef}>
+        {isLoading ? (
+          <div className={styles.list}>
+            {Array.from({ length: 20 }).map((_, i) => (
+              <Skeleton key={i} variant="rect" />
+            ))}
+          </div>
+        ) : isError ? (
+          <div className={styles.errorState}>
+            <p className="text-muted">Failed to load leaderboard.</p>
+            <button
+              className="btn-primary btn-sm"
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          <LeaderboardTable
+            players={players}
+            metric={activeTab}
+            currentUserId={user?.id}
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
+        )}
+      </div>
     </div>
   );
 }

@@ -1,49 +1,29 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase, isSupabaseConfigured } from '../config/supabase';
+import { api } from '../lib/api';
 
 /**
- * Fetch leaderboard data with optional metric and timeframe.
+ * Fetch leaderboard data via the Netlify function.
  *
  * @param {object} options
  * @param {'coins'|'accuracy'|'profit'|'streak'} [options.metric='coins']
  * @param {'all'|'month'|'week'} [options.timeframe='all']
+ * @param {number} [options.page=1]
  * @param {number} [options.limit=50]
- * @param {number} [options.offset=0]
  */
-export function useLeaderboard({ metric = 'coins', timeframe = 'all', limit = 50, offset = 0 } = {}) {
+export function useLeaderboard({ metric = 'coins', timeframe = 'all', page = 1, limit = 50 } = {}) {
+  const offset = (page - 1) * limit;
+
   return useQuery({
-    queryKey: ['leaderboard', { metric, timeframe, limit, offset }],
+    queryKey: ['leaderboard', { metric, timeframe, page, limit }],
     queryFn: async () => {
-      if (!isSupabaseConfigured()) {
-        return [];
-      }
-
-      let query = supabase.from('users').select('*', { count: 'exact' });
-
-      switch (metric) {
-        case 'accuracy':
-          query = query.gte('total_predictions', 20).order('accuracy', { ascending: false });
-          break;
-        case 'profit':
-          query = query.order('net_profit', { ascending: false });
-          break;
-        case 'streak':
-          query = query.gt('betting_streak', 0).order('betting_streak', { ascending: false });
-          break;
-        case 'coins':
-        default:
-          query = query.gte('coins', 2500).order('coins', { ascending: false });
-          break;
-      }
-
-      const { data, error } = await query
-        .range(offset, offset + limit - 1)
-        .limit(limit);
-
-      if (error) throw error;
-      return data || [];
+      const data = await api.get('/leaderboard', { metric, timeframe, limit, offset });
+      return {
+        players: data.players || [],
+        totalCount: data.totalCount || 0,
+        userRank: data.userRank ?? null,
+      };
     },
-    staleTime: 30 * 1000,
-    refetchInterval: 60 * 1000,
+    staleTime: 60 * 1000,
+    refetchInterval: 2 * 60 * 1000,
   });
 }
