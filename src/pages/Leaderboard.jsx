@@ -18,7 +18,7 @@ const TABS = [
 export default function Leaderboard() {
   const [activeTab, setActiveTab] = useState('coins');
   const navigate = useNavigate();
-  const { data: rows, isLoading, isError } = useLeaderboard(activeTab);
+  const { data: rows, isLoading, isError } = useLeaderboard({ metric: activeTab });
 
   const getValue = (row) => {
     switch (activeTab) {

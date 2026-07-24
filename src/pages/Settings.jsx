@@ -5,6 +5,7 @@ import { useAuthStore } from '../stores/authStore';
 import { RankBadge } from '../components/gamification/RankBadge';
 import { XPBar } from '../components/gamification/XPBar';
 import { Button } from '../components/ui/Button';
+import { api } from '../lib/api';
 import { formatDate } from '../lib/format';
 import styles from './Settings.module.css';
 
@@ -20,25 +21,12 @@ export default function Settings() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch('/.netlify/functions/update-profile', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${user.access_token || ''}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username: displayName }),
-      });
-
-      if (res.ok) {
-        updateUser({ username: displayName });
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2000);
-      } else {
-        const err = await res.json();
-        alert(err.error || 'Failed to update username');
-      }
+      const res = await api.post('/update-profile', { username: displayName.trim() });
+      updateUser({ username: displayName.trim() });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
     } catch (err) {
-      alert('Failed to save. Make sure the server is running.');
+      alert(err.message || 'Failed to update username');
     } finally {
       setSaving(false);
     }

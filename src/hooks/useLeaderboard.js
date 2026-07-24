@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../config/supabase';
+import { supabase, isSupabaseConfigured } from '../config/supabase';
 
 /**
  * Fetch leaderboard data with optional metric and timeframe.
@@ -14,6 +14,10 @@ export function useLeaderboard({ metric = 'coins', timeframe = 'all', limit = 50
   return useQuery({
     queryKey: ['leaderboard', { metric, timeframe, limit, offset }],
     queryFn: async () => {
+      if (!isSupabaseConfigured()) {
+        return [];
+      }
+
       let query = supabase.from('users').select('*', { count: 'exact' });
 
       switch (metric) {
@@ -32,12 +36,12 @@ export function useLeaderboard({ metric = 'coins', timeframe = 'all', limit = 50
           break;
       }
 
-      const { data, error, count } = await query
+      const { data, error } = await query
         .range(offset, offset + limit - 1)
         .limit(limit);
 
       if (error) throw error;
-      return { players: data, count };
+      return data || [];
     },
     staleTime: 30 * 1000,
     refetchInterval: 60 * 1000,
