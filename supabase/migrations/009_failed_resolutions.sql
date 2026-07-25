@@ -1,0 +1,2 @@
+ALTER TABLE public.markets
+  ADD COLUMN IF NOT EXISTS failed_resolutions INTEGER NOT NULL DEFAULT 0;

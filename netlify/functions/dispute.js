@@ -2,11 +2,6 @@ import { verifyAuth } from './_shared/auth.js';
 import { corsHeaders } from './_shared/cors.js';
 import { supabaseAdmin } from './_shared/supabase.js';
 
-/**
- * POST /api/dispute
- * Flag a resolved market for admin review.
- * Only allowed within 24 hours of resolution (dispute_deadline).
- */
 export default async (req, context) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders, status: 204 });
@@ -31,7 +26,13 @@ export default async (req, context) => {
       });
     }
 
-    // Check market exists and is resolved within dispute window
+    if (reason.length < 10) {
+      return new Response(JSON.stringify({ error: 'Reason must be at least 10 characters' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const { data: market } = await supabaseAdmin
       .from('markets')
       .select('id, status, dispute_deadline')
@@ -59,8 +60,7 @@ export default async (req, context) => {
       });
     }
 
-    // Insert dispute
-    const { data, error } = await supabaseAdmin
+    const { data: dispute, error } = await supabaseAdmin
       .from('market_disputes')
       .insert({ market_id, user_id: user.id, reason })
       .select()
@@ -76,9 +76,26 @@ export default async (req, context) => {
       throw error;
     }
 
-    // TODO: If 3+ disputes, auto-move market to 'review' status
+    const { count } = await supabaseAdmin
+      .from('market_disputes')
+      .select('*', { count: 'exact', head: true })
+      .eq('market_id', market_id);
 
-    return new Response(JSON.stringify({ dispute: data }), {
+    let marketReviewed = false;
+
+    if (count >= 3) {
+      await supabaseAdmin
+        .from('markets')
+        .update({ status: 'review' })
+        .eq('id', market_id);
+      marketReviewed = true;
+    }
+
+    return new Response(JSON.stringify({
+      dispute,
+      market_reviewed: marketReviewed,
+      dispute_count: count,
+    }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
