@@ -22,7 +22,6 @@ export default function Community() {
   const [activeTab, setActiveTab] = useState('live');
 
   const userLevel = user?.level || 1;
-  const unlocked = getUnlockedFeatures(userLevel);
   const canVote = userLevel >= 3;
   const canPropose = userLevel >= 5;
 
