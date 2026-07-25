@@ -61,14 +61,10 @@ export async function checkAchievements(userId, triggerAction, context = {}) {
     const met = await evaluateCondition(userId, achievement.slug, context);
 
     if (met) {
-      // Award the achievement
-      await supabaseAdmin
-        .from('user_achievements')
-        .insert({ user_id: userId, achievement_id: achievement.id });
-
-      // Award rewards
-      await supabaseAdmin.rpc('award_achievement_rewards', {
+      // Award the achievement + rewards atomically
+      await supabaseAdmin.rpc('unlock_achievement', {
         p_user_id: userId,
+        p_achievement_id: achievement.id,
         p_xp: achievement.xp_reward,
         p_coins: achievement.coin_reward,
       });
