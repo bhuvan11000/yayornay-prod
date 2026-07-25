@@ -1,13 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { supabase } from '../config/supabase';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../stores/authStore';
 
-/**
- * Subscribe to real-time market price updates for a specific market.
- *
- * @param {string} marketId - Market UUID
- */
 export function useMarketRealtime(marketId) {
   const queryClient = useQueryClient();
 
@@ -22,7 +17,6 @@ export function useMarketRealtime(marketId) {
         table: 'markets',
         filter: `id=eq.${marketId}`,
       }, (payload) => {
-        // Update the cached market data instantly
         queryClient.setQueryData(['market', marketId], (old) => {
           if (!old) return old;
           return {
@@ -35,7 +29,6 @@ export function useMarketRealtime(marketId) {
           };
         });
 
-        // Also update in the markets list cache
         queryClient.setQueriesData({ queryKey: ['markets'] }, (old) => {
           if (!old?.markets) return old;
           return {
@@ -63,9 +56,6 @@ export function useMarketRealtime(marketId) {
   }, [marketId, queryClient]);
 }
 
-/**
- * Subscribe to real-time user updates (coins, XP, rank changes).
- */
 export function useUserRealtime() {
   const userId = useAuthStore((s) => s.user?.id);
   const updateUser = useAuthStore((s) => s.updateUser);
@@ -95,4 +85,34 @@ export function useUserRealtime() {
       supabase.removeChannel(channel);
     };
   }, [userId, updateUser]);
+}
+
+export function useLeaderboardRealtime() {
+  const queryClient = useQueryClient();
+  const debounceRef = useRef(null);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('leaderboard')
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'users',
+      }, () => {
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current);
+        }
+        debounceRef.current = setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
+        }, 2000);
+      })
+      .subscribe();
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 }
