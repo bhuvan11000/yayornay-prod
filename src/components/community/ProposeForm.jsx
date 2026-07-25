@@ -60,7 +60,7 @@ export function ProposeForm() {
   }, [title, description, category, closeDate, resolutionCriteria]);
 
   const userLevel = user?.level || 1;
-  if (userLevel < 5) {
+  if (userLevel < 3) {
     return (
       <div className={styles.locked}>
         <div className={styles.lockedIcon}>
@@ -68,7 +68,7 @@ export function ProposeForm() {
         </div>
         <h3 className={styles.lockedTitle}>Proposals Locked</h3>
         <p className={styles.lockedText}>
-          Reach Level 5 to propose community markets. You are currently Level {userLevel}.
+          Reach Level 3 to propose community markets. You are currently Level {userLevel}.
         </p>
       </div>
     );

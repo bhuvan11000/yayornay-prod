@@ -85,8 +85,8 @@ export default async (req) => {
       });
     }
 
-    if (profile.level < 5) {
-      return new Response(JSON.stringify({ error: 'Level 5 required to propose markets' }), {
+    if (profile.level < 3) {
+      return new Response(JSON.stringify({ error: 'Level 3 required to propose markets' }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });

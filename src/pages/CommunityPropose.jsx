@@ -20,9 +20,9 @@ export default function CommunityPropose() {
         <h1 className="text-2xl font-heading">Propose a Market</h1>
         <p className={styles.subtitle}>
           Create a new prediction market for the community to vote on.
-          {userLevel < 5 && (
+          {userLevel < 3 && (
             <span className={styles.levelNote}>
-              You need Level 5 to propose (currently Level {userLevel})
+              You need Level 3 to propose (currently Level {userLevel})
             </span>
           )}
         </p>

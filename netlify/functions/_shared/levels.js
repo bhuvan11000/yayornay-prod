@@ -7,8 +7,7 @@ import { supabaseAdmin } from './supabase.js';
 
 export const LEVEL_UNLOCKS = {
   1: 'Predict on AI markets, view leaderboard',
-  3: 'Vote on community proposals',
-  5: 'Submit community market proposals',
+  3: 'Vote on community proposals, submit community market proposals',
   8: 'Daily quest slots: 3 → 4',
   10: 'Weekly quest slots: 2 → 3',
 };

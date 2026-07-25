@@ -23,7 +23,7 @@ export default function Community() {
 
   const userLevel = user?.level || 1;
   const canVote = userLevel >= 3;
-  const canPropose = userLevel >= 5;
+  const canPropose = userLevel >= 3;
 
   const { data: marketsData, isLoading: marketsLoading } = useMarkets({
     source: 'community',
@@ -105,7 +105,7 @@ export default function Community() {
         ) : (
           <div className={styles.levelLock}>
             <Lock size={14} />
-            <span>Level 5+</span>
+            <span>Level 3+</span>
           </div>
         )}
       </div>
