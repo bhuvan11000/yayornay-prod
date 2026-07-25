@@ -2,19 +2,7 @@ import { verifyCronSecret } from './_shared/auth.js';
 import { corsHeaders } from './_shared/cors.js';
 import { supabaseAdmin } from './_shared/supabase.js';
 
-/**
- * POST /api/season-transition
- * Called by GitHub Actions cron on the 1st of each month (00:00 UTC).
- * Processes the monthly season transition:
- * - Snapshot leaderboard, award end-of-season rewards (top 10)
- * - Apply 25% coin deduction (floor 1,000)
- * - Recalculate all ranks
- * - Create seasonal badges for top 3
- * - Create new season record
- *
- * Calls the PostgreSQL process_season_transition function.
- */
-export default async (req, context) => {
+export default async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders, status: 204 });
   }
@@ -27,24 +15,111 @@ export default async (req, context) => {
   }
 
   try {
-    // Calculate new season number
-    const { data: lastSeason } = await supabaseAdmin
+    const now = new Date();
+
+    const { data: activeSeason } = await supabaseAdmin
       .from('seasons')
-      .select('season_number')
-      .order('season_number', { ascending: false })
+      .select('*')
+      .eq('status', 'active')
+      .single()
+      .maybeSingle();
+
+    if (!activeSeason) {
+      const { data: newSeason, error: createError } = await supabaseAdmin
+        .from('seasons')
+        .insert({
+          season_number: 1,
+          starts_at: now.toISOString(),
+          ends_at: new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString(),
+          status: 'active',
+        })
+        .select()
+        .single();
+
+      if (createError) throw createError;
+
+      return new Response(JSON.stringify({
+        season_ended: 0,
+        rewards_awarded: 0,
+        new_season: 1,
+        coins_deducted: false,
+        message: 'First season created',
+        season: newSeason,
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const seasonEnd = new Date(activeSeason.ends_at);
+    if (now < seasonEnd) {
+      return new Response(JSON.stringify({
+        season_ended: 0,
+        rewards_awarded: 0,
+        new_season: activeSeason.season_number,
+        coins_deducted: false,
+        message: 'Current season has not ended yet',
+        season: activeSeason,
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const newSeasonNumber = activeSeason.season_number + 1;
+
+    const { data: existingNewSeason } = await supabaseAdmin
+      .from('seasons')
+      .select('id')
+      .eq('season_number', newSeasonNumber)
+      .maybeSingle();
+
+    if (existingNewSeason) {
+      return new Response(JSON.stringify({
+        season_ended: activeSeason.season_number,
+        rewards_awarded: 0,
+        new_season: newSeasonNumber,
+        coins_deducted: false,
+        message: 'Season transition already processed',
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const { data: existingRewards } = await supabaseAdmin
+      .from('season_rewards')
+      .select('id')
+      .eq('season_id', activeSeason.id)
       .limit(1)
-      .single();
+      .maybeSingle();
 
-    const newSeasonNumber = (lastSeason?.season_number || 0) + 1;
+    if (existingRewards) {
+      return new Response(JSON.stringify({
+        season_ended: activeSeason.season_number,
+        rewards_awarded: 0,
+        new_season: newSeasonNumber,
+        coins_deducted: false,
+        message: 'Rewards already distributed for this season',
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
-    // Call the PostgreSQL function
     const { data, error } = await supabaseAdmin.rpc('process_season_transition', {
       p_season_number: newSeasonNumber,
     });
 
     if (error) throw error;
 
-    return new Response(JSON.stringify(data), {
+    return new Response(JSON.stringify({
+      season_ended: activeSeason.season_number,
+      rewards_awarded: data?.top_players_awarded || 0,
+      new_season: newSeasonNumber,
+      coins_deducted: true,
+      result: data,
+    }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
