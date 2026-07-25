@@ -1,11 +1,10 @@
-import { Gift, Lock, CheckCircle, Sun, Coins, Zap } from 'lucide-react';
+import { Gift, Lock, Sun } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { getRankColor, getRankLabel } from '../../lib/ranks';
-import { formatTimeRemaining, formatCoins } from '../../lib/format';
+import { formatCoins } from '../../lib/format';
 import styles from './DailyRewardClaim.module.css';
 
 export function DailyRewardClaim({ onClaim, claiming }) {
-  const user = useAuthStore((s) => s.user);
   const rewardStatus = useAuthStore((s) => s.rewardStatus);
 
   if (!rewardStatus) return null;
@@ -13,17 +12,8 @@ export function DailyRewardClaim({ onClaim, claiming }) {
   const { can_claim, is_active, rank, coins, xp, is_sunday, last_claim } = rewardStatus;
   const rankColor = getRankColor(rank);
   const rankLabel = getRankLabel(rank);
-  const now = new Date();
-  const todayStr = now.toISOString().split('T')[0];
+  const todayStr = new Date().toISOString().split('T')[0];
   const alreadyClaimed = Boolean(last_claim) && last_claim === todayStr;
-
-  const computeNextReset = () => {
-    if (!last_claim) return null;
-    const next = new Date(last_claim);
-    next.setDate(next.getDate() + 1);
-    next.setUTCHours(0, 0, 0, 0);
-    return next.toISOString();
-  };
 
   if (!is_active) {
     return (
@@ -42,31 +32,7 @@ export function DailyRewardClaim({ onClaim, claiming }) {
   }
 
   if (alreadyClaimed || (!can_claim && is_active)) {
-    const nextReset = computeNextReset();
-    return (
-      <div className={`${styles.banner} ${styles.claimed}`}>
-        <div className={`${styles.iconWrapper} ${styles.claimedIcon}`}>
-          <CheckCircle size={24} />
-        </div>
-        <div className={styles.body}>
-          <span className={styles.header}>Daily Reward Claimed</span>
-          <div className={styles.rewardPreview}>
-            <span className={styles.rankBadge} style={{ background: rankColor }}>
-              {rankLabel}
-            </span>
-            <span className={styles.rewardAmounts}>
-              +{formatCoins(coins)} coins, +{xp} XP
-              {is_sunday && <span className={styles.sundayBadge}>3x Sunday</span>}
-            </span>
-          </div>
-          {nextReset && (
-            <p className={styles.resetTimer}>
-              Next reward in {formatTimeRemaining(nextReset)}
-            </p>
-          )}
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
