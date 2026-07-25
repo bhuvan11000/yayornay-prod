@@ -23,3 +23,5 @@
     timeout = 30
   [functions.resolve]
     timeout = 30
+  [functions.season-transition]
+    timeout = 30
