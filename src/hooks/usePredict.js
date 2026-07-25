@@ -8,6 +8,7 @@ export function usePredict() {
   const updateUser = useAuthStore((s) => s.updateUser);
   const user = useAuthStore((s) => s.user);
   const addToast = useUIStore((s) => s.addToast);
+  const addAchievement = useUIStore((s) => s.addAchievement);
   const showLevelUpModal = useUIStore((s) => s.showLevelUpModal);
 
   return useMutation({
@@ -35,6 +36,7 @@ export function usePredict() {
       queryClient.invalidateQueries({ queryKey: ['market', variables.market_id] });
       queryClient.invalidateQueries({ queryKey: ['predictions'] });
       queryClient.invalidateQueries({ queryKey: ['quests'] });
+      queryClient.invalidateQueries({ queryKey: ['achievements'] });
 
       addToast('prediction', {
         title: 'Prediction Placed!',
@@ -44,9 +46,15 @@ export function usePredict() {
 
       if (response.achievements?.length > 0) {
         for (const ach of response.achievements) {
-          addToast('achievement', {
-            title: `Achievement Unlocked: ${ach.title}`,
-            message: ach.description,
+          addAchievement(ach);
+        }
+      }
+
+      if (response.completedQuests?.length > 0) {
+        for (const q of response.completedQuests) {
+          addToast('success', {
+            title: `Quest Complete: ${q.title}`,
+            message: `+${q.xp_reward} XP, +${q.coin_reward} coins`,
           });
         }
       }
