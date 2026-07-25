@@ -40,20 +40,25 @@ export function LeaderboardTable({ players, metric, currentUserId, page, totalPa
           </button>
 
           <div className={styles.pageInfo}>
-            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-              const start = Math.max(1, Math.min(page - 2, totalPages - 4));
-              const p = start + i;
-              if (p > totalPages) return null;
-              return (
-                <button
-                  key={p}
-                  className={`${styles.pageNum} ${p === page ? styles.activePage : ''}`}
-                  onClick={() => onPageChange(p)}
-                >
-                  {p}
-                </button>
-              );
-            })}
+            {(() => {
+              const maxVisible = Math.min(totalPages, 5);
+              const half = Math.floor(maxVisible / 2);
+              let start = page - half;
+              if (start < 1) start = 1;
+              if (start + maxVisible - 1 > totalPages) start = totalPages - maxVisible + 1;
+              return Array.from({ length: maxVisible }, (_, i) => {
+                const p = start + i;
+                return (
+                  <button
+                    key={p}
+                    className={`${styles.pageNum} ${p === page ? styles.activePage : ''}`}
+                    onClick={() => onPageChange(p)}
+                  >
+                    {p}
+                  </button>
+                );
+              });
+            })()}
           </div>
 
           <button
