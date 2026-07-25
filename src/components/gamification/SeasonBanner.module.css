@@ -1,0 +1,86 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  font-size: var(--text-sm);
+}
+
+/* ── Urgency ── */
+
+.normal { border-color: var(--border-subtle); }
+
+.warning {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), var(--bg-secondary));
+}
+
+.critical {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), var(--bg-secondary));
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.icon {
+  color: var(--accent-blue);
+  flex-shrink: 0;
+}
+
+.title {
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.countdown {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.warning .countdown { color: var(--color-warning); }
+.critical .countdown { color: var(--color-no); }
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.rankPill {
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progressTrack {
+  width: 80px;
+  height: 4px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.5s ease;
+}
+
+.normal .progressFill { background: var(--accent-blue); }
+.warning .progressFill { background: var(--color-warning); }
+.critical .progressFill { background: var(--color-no); }

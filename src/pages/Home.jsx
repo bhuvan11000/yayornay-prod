@@ -1,32 +1,64 @@
 import { Link } from 'react-router';
+import { Coins, TrendingUp } from 'lucide-react';
+import { useAuthStore } from '../stores/authStore';
 import { useMarkets } from '../hooks/useMarkets';
+import { useQuests } from '../hooks/useQuests';
+import { useClaimReward } from '../hooks/useClaimReward';
 import { MarketCard } from '../components/market/MarketCard';
 import { Skeleton } from '../components/ui/Skeleton';
+import { DailyRewardClaim } from '../components/gamification/DailyRewardClaim';
+import { StreakCounter } from '../components/gamification/StreakCounter';
+import { SeasonBanner } from '../components/gamification/SeasonBanner';
+import { RankBadge } from '../components/gamification/RankBadge';
+import { XPBar } from '../components/gamification/XPBar';
+import { formatCoins } from '../lib/format';
 import styles from './Home.module.css';
 
 export default function Home() {
-  const { data, isLoading, isError } = useMarkets({
+  const user = useAuthStore((s) => s.user);
+  const { data: marketsData, isLoading: marketsLoading, isError: marketsError } = useMarkets({
     status: 'open',
     sort: 'volume',
     limit: 6,
     page: 1,
   });
+  const { data: questsData } = useQuests();
+  const { mutate: claimReward, isPending: claiming } = useClaimReward();
 
-  const trendingMarkets = data?.markets || [];
+  const trendingMarkets = marketsData?.markets || [];
+  const dailyQuests = questsData?.daily?.filter(q => !q.completed) || [];
+  const weeklyQuests = questsData?.weekly?.filter(q => !q.completed) || [];
 
   return (
     <div className={styles.home}>
       <div className={styles.header}>
-        <h1 className="text-2xl font-heading">Dashboard</h1>
+        <h1 className="text-2xl font-heading">
+          Welcome{user?.username ? `, ${user.username}` : ''}
+        </h1>
       </div>
 
-      <div className="card">
-        <p className="text-secondary">Daily reward status — coming soon</p>
-      </div>
+      <SeasonBanner />
 
-      <div className="card">
-        <p className="text-secondary">Season progress — coming soon</p>
-      </div>
+      <DailyRewardClaim onClaim={() => claimReward()} claiming={claiming} />
+
+      {user && (
+        <div className={styles.statsRow}>
+          <div className={styles.statCard}>
+            <Coins size={18} className={styles.coinIcon} />
+            <span className={styles.statValue}>{formatCoins(user.coins)}</span>
+            <span className={styles.statLabel}>Coins</span>
+          </div>
+          <div className={styles.statCard}>
+            <RankBadge rank={user.rank} size="md" showLabel />
+          </div>
+          <div className={styles.statCard}>
+            <StreakCounter streak={user.betting_streak || 0} longest={user.longest_streak} size="md" />
+          </div>
+          <div className={styles.statCard}>
+            <XPBar xp={user.xp} variant="mini" />
+          </div>
+        </div>
+      )}
 
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -36,13 +68,15 @@ export default function Home() {
           </Link>
         </div>
 
-        {isLoading ? (
-          <div className={styles.trendingGrid}>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} variant="card" />
+        {marketsLoading ? (
+          <div className={styles.trendingRow}>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className={styles.trendingCard}>
+                <Skeleton variant="card" />
+              </div>
             ))}
           </div>
-        ) : isError ? (
+        ) : marketsError ? (
           <p className="text-muted text-sm">Failed to load trending markets.</p>
         ) : trendingMarkets.length === 0 ? (
           <p className="text-muted text-sm">No trending markets right now. Check back soon.</p>
@@ -58,8 +92,55 @@ export default function Home() {
       </section>
 
       <section className={styles.section}>
-        <h2 className="text-xl font-heading">Your Active Predictions</h2>
-        <p className="text-muted text-sm">Your active predictions will appear here once you place predictions.</p>
+        <div className={styles.sectionHeader}>
+          <h2 className="text-xl font-heading">
+            <TrendingUp size={18} />
+            Active Quests
+          </h2>
+          <Link to="/quests" className={styles.viewAll}>
+            View All &rarr;
+          </Link>
+        </div>
+        {dailyQuests.length > 0 || weeklyQuests.length > 0 ? (
+          <div className={styles.questMiniList}>
+            {dailyQuests.slice(0, 2).map((q) => {
+              const pct = q.target > 0 ? Math.min(Math.round((q.progress / q.target) * 100), 100) : 0;
+              return (
+                <div key={q.id} className={styles.questMiniRow}>
+                  <div className={styles.questMiniInfo}>
+                    <span className={styles.questMiniTitle}>{q.title}</span>
+                    <span className={styles.questMiniType}>Daily</span>
+                  </div>
+                  <div className={styles.questMiniProgress}>
+                    <div className={styles.questMiniTrack}>
+                      <div className={styles.questMiniFill} style={{ width: `${pct}%` }} />
+                    </div>
+                    <span className={styles.questMiniCount}>{q.progress}/{q.target}</span>
+                  </div>
+                </div>
+              );
+            })}
+            {weeklyQuests.slice(0, 1).map((q) => {
+              const pct = q.target > 0 ? Math.min(Math.round((q.progress / q.target) * 100), 100) : 0;
+              return (
+                <div key={q.id} className={styles.questMiniRow}>
+                  <div className={styles.questMiniInfo}>
+                    <span className={styles.questMiniTitle}>{q.title}</span>
+                    <span className={styles.questMiniType}>Weekly</span>
+                  </div>
+                  <div className={styles.questMiniProgress}>
+                    <div className={styles.questMiniTrack}>
+                      <div className={styles.questMiniFill} style={{ width: `${pct}%` }} />
+                    </div>
+                    <span className={styles.questMiniCount}>{q.progress}/{q.target}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-muted text-sm">No active quests. Check the Quest Board to start.</p>
+        )}
       </section>
     </div>
   );
