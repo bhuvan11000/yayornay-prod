@@ -9,14 +9,6 @@
   box-shadow: 0 0 20px rgba(34, 197, 94, 0.15), var(--shadow-lg);
   min-width: 300px;
   cursor: pointer;
-  transform: translateX(120%);
-  opacity: 0;
-  transition: transform var(--transition-normal), opacity var(--transition-normal);
-}
-
-.visible {
-  transform: translateX(0);
-  opacity: 1;
 }
 
 .accentBar {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle } from 'lucide-react';
 import { useUIStore } from '../../stores/uiStore';
 import { getUnlockedFeatures } from '../../lib/levels';
@@ -7,12 +8,10 @@ import styles from './LevelUpModal.module.css';
 
 export function LevelUpModal() {
   const { showLevelUpModal, levelUpData, hideLevelUpModal } = useUIStore();
-  const [visible, setVisible] = useState(false);
   const [particles, setParticles] = useState([]);
 
   useEffect(() => {
     if (showLevelUpModal && levelUpData) {
-      setVisible(true);
       const p = Array.from({ length: 12 }).map((_, i) => ({
         id: i,
         x: Math.random() * 100,
@@ -32,60 +31,71 @@ export function LevelUpModal() {
   );
 
   const handleDismiss = () => {
-    setVisible(false);
-    setTimeout(hideLevelUpModal, 300);
+    hideLevelUpModal();
   };
 
   return createPortal(
-    <div
-      className={`${styles.overlay} ${visible ? styles.overlayVisible : ''}`}
-      onClick={handleDismiss}
-    >
-      <div
-        className={`${styles.card} ${visible ? styles.cardVisible : ''}`}
-        onClick={e => e.stopPropagation()}
-      >
-        <div className={styles.particles}>
-          {particles.map(p => (
-            <span
-              key={p.id}
-              className={styles.particle}
-              style={{
-                left: `${p.x}%`,
-                animationDelay: `${p.delay}s`,
-                width: p.size,
-                height: p.size,
-                background: p.color,
-              }}
-            />
-          ))}
-        </div>
+    <AnimatePresence>
+      {showLevelUpModal && (
+        <motion.div
+          className={styles.overlay}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={handleDismiss}
+        >
+          <motion.div
+            className={styles.card}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className={styles.particles}>
+              {particles.map(p => (
+                <span
+                  key={p.id}
+                  className={styles.particle}
+                  style={{
+                    left: `${p.x}%`,
+                    animationDelay: `${p.delay}s`,
+                    width: p.size,
+                    height: p.size,
+                    background: p.color,
+                  }}
+                />
+              ))}
+            </div>
 
-        <h1 className={styles.title}>LEVEL UP!</h1>
+            <h1 className={styles.title}>LEVEL UP!</h1>
 
-        <div className={styles.levelRow}>
-          <span className={styles.oldLevel}>Lv.{oldLevel}</span>
-          <span className={styles.arrow}>&rarr;</span>
-          <span className={styles.newLevel}>Lv.{newLevel}</span>
-        </div>
+            <div className={styles.levelRow}>
+              <span className={styles.oldLevel}>Lv.{oldLevel}</span>
+              <span className={styles.arrow}>&rarr;</span>
+              <span className={styles.newLevel}>Lv.{newLevel}</span>
+            </div>
 
-        {newUnlocks.length > 0 && (
-          <div className={styles.unlocks}>
-            <p className={styles.unlockTitle}>New Unlocks</p>
-            {newUnlocks.map((feature, i) => (
-              <div key={i} className={styles.unlockItem}>
-                <CheckCircle size={16} className={styles.unlockIcon} />
-                <span>{feature}</span>
+            {newUnlocks.length > 0 && (
+              <div className={styles.unlocks}>
+                <p className={styles.unlockTitle}>New Unlocks</p>
+                {newUnlocks.map((feature, i) => (
+                  <div key={i} className={styles.unlockItem}>
+                    <CheckCircle size={16} className={styles.unlockIcon} />
+                    <span>{feature}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            )}
 
-        <button className={styles.continue} onClick={handleDismiss}>
-          Continue
-        </button>
-      </div>
-    </div>,
+            <button className={styles.continue} onClick={handleDismiss}>
+              Continue
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>,
     document.getElementById('modal-root') || document.body
   );
 }
