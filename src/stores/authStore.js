@@ -101,7 +101,7 @@ export const useAuthStore = create((set, get) => ({
           const onboardData = await onboardRes.json();
           set({
             session,
-            user: onboardData.user,
+            user: { ...onboardData.user, email: session.user.email },
             rewardStatus: {
               can_claim: true,
               is_active: false,
@@ -115,7 +115,7 @@ export const useAuthStore = create((set, get) => ({
         const data = await res.json();
         set({
           session,
-          user: data.user,
+          user: { ...data.user, email: session.user.email },
           rewardStatus: data.rewardStatus,
           loading: false,
         });
@@ -139,7 +139,7 @@ export const useAuthStore = create((set, get) => ({
         if (userData && !fetchError) {
           set({
             session,
-            user: userData,
+            user: { ...userData, email: session.user.email },
             rewardStatus: {
               can_claim: true,
               is_active: false,
