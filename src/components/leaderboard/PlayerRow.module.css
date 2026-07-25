@@ -23,10 +23,16 @@
 .currentUser {
   background: rgba(79, 125, 245, 0.05);
   border-color: rgba(79, 125, 245, 0.2);
+  animation: rankGlow 2s ease-in-out infinite;
 }
 
 .currentUser:hover {
   background: rgba(79, 125, 245, 0.08);
+}
+
+@keyframes rankGlow {
+  0%, 100% { box-shadow: 0 0 0 rgba(79, 125, 245, 0); }
+  50% { box-shadow: 0 0 12px rgba(79, 125, 245, 0.15); }
 }
 
 /* ── Rank ── */

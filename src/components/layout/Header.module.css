@@ -104,6 +104,7 @@
   background: var(--bg-tertiary);
   border-radius: var(--radius-md);
   white-space: nowrap;
+  animation: coinPulse 0.3s ease;
 }
 
 .coinIcon {
