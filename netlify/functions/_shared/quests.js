@@ -92,10 +92,10 @@ export async function updateQuestProgress(userId, actionType, context = {}) {
           completed: true,
         });
       } else {
-        await supabaseAdmin
-          .from('user_quests')
-          .update({ progress: newProgress })
-          .eq('id', uq.id);
+        await supabaseAdmin.rpc('update_quest_progress', {
+          p_user_quest_id: uq.id,
+          p_new_progress: newProgress,
+        });
       }
     }
   }
