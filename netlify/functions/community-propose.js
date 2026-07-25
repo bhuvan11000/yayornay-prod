@@ -2,19 +2,17 @@ import { verifyAuth } from './_shared/auth.js';
 import { corsHeaders } from './_shared/cors.js';
 import { supabaseAdmin } from './_shared/supabase.js';
 import { getProposalCost } from './_shared/rewards.js';
+import { checkRankChange } from './_shared/ranks.js';
 
-/**
- * POST /api/community-propose
- * Submit a new community market proposal.
- * Deducts rank-scaled stake from proposer.
- */
-export default async (req, context) => {
+const VALID_CATEGORIES = ['sports', 'tech', 'popculture', 'politics', 'memes'];
+
+export default async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders, status: 204 });
   }
 
-  const user = await verifyAuth(req);
-  if (!user) {
+  const auth = await verifyAuth(req);
+  if (!auth) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -32,26 +30,52 @@ export default async (req, context) => {
       });
     }
 
-    // Validate title length
     if (title.length < 10 || title.length > 200) {
-      return new Response(JSON.stringify({ error: 'Title must be between 10 and 200 characters' }), {
+      return new Response(JSON.stringify({ error: 'Title must be 10-200 characters' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    if (!['sports', 'tech', 'popculture', 'politics', 'memes'].includes(category)) {
+    if (description.length < 20 || description.length > 500) {
+      return new Response(JSON.stringify({ error: 'Description must be 20-500 characters' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!VALID_CATEGORIES.includes(category)) {
       return new Response(JSON.stringify({ error: 'Invalid category' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Get user's rank for cost calculation
+    if (resolution_criteria.length < 20 || resolution_criteria.length > 300) {
+      return new Response(JSON.stringify({ error: 'Resolution criteria must be 20-300 characters' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const closesDate = new Date(closes_at);
+    const now = new Date();
+    const minDate = new Date(now);
+    minDate.setDate(minDate.getDate() + 3);
+    const maxDate = new Date(now);
+    maxDate.setDate(maxDate.getDate() + 90);
+
+    if (isNaN(closesDate.getTime()) || closesDate < minDate || closesDate > maxDate) {
+      return new Response(JSON.stringify({ error: 'Close date must be 3-90 days from now' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const { data: profile } = await supabaseAdmin
       .from('users')
-      .select('coins, rank')
-      .eq('id', user.id)
+      .select('coins, rank, level')
+      .eq('id', auth.id)
       .single();
 
     if (!profile) {
@@ -61,20 +85,17 @@ export default async (req, context) => {
       });
     }
 
-    const cost = getProposalCost(profile.rank);
-
-    if (profile.coins < cost) {
-      return new Response(JSON.stringify({ error: `Insufficient coins. Proposal cost: ${cost} coins` }), {
-        status: 400,
+    if (profile.level < 5) {
+      return new Response(JSON.stringify({ error: 'Level 5 required to propose markets' }), {
+        status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Check max pending proposals
     const { count: pendingCount } = await supabaseAdmin
       .from('community_proposals')
       .select('*', { count: 'exact', head: true })
-      .eq('proposer_id', user.id)
+      .eq('proposer_id', auth.id)
       .eq('status', 'pending');
 
     if (pendingCount >= 3) {
@@ -84,35 +105,47 @@ export default async (req, context) => {
       });
     }
 
-    // Calculate voting deadline (7 days from now)
+    const cost = getProposalCost(profile.rank);
+
+    if (profile.coins < cost) {
+      return new Response(JSON.stringify({ error: `Insufficient coins. Need ${cost}, have ${profile.coins}` }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const votingDeadline = new Date();
     votingDeadline.setDate(votingDeadline.getDate() + 7);
 
-    // Deduct stake and create proposal
-    const { data, error } = await supabaseAdmin
+    const { data: proposal, error } = await supabaseAdmin
       .from('community_proposals')
       .insert({
-        proposer_id: user.id,
+        proposer_id: auth.id,
         title,
         description,
         category,
         resolution_criteria,
         stake_amount: cost,
         voting_deadline: votingDeadline.toISOString(),
-        closes_at,
+        closes_at: closesDate.toISOString(),
       })
       .select()
       .single();
 
     if (error) throw error;
 
-    // Deduct stake from user
     await supabaseAdmin
       .from('users')
       .update({ coins: profile.coins - cost })
-      .eq('id', user.id);
+      .eq('id', auth.id);
 
-    return new Response(JSON.stringify({ proposal: data }), {
+    await checkRankChange(auth.id, profile.coins - cost, profile.rank);
+
+    return new Response(JSON.stringify({
+      proposal_id: proposal.id,
+      stake_deducted: cost,
+      status: 'pending',
+    }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

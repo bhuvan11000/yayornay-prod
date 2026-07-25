@@ -1,19 +1,27 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
+import { useAuthStore } from '../stores/authStore';
 import { useUIStore } from '../stores/uiStore';
 
-/**
- * Mutation hook for proposing a community market.
- */
 export function usePropose() {
   const queryClient = useQueryClient();
+  const updateUser = useAuthStore((s) => s.updateUser);
+  const user = useAuthStore((s) => s.user);
   const addToast = useUIStore((s) => s.addToast);
 
   return useMutation({
     mutationFn: (data) => api.post('/community-propose', data),
 
-    onSuccess: () => {
+    onMutate: async () => {
+      return { previousCoins: user?.coins };
+    },
+
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['proposals'] });
+
+      if (response.stake_deducted && user) {
+        updateUser({ coins: user.coins - response.stake_deducted });
+      }
 
       addToast('success', {
         title: 'Proposal Submitted',
@@ -21,7 +29,11 @@ export function usePropose() {
       });
     },
 
-    onError: (error) => {
+    onError: (error, variables, context) => {
+      if (context?.previousCoins != null && user) {
+        updateUser({ coins: context.previousCoins });
+      }
+
       addToast('error', {
         title: 'Proposal Failed',
         message: error.message,

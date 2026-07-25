@@ -1,36 +1,36 @@
+import { useNavigate } from 'react-router';
+import { ArrowLeft } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
-import { getUnlockedFeatures } from '../lib/levels';
-import { Lock } from 'lucide-react';
+import { ProposeForm } from '../components/community/ProposeForm';
 import styles from './CommunityPropose.module.css';
 
-/**
- * CommunityPropose — Form to submit a new community market proposal.
- * Requires minimum level 5 to access.
- */
 export default function CommunityPropose() {
-  const user = useAuthStore(s => s.user);
+  const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
   const userLevel = user?.level || 1;
-  const unlocked = getUnlockedFeatures(userLevel);
-  const canPropose = unlocked.some(f => f.includes('Submit') || f.includes('Proposal'));
-
-  if (!canPropose) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.locked}>
-          <Lock size={24} />
-          <div>
-            <p className="text-lg font-heading">Proposals Locked</p>
-            <p className="text-sm text-muted">Unlock at Level 5 — Submit community market proposals</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.page}>
-      <h1 className="text-2xl font-heading">Propose a Market</h1>
-      <p className="text-muted">Submit a new community prediction market — coming soon</p>
+      <button className={styles.backBtn} onClick={() => navigate('/community')}>
+        <ArrowLeft size={16} />
+        Back to Community
+      </button>
+
+      <div className={styles.header}>
+        <h1 className="text-2xl font-heading">Propose a Market</h1>
+        <p className={styles.subtitle}>
+          Create a new prediction market for the community to vote on.
+          {userLevel < 5 && (
+            <span className={styles.levelNote}>
+              You need Level 5 to propose (currently Level {userLevel})
+            </span>
+          )}
+        </p>
+      </div>
+
+      <div className={styles.formCard}>
+        <ProposeForm />
+      </div>
     </div>
   );
 }
