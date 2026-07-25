@@ -21,7 +21,7 @@ export async function updateQuestProgress(userId, actionType, context = {}) {
       id,
       progress,
       completed,
-      quest:quest_id(title, description, type, action_type, target, xp_reward, coin_reward)
+      quest:quest_id(title, description, type, action_type, target, xp_reward, coin_reward, criteria)
     `)
     .eq('user_id', userId)
     .eq('completed', false)
@@ -78,20 +78,14 @@ export async function updateQuestProgress(userId, actionType, context = {}) {
       const newProgress = uq.progress + 1;
 
       if (newProgress >= quest.target) {
-        // Quest completed!
-        await supabaseAdmin
-          .from('user_quests')
-          .update({ progress: newProgress, completed: true })
-          .eq('id', uq.id);
-
-        // Award rewards
-        await supabaseAdmin
-          .from('users')
-          .update({
-            coins: supabaseAdmin.rpc('increment', { x: quest.coin_reward }),
-            xp: supabaseAdmin.rpc('increment', { x: quest.xp_reward }),
-          })
-          .eq('id', userId);
+        // Quest completed! Atomically mark complete and award rewards
+        await supabaseAdmin.rpc('complete_quest', {
+          p_user_quest_id: uq.id,
+          p_user_id: userId,
+          p_coins: quest.coin_reward,
+          p_xp: quest.xp_reward,
+          p_new_progress: newProgress,
+        });
 
         completedQuests.push({
           ...quest,
