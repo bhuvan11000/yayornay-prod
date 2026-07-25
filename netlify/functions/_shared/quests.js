@@ -41,9 +41,23 @@ export async function updateQuestProgress(userId, actionType, context = {}) {
       case 'predict':
         shouldIncrement = true;
         break;
-      case 'category':
-        shouldIncrement = context.category === quest.criteria?.category;
+      case 'category': {
+        // Count distinct categories predicted since quest assignment
+        if (quest.criteria?.distinct_categories && context.category) {
+          const { data: recentPreds } = await supabaseAdmin
+            .from('predictions')
+            .select('market:market_id(category)')
+            .eq('user_id', userId)
+            .gte('created_at', uq.assigned_at);
+          const distinctCategories = new Set(
+            (recentPreds || []).map(p => p.market?.category).filter(Boolean)
+          );
+          shouldIncrement = distinctCategories.size > uq.progress;
+        } else {
+          shouldIncrement = context.category === quest.criteria?.category;
+        }
         break;
+      }
       case 'confidence':
         shouldIncrement = context.confidence >= (quest.criteria?.min_confidence || 3);
         break;

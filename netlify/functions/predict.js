@@ -76,9 +76,17 @@ export default async (req, context) => {
     }
 
     try {
+      // Fetch market category for quest progress tracking
+      const { data: marketData } = await supabaseAdmin
+        .from('markets')
+        .select('category')
+        .eq('id', market_id)
+        .single();
+
       completedQuests = await updateQuestProgress(user.id, 'predict', {
-        category: data.category,
+        category: marketData?.category,
         confidence,
+        market_id,
       });
     } catch (err) {
       console.error('Quest update failed (non-blocking):', err.message);
