@@ -236,7 +236,7 @@ async function insertMarket(market) {
       category: market.category,
       resolution_criteria: market.resolution_criteria.trim(),
       source: 'ai',
-      status: 'open',
+      status: 'pending',
       yes_price: 0.50,
       no_price: 0.50,
       q_yes: 0,
