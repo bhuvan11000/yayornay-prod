@@ -25,3 +25,5 @@
     timeout = 30
   [functions.season-transition]
     timeout = 30
+  [functions.publish-markets]
+    timeout = 10

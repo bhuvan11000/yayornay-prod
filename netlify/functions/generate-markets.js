@@ -227,6 +227,18 @@ async function callGemini(prompt, apiKey) {
   return { markets, groundingMetadata };
 }
 
+/**
+ * Get the next 06:30 UTC (12:00 PM IST) for market publishing.
+ */
+function nextPublishTime() {
+  const now = new Date();
+  const publish = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 30, 0, 0));
+  if (now >= publish) {
+    publish.setUTCDate(publish.getUTCDate() + 1);
+  }
+  return publish.toISOString();
+}
+
 async function insertMarket(market) {
   const { data, error } = await supabaseAdmin
     .from('markets')
@@ -236,13 +248,13 @@ async function insertMarket(market) {
       category: market.category,
       resolution_criteria: market.resolution_criteria.trim(),
       source: 'ai',
-      status: 'pending',
+      status: 'draft',
       yes_price: 0.50,
       no_price: 0.50,
       q_yes: 0,
       q_no: 0,
       b: 100,
-      opens_at: new Date().toISOString(),
+      opens_at: nextPublishTime(),
       closes_at: new Date(market.closes_at).toISOString(),
     })
     .select('id, title')
