@@ -6,6 +6,7 @@ import { useUIStore } from '../stores/uiStore';
 export function useClaimReward() {
   const queryClient = useQueryClient();
   const updateUser = useAuthStore((s) => s.updateUser);
+  const setRewardStatus = useAuthStore((s) => s.setRewardStatus);
   const addToast = useUIStore((s) => s.addToast);
   const addAchievement = useUIStore((s) => s.addAchievement);
   const showLevelUpModal = useUIStore((s) => s.showLevelUpModal);
@@ -21,6 +22,18 @@ export function useClaimReward() {
           rank: response.new_rank,
         });
       }
+
+      // Update reward status so the banner disappears immediately
+      const todayStr = new Date().toISOString().split('T')[0];
+      setRewardStatus({
+        can_claim: false,
+        is_active: true,
+        rank: response.new_rank,
+        coins: response.coins_awarded,
+        xp: response.xp_awarded,
+        is_sunday: response.is_sunday,
+        last_claim: todayStr,
+      });
 
       queryClient.invalidateQueries({ queryKey: ['quests'] });
       queryClient.invalidateQueries({ queryKey: ['achievements'] });
