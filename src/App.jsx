@@ -21,7 +21,6 @@ const Profile = lazy(() => import('./pages/Profile'));
 const Quests = lazy(() => import('./pages/Quests'));
 const Achievements = lazy(() => import('./pages/Achievements'));
 const Settings = lazy(() => import('./pages/Settings'));
-const Admin = lazy(() => import('./pages/Admin'));
 
 const pageVariants = {
   initial: { opacity: 0, y: 10 },
@@ -102,14 +101,6 @@ function AppRoutes() {
           <Route path="achievements" element={<LazyPage Component={Achievements} />} />
           <Route path="settings" element={<LazyPage Component={Settings} />} />
 
-          <Route
-            path="admin"
-            element={
-              <ProtectedRoute adminOnly>
-                <LazyPage Component={Admin} />
-              </ProtectedRoute>
-            }
-          />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

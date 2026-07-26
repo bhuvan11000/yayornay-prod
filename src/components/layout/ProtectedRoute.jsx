@@ -9,12 +9,8 @@ import styles from './ProtectedRoute.module.css';
  * - If still loading auth state, renders a full-page skeleton.
  * - If not authenticated, redirects to /auth.
  * - If authenticated, renders children.
- *
- * @param {object} props
- * @param {React.ReactNode} props.children
- * @param {boolean} [props.adminOnly=false] - If true, checks admin email
  */
-export function ProtectedRoute({ children, adminOnly = false }) {
+export function ProtectedRoute({ children }) {
   const { user, loading } = useAuthStore();
 
   if (loading) {
@@ -27,10 +23,6 @@ export function ProtectedRoute({ children, adminOnly = false }) {
 
   if (!user) {
     return <Navigate to="/auth" replace />;
-  }
-
-  if (adminOnly && user.email !== import.meta.env.VITE_ADMIN_EMAIL) {
-    return <Navigate to="/" replace />;
   }
 
   return children;
