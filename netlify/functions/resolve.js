@@ -1,6 +1,7 @@
 import { verifyCronSecret } from './_shared/auth.js';
 import { corsHeaders } from './_shared/cors.js';
 import { supabaseAdmin } from './_shared/supabase.js';
+import { updateQuestProgress } from './_shared/quests.js';
 
 const GEMINI_MODEL = 'gemini-2.5-flash';
 
@@ -138,6 +139,23 @@ export default async (req, context) => {
           });
           if (error) throw error;
           resolved++;
+
+          // Track win quest progress for all winners (non-blocking)
+          try {
+            const { data: winners } = await supabaseAdmin
+              .from('predictions')
+              .select('user_id')
+              .eq('market_id', market.id)
+              .eq('result', 'won');
+            if (winners && winners.length > 0) {
+              const winnerIds = [...new Set(winners.map(w => w.user_id))];
+              for (const userId of winnerIds) {
+                await updateQuestProgress(userId, 'win', { result: 'won' });
+              }
+            }
+          } catch (err) {
+            console.error('Win quest update failed (non-blocking):', err.message);
+          }
         } else if (result.confidence >= 0.50) {
           await supabaseAdmin
             .from('markets')

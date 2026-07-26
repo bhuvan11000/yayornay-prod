@@ -5,6 +5,7 @@ import { getApprovalReward } from './_shared/rewards.js';
 import { checkRankChange } from './_shared/ranks.js';
 import { checkAchievements } from './_shared/achievements.js';
 import { checkLevelUp } from './_shared/levels.js';
+import { updateQuestProgress } from './_shared/quests.js';
 
 export default async (req) => {
   if (req.method === 'OPTIONS') {
@@ -102,6 +103,13 @@ export default async (req) => {
         });
       }
       throw voteError;
+    }
+
+    // Track vote quest progress (non-blocking)
+    try {
+      await updateQuestProgress(auth.id, 'vote', {});
+    } catch (err) {
+      console.error('Vote quest update failed (non-blocking):', err.message);
     }
 
     const { count: upvotes } = await supabaseAdmin
