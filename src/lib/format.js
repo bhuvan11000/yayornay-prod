@@ -121,3 +121,14 @@ export function formatPrice(price) {
   if (price == null || isNaN(price)) return '—';
   return `${Math.round(price * 100)}c`;
 }
+
+/**
+ * Get display label for a market source.
+ * @param {string} source - Market source ('ai', 'admin', 'community')
+ * @returns {string}
+ */
+export function formatSource(source) {
+  if (source === 'ai') return 'Daily';
+  if (source === 'admin') return 'Admin';
+  return 'Community';
+}

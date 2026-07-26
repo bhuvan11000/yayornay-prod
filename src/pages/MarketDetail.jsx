@@ -8,7 +8,7 @@ import { PriceChart } from '../components/market/PriceChart';
 import { PredictionForm } from '../components/market/PredictionForm';
 import { SellForm } from '../components/market/SellForm';
 import { PageSkeleton } from '../components/ui/Skeleton';
-import { formatTimeRemaining, formatCoins, formatDateTime, pluralize } from '../lib/format';
+import { formatTimeRemaining, formatCoins, formatDateTime, pluralize, formatSource } from '../lib/format';
 import styles from './MarketDetail.module.css';
 
 export default function MarketDetail() {
@@ -110,7 +110,7 @@ export default function MarketDetail() {
       <div className={styles.metaRow}>
         <CategoryTag category={market.category} />
         <span className={styles.source}>
-          {market.source === 'ai' ? 'AI' : 'Community'}
+          {formatSource(market.source)}
         </span>
         <span className={styles.time}>{formatTimeRemaining(market.closes_at)}</span>
         <span className={styles.stat}>{pluralize(market.participant_count || 0, 'player')}</span>
@@ -156,7 +156,7 @@ export default function MarketDetail() {
               </div>
               <div className={styles.statItem}>
                 <span className={styles.statLabel}>Source</span>
-                <span className={styles.statValue}>{market.source === 'ai' ? 'AI (Gemini)' : 'Community'}</span>
+                <span className={styles.statValue}>{formatSource(market.source)}</span>
               </div>
               <div className={styles.statItem}>
                 <span className={styles.statLabel}>Opens</span>

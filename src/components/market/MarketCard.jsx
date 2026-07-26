@@ -4,7 +4,7 @@ import { CategoryTag } from '../ui/CategoryTag';
 import { MarketStatus } from './MarketStatus';
 import { PriceBar } from './PriceBar';
 import { RankBadge } from '../gamification/RankBadge';
-import { formatTimeRemaining, formatCoins, pluralize } from '../../lib/format';
+import { formatTimeRemaining, formatCoins, pluralize, formatSource } from '../../lib/format';
 import styles from './MarketCard.module.css';
 
 export function MarketCard({ market }) {
@@ -25,7 +25,7 @@ export function MarketCard({ market }) {
       <div className={styles.meta}>
         <CategoryTag category={market.category} />
         <span className={styles.source}>
-          {market.source === 'ai' ? 'AI' : 'Community'}
+          {formatSource(market.source)}
         </span>
         <span className={styles.time}>{formatTimeRemaining(market.closes_at)}</span>
       </div>
