@@ -1,6 +1,8 @@
 import { useParams, useNavigate } from 'react-router';
+import { useState } from 'react';
 import { useMarket } from '../hooks/useMarket';
 import { usePredictions } from '../hooks/usePredictions';
+import { useDispute } from '../hooks/useDispute';
 import { useAuthStore } from '../stores/authStore';
 import { CategoryTag } from '../components/ui/CategoryTag';
 import { MarketStatus } from '../components/market/MarketStatus';
@@ -18,6 +20,8 @@ export default function MarketDetail() {
 
   const { data, isLoading, isError, error, refetch } = useMarket(id);
   const { data: userPredictions, isLoading: predsLoading } = usePredictions({ marketId: id });
+  const { reason, setReason, submitDispute, isSubmitting, isSuccess: disputeSuccess, error: disputeError, reset: resetDispute } = useDispute(id);
+  const [showDisputeForm, setShowDisputeForm] = useState(false);
 
   if (isLoading) return <PageSkeleton />;
 
@@ -65,7 +69,10 @@ export default function MarketDetail() {
             </p>
           </div>
         );
-      case 'resolved':
+      case 'resolved': {
+        const disputeDeadline = market.dispute_deadline ? new Date(market.dispute_deadline) : null;
+        const withinDisputeWindow = disputeDeadline && new Date() < disputeDeadline;
+
         return (
           <div className={`card ${styles.sideCard}`}>
             <h3 className={styles.sideTitle}>Resolved</h3>
@@ -79,8 +86,65 @@ export default function MarketDetail() {
                 Source: {market.resolution_source}
               </p>
             )}
+
+            {withinDisputeWindow && !disputeSuccess && (
+              <div className={styles.disputeSection}>
+                <p className={styles.disputeDeadline}>
+                  Dispute window closes in {formatTimeRemaining(market.dispute_deadline)}
+                </p>
+                {!showDisputeForm ? (
+                  <button
+                    className={styles.disputeBtn}
+                    onClick={() => setShowDisputeForm(true)}
+                  >
+                    Dispute this resolution
+                  </button>
+                ) : (
+                  <div className={styles.disputeForm}>
+                    <textarea
+                      className={styles.disputeInput}
+                      placeholder="Why is this resolution wrong? (min 10 characters)"
+                      value={reason}
+                      onChange={(e) => setReason(e.target.value)}
+                      rows={3}
+                    />
+                    {disputeError && (
+                      <p className={styles.disputeError}>{disputeError.message}</p>
+                    )}
+                    <div className={styles.disputeActions}>
+                      <button
+                        className={styles.disputeSubmitBtn}
+                        onClick={() => submitDispute()}
+                        disabled={isSubmitting || reason.length < 10}
+                      >
+                        {isSubmitting ? 'Submitting...' : 'Submit Dispute'}
+                      </button>
+                      <button
+                        className={styles.disputeCancelBtn}
+                        onClick={() => { setShowDisputeForm(false); resetDispute(); setReason(''); }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {disputeSuccess && (
+              <div className={styles.disputeSuccess}>
+                Dispute submitted. {withinDisputeWindow ? 'Others can still dispute.' : ''}
+              </div>
+            )}
+
+            {!withinDisputeWindow && disputeDeadline && !disputeSuccess && (
+              <p className="text-xs text-muted" style={{ marginTop: 'var(--space-3)' }}>
+                Dispute window has expired.
+              </p>
+            )}
           </div>
         );
+      }
       case 'review':
         return (
           <div className={`card ${styles.sideCard}`}>
