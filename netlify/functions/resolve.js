@@ -131,7 +131,7 @@ export default async (req, context) => {
           continue;
         }
 
-        if (result.confidence >= 0.85) {
+        if (result.confidence >= 0.90) {
           const { error } = await supabaseAdmin.rpc('resolve_market', {
             p_market_id: market.id,
             p_resolution: result.resolution,
