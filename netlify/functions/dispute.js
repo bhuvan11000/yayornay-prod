@@ -83,7 +83,7 @@ export default async (req, context) => {
 
     let marketReviewed = false;
 
-    if (count >= 3) {
+    if (count >= 5) {
       await supabaseAdmin
         .from('markets')
         .update({ status: 'review' })
