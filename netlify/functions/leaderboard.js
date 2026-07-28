@@ -75,61 +75,81 @@ export default async (req) => {
     let userRank = null;
 
     if (authUser) {
-      // Need to count how many users are ahead of the current user for the given metric
-      let rankQuery = supabaseAdmin.from('users').select('id', { count: 'exact', head: true });
+      // Get the current user's metric value (and total_predictions for accuracy)
+      const metricCol = metric === 'accuracy' ? 'accuracy'
+        : metric === 'profit' ? 'net_profit'
+        : metric === 'streak' ? 'betting_streak'
+        : 'coins';
 
-      switch (metric) {
-        case 'accuracy':
-          rankQuery = rankQuery.gte('total_predictions', 20).gt('accuracy', 0);
-          break;
-        case 'profit':
-          rankQuery = rankQuery.gt('net_profit', 0);
-          break;
-        case 'streak':
-          rankQuery = rankQuery.gt('betting_streak', 0);
-          break;
-        case 'coins':
-        default:
-          rankQuery = rankQuery.gte('coins', 2500);
-          break;
-      }
+      const selectCols = metric === 'accuracy'
+        ? `${metricCol}, total_predictions`
+        : metricCol;
 
-      if (timeFilter) {
-        rankQuery = rankQuery.gte('created_at', timeFilter);
-      }
-
-      // Get the current user's metric value
       const { data: currentUser } = await supabaseAdmin
         .from('users')
-        .select(metric === 'accuracy' ? 'accuracy' : metric === 'profit' ? 'net_profit' : metric === 'streak' ? 'betting_streak' : 'coins')
+        .select(selectCols)
         .eq('id', authUser.id)
         .single();
 
       if (currentUser) {
-        const userValue = currentUser[metric === 'accuracy' ? 'accuracy' : metric === 'profit' ? 'net_profit' : metric === 'streak' ? 'betting_streak' : 'coins'];
+        const userValue = currentUser[metricCol];
 
         if (userValue != null) {
-          // Count users ahead of current user
-          let aheadQuery = supabaseAdmin.from('users').select('id', { count: 'exact', head: true });
+          // First check if the user meets eligibility criteria for this
+          // leaderboard. If not, don't compute a misleading rank.
+          let isEligible = true;
 
-          const metricCol = metric === 'accuracy' ? 'accuracy' : metric === 'profit' ? 'net_profit' : metric === 'streak' ? 'betting_streak' : 'coins';
-
-          if (metric === 'accuracy') {
-            aheadQuery = aheadQuery.gte('total_predictions', 20).gt(metricCol, userValue);
-          } else if (metric === 'streak') {
-            aheadQuery = aheadQuery.gt(metricCol, userValue);
-          } else if (metric === 'coins') {
-            aheadQuery = aheadQuery.gt(metricCol, userValue);
-          } else {
-            aheadQuery = aheadQuery.gt(metricCol, userValue);
+          switch (metric) {
+            case 'coins':
+              isEligible = userValue >= 2500;
+              break;
+            case 'streak':
+              isEligible = userValue > 0;
+              break;
+            case 'accuracy':
+              isEligible = (currentUser?.total_predictions ?? 0) >= 20 && userValue > 0;
+              break;
+            // profit: no minimum threshold, always eligible
           }
 
-          if (timeFilter) {
-            aheadQuery = aheadQuery.gte('created_at', timeFilter);
-          }
+          if (isEligible) {
+            // Count users ahead of current user, applying the same
+            // eligibility filters as the main leaderboard query
+            let aheadQuery = supabaseAdmin
+              .from('users')
+              .select('id', { count: 'exact', head: true });
 
-          const { count: aheadCount } = await aheadQuery;
-          userRank = (aheadCount || 0) + 1;
+            switch (metric) {
+              case 'accuracy':
+                aheadQuery = aheadQuery
+                  .gte('total_predictions', 20)
+                  .gt(metricCol, userValue);
+                break;
+              case 'profit':
+                aheadQuery = aheadQuery.gt(metricCol, userValue);
+                break;
+              case 'streak':
+                aheadQuery = aheadQuery
+                  .gt('betting_streak', 0)
+                  .gt(metricCol, userValue);
+                break;
+              case 'coins':
+              default:
+                aheadQuery = aheadQuery
+                  .gte('coins', 2500)
+                  .gt(metricCol, userValue);
+                break;
+            }
+
+            if (timeFilter) {
+              aheadQuery = aheadQuery.gte('created_at', timeFilter);
+            }
+
+            const { count: aheadCount, error: aheadError } = await aheadQuery;
+            if (!aheadError) {
+              userRank = (aheadCount || 0) + 1;
+            }
+          }
         }
       }
     }

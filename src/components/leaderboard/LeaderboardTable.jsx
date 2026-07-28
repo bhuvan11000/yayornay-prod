@@ -8,6 +8,8 @@ const COLUMN_HEADERS = {
   streak: ['#', 'Player', 'Rank', 'Streak', 'Longest'],
 };
 
+const PAGE_SIZE = 50;
+
 export function LeaderboardTable({ players, metric, currentUserId, page, totalPages, onPageChange }) {
   if (!players || players.length === 0) {
     return (
@@ -23,7 +25,7 @@ export function LeaderboardTable({ players, metric, currentUserId, page, totalPa
         <PlayerRow
           key={player.id}
           player={player}
-          rank={page > 1 ? (page - 1) * players.length + i + 1 : i + 1}
+          rank={(page - 1) * PAGE_SIZE + i + 1}
           metric={metric}
           isCurrentUser={player.id === currentUserId}
         />
