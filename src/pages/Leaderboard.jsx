@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ArrowUp, Search } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { useLeaderboard } from '../hooks/useLeaderboard';
@@ -30,6 +30,7 @@ export default function Leaderboard() {
   const [timeframe, setTimeframe] = useState('all');
   const [page, setPage] = useState(1);
   const listRef = useRef(null);
+  const scrollToUserRef = useRef(false);
 
   const { data, isLoading, isError } = useLeaderboard({
     metric: activeTab,
@@ -45,6 +46,20 @@ export default function Leaderboard() {
 
   const userOnCurrentPage = players.some(p => p.id === user?.id);
 
+  // After jumping to a page, scroll to the user's specific row once data loads
+  useEffect(() => {
+    if (scrollToUserRef.current && userOnCurrentPage) {
+      scrollToUserRef.current = false;
+      // Small timeout to let the DOM render
+      requestAnimationFrame(() => {
+        const userRow = document.querySelector('[data-current-user="true"]');
+        if (userRow) {
+          userRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    }
+  }, [userOnCurrentPage]);
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setPage(1);
@@ -58,10 +73,8 @@ export default function Leaderboard() {
   const handleJumpToMyRank = () => {
     if (!userRank) return;
     const targetPage = Math.ceil(userRank / LIMIT);
+    scrollToUserRef.current = true;
     setPage(targetPage);
-    setTimeout(() => {
-      listRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
   };
 
   return (

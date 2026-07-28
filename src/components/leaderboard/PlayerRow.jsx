@@ -53,6 +53,7 @@ export function PlayerRow({ player, rank, metric, isCurrentUser }) {
   return (
     <div
       className={`${styles.row} ${isCurrentUser ? styles.currentUser : ''}`}
+      data-current-user={isCurrentUser ? 'true' : undefined}
       onClick={() => navigate(`/profile/${player.username}`)}
       role="button"
       tabIndex={0}
