@@ -64,6 +64,7 @@ export function LevelUpModal() {
                     width: p.size,
                     height: p.size,
                     background: p.color,
+                    '--drift': `${(Math.random() - 0.5) * 80}px`,
                   }}
                 />
               ))}
