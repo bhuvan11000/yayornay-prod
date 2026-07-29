@@ -5,12 +5,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: var(--z-modal-backdrop);
+  z-index: var(--z-modal-backdrop, 100);
   backdrop-filter: blur(4px);
 }
 
 .card {
   position: relative;
+  z-index: 1;
   background: var(--bg-elevated);
   border-radius: var(--radius-xl);
   padding: var(--space-10);
@@ -22,38 +23,32 @@
   gap: var(--space-6);
   text-align: center;
   overflow: hidden;
+  box-shadow:
+    0 0 0 2px var(--bg-elevated),
+    0 0 0 4px rgba(245, 158, 11, 0.3),
+    0 0 20px rgba(245, 158, 11, 0.15);
+  animation: borderPulse 2s ease-in-out infinite;
 }
 
-/* Animated gradient border */
-.card::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  background: conic-gradient(
-    from 0deg,
-    #f59e0b,
-    #ef4444,
-    #a855f7,
-    #4f7df5,
-    #22c55e,
-    #f59e0b
-  );
-  z-index: -1;
-  animation: borderSpin 3s linear infinite;
-}
-
-.card::after {
-  content: '';
-  position: absolute;
-  inset: 1px;
-  border-radius: calc(var(--radius-xl) - 1px);
-  background: var(--bg-elevated);
-  z-index: -1;
-}
-
-@keyframes borderSpin {
-  to { transform: rotate(360deg); }
+@keyframes borderPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px var(--bg-elevated),
+      0 0 0 4px rgba(245, 158, 11, 0.3),
+      0 0 20px rgba(245, 158, 11, 0.15);
+  }
+  33% {
+    box-shadow:
+      0 0 0 2px var(--bg-elevated),
+      0 0 0 4px rgba(239, 68, 68, 0.3),
+      0 0 20px rgba(239, 68, 68, 0.15);
+  }
+  66% {
+    box-shadow:
+      0 0 0 2px var(--bg-elevated),
+      0 0 0 4px rgba(168, 85, 247, 0.3),
+      0 0 20px rgba(168, 85, 247, 0.15);
+  }
 }
 
 /* Particles */
@@ -67,6 +62,8 @@
 .particle {
   position: absolute;
   bottom: -10px;
+  width: 8px;
+  height: 8px;
   border-radius: var(--radius-full);
   animation: particleBurst 1.8s ease-out forwards;
 }
@@ -95,7 +92,6 @@
   background-clip: text;
   animation: titleDance 2s ease-in-out infinite;
   z-index: 1;
-  text-shadow: none;
   filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.3));
 }
 
@@ -204,7 +200,6 @@
 
 /* Continue button */
 .continue {
-  position: relative;
   background: linear-gradient(135deg, var(--accent-blue), #6366f1);
   color: #fff;
   border: none;
@@ -228,15 +223,20 @@
   transform: translateY(0) scale(0.98);
 }
 
-/* Background pulse ring */
+/* Pulse rings */
 .ring {
   position: absolute;
+  top: 50%;
+  left: 50%;
   width: 200px;
   height: 200px;
+  margin-left: -100px;
+  margin-top: -100px;
   border-radius: var(--radius-full);
   border: 2px solid rgba(245, 158, 11, 0.15);
   animation: ringExpand 2s ease-out infinite;
   pointer-events: none;
+  z-index: 0;
 }
 
 .ring:nth-child(2) {
