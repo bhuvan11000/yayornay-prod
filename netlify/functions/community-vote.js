@@ -78,38 +78,62 @@ export default async (req) => {
       });
     }
 
-    const { count: todayVotes } = await supabaseAdmin
+    // Check if user already voted on this proposal
+    const { data: existingVote } = await supabaseAdmin
       .from('proposal_votes')
-      .select('*', { count: 'exact', head: true })
+      .select('id, vote')
       .eq('user_id', auth.id)
-      .gte('created_at', new Date(new Date().setHours(0,0,0,0)).toISOString());
+      .eq('proposal_id', proposal_id)
+      .maybeSingle();
 
-    if (todayVotes >= 10) {
-      return new Response(JSON.stringify({ error: 'Daily vote limit reached (max 10)' }), {
-        status: 429,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+    let voteRemoved = false;
+    let voteChanged = false;
 
-    const { error: voteError } = await supabaseAdmin
-      .from('proposal_votes')
-      .insert({ user_id: auth.id, proposal_id, vote });
+    if (existingVote) {
+      if (existingVote.vote === vote) {
+        // Same vote — toggle off (remove it)
+        await supabaseAdmin
+          .from('proposal_votes')
+          .delete()
+          .eq('id', existingVote.id);
+        voteRemoved = true;
+      } else {
+        // Different vote — change it
+        await supabaseAdmin
+          .from('proposal_votes')
+          .update({ vote })
+          .eq('id', existingVote.id);
+        voteChanged = true;
+      }
+    } else {
+      // New vote — check daily limit first
+      const { count: todayVotes } = await supabaseAdmin
+        .from('proposal_votes')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', auth.id)
+        .gte('created_at', new Date(new Date().setHours(0,0,0,0)).toISOString());
 
-    if (voteError) {
-      if (voteError.code === '23505') {
-        return new Response(JSON.stringify({ error: 'Already voted on this proposal' }), {
-          status: 409,
+      if (todayVotes >= 10) {
+        return new Response(JSON.stringify({ error: 'Daily vote limit reached (max 10)' }), {
+          status: 429,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-      throw voteError;
-    }
 
-    // Track vote quest progress (non-blocking)
-    try {
-      await updateQuestProgress(auth.id, 'vote', {});
-    } catch (err) {
-      console.error('Vote quest update failed (non-blocking):', err.message);
+      const { error: voteError } = await supabaseAdmin
+        .from('proposal_votes')
+        .insert({ user_id: auth.id, proposal_id, vote });
+
+      if (voteError) {
+        throw voteError;
+      }
+
+      // Track vote quest progress (non-blocking)
+      try {
+        await updateQuestProgress(auth.id, 'vote', {});
+      } catch (err) {
+        console.error('Vote quest update failed (non-blocking):', err.message);
+      }
     }
 
     const { count: upvotes } = await supabaseAdmin
@@ -201,6 +225,8 @@ export default async (req) => {
 
     return new Response(JSON.stringify({
       vote_recorded: true,
+      vote_removed: voteRemoved,
+      vote_changed: voteChanged,
       proposal_status: proposalStatus,
       upvotes: up,
       downvotes: down,
