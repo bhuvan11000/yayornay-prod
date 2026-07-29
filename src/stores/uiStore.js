@@ -28,7 +28,7 @@ export const useUIStore = create((set, get) => ({
     }));
   },
 
-  showLevelUpModal: (levelUpData) => {
+  triggerLevelUpModal: (levelUpData) => {
     set({ showLevelUpModal: true, levelUpData });
   },
 
