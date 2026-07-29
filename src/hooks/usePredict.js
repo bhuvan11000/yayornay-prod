@@ -29,6 +29,7 @@ export function usePredict() {
           coins: response.user_coins,
           xp: response.user_xp,
           rank: response.user_rank,
+          level: response.user_level,
         });
       }
 

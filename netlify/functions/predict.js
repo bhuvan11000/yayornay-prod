@@ -3,7 +3,7 @@ import { corsHeaders } from './_shared/cors.js';
 import { supabaseAdmin } from './_shared/supabase.js';
 import { checkAchievements } from './_shared/achievements.js';
 import { updateQuestProgress } from './_shared/quests.js';
-import { checkLevelUp } from './_shared/levels.js';
+import { checkLevelUp, calculateLevel } from './_shared/levels.js';
 
 export default async (req, context) => {
   if (req.method === 'OPTIONS') {
@@ -98,8 +98,12 @@ export default async (req, context) => {
       console.error('Level-up check failed (non-blocking):', err.message);
     }
 
+    // Add the user's current level (for auth store sync)
+    const userLevel = data.user_xp ? calculateLevel(data.user_xp) : (data.user_level || 1);
+
     const response = {
       ...data,
+      user_level: userLevel,
       achievements,
       completedQuests,
       levelUp,

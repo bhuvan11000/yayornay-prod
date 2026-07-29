@@ -21,7 +21,23 @@ export default function Community() {
   const user = useAuthStore((s) => s.user);
   const [activeTab, setActiveTab] = useState('live');
 
-  const userLevel = user?.level || 1;
+  // Fetch fresh user data on mount so level is always current
+  const { data: freshUser } = useQuery({
+    queryKey: ['community-user-level', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase
+        .from('users')
+        .select('level')
+        .eq('id', user.id)
+        .single();
+      return data;
+    },
+    enabled: !!user?.id,
+    staleTime: 10 * 1000,
+  });
+
+  const userLevel = freshUser?.level ?? user?.level ?? 1;
   const canVote = userLevel >= 3;
   const canPropose = userLevel >= 3;
 
