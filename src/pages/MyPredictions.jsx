@@ -26,9 +26,9 @@ function groupPredictions(predictions) {
     if (status === 'closed' || status === 'review' || status === 'resolving') {
       groups.attention.push(p);
     } else if (status === 'resolved') {
-      // Show only recent resolutions (within 7 days)
+      // Show only recent resolutions (within 3 days)
       const resolvedAt = p.market?.resolved_at ? new Date(p.market.resolved_at) : null;
-      const isRecent = resolvedAt && (Date.now() - resolvedAt.getTime()) < 7 * 86400000;
+      const isRecent = resolvedAt && (Date.now() - resolvedAt.getTime()) < 3 * 86400000;
       if (isRecent) {
         groups.resolved.push(p);
       } else {
