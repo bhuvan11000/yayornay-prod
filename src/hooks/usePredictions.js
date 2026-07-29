@@ -19,7 +19,7 @@ export function usePredictions({ marketId } = {}) {
         .from('predictions')
         .select(`
           *,
-          market:market_id(title, category, status, resolution, yes_price, no_price)
+          market:market_id(title, category, status, resolution, yes_price, no_price, resolved_at, closes_at)
         `)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
