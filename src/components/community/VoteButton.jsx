@@ -9,11 +9,19 @@ export function VoteButton({ proposal, userVote }) {
 
   const isOwn = user?.id === proposal.proposer_id;
   const deadlinePassed = new Date(proposal.voting_deadline) < new Date();
-  const isDisabled = isOwn || proposal.status !== 'pending' || deadlinePassed || voteMutation.isPending;
+  const belowLevelReq = (user?.level || 0) < 3;
+  const isDisabled = isOwn || proposal.status !== 'pending' || deadlinePassed || voteMutation.isPending || belowLevelReq;
 
   const handleVote = (v) => {
     if (isDisabled) return;
     voteMutation.mutate({ proposal_id: proposal.id, vote: v });
+  };
+
+  const getTitle = () => {
+    if (isOwn) return 'Cannot vote on own proposal';
+    if (belowLevelReq) return 'Level 3 required to vote';
+    if (deadlinePassed) return 'Voting ended';
+    return 'Vote';
   };
 
   return (
@@ -22,7 +30,7 @@ export function VoteButton({ proposal, userVote }) {
         className={`${styles.btn} ${styles.upBtn} ${userVote === 'up' ? styles.upActive : ''}`}
         onClick={() => handleVote('up')}
         disabled={isDisabled}
-        title={isOwn ? 'Cannot vote on own proposal' : deadlinePassed ? 'Voting ended' : 'Upvote'}
+        title={getTitle()}
       >
         <ThumbsUp size={16} />
         <span>{proposal.upvotes || 0}</span>
@@ -31,7 +39,7 @@ export function VoteButton({ proposal, userVote }) {
         className={`${styles.btn} ${styles.downBtn} ${userVote === 'down' ? styles.downActive : ''}`}
         onClick={() => handleVote('down')}
         disabled={isDisabled}
-        title={isOwn ? 'Cannot vote on own proposal' : deadlinePassed ? 'Voting ended' : 'Downvote'}
+        title={getTitle()}
       >
         <ThumbsDown size={16} />
         <span>{proposal.downvotes || 0}</span>
