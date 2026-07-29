@@ -66,26 +66,21 @@
   100% { background-position: 0% 50%; filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.2)); }
 }
 
-/* Header avatar glow for Omniscient players */
+/* Glow ring for Omniscient players */
 .badge.omniscient::before {
   content: '';
   position: absolute;
   inset: -3px;
   border-radius: var(--radius-full);
-  background: conic-gradient(from var(--angle, 0deg), #f59e0b, #ef4444, #a855f7, #3b82f6, #22c55e, #f59e0b);
+  background: conic-gradient(#f59e0b, #ef4444, #a855f7, #3b82f6, #22c55e, #f59e0b);
   z-index: -1;
-  animation: omniscientRing 2s linear infinite;
   opacity: 0.6;
+  animation: omniscientPulse 2s ease-in-out infinite;
 }
 
-@property --angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-
-@keyframes omniscientRing {
-  to { --angle: 360deg; }
+@keyframes omniscientPulse {
+  0%, 100% { opacity: 0.4; filter: blur(2px); }
+  50% { opacity: 0.7; filter: blur(4px); }
 }
 
 /* Larger dot for Omniscient in md/lg sizes */
