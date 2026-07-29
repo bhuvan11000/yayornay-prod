@@ -33,6 +33,7 @@ import styles from './Header.module.css';
 
 const NAV_ITEMS = [
   { to: '/markets', label: 'Markets' },
+  { to: '/my-predictions', label: 'My Predictions' },
   { to: '/community', label: 'Community' },
   { to: '/leaderboard', label: 'Leaderboard' },
   { to: '/quests', label: 'Quests' },
