@@ -20,7 +20,7 @@ export default function MarketDetail() {
 
   const { data, isLoading, isError, error, refetch } = useMarket(id);
   const { data: userPredictions, isLoading: predsLoading } = usePredictions({ marketId: id });
-  const { reason, setReason, submitDispute, isSubmitting, isSuccess: disputeSuccess, error: disputeError, reset: resetDispute } = useDispute(id);
+  const { reason, setReason, submitDispute, isSubmitting, isSuccess: disputeSuccess, error: disputeError, reset: resetDispute, hasDisputed } = useDispute(id);
   const [showDisputeForm, setShowDisputeForm] = useState(false);
 
   if (isLoading) return <PageSkeleton />;
@@ -87,7 +87,7 @@ export default function MarketDetail() {
               </p>
             )}
 
-            {withinDisputeWindow && !disputeSuccess && (
+            {withinDisputeWindow && !hasDisputed && !disputeSuccess && (
               <div className={styles.disputeSection}>
                 <p className={styles.disputeDeadline}>
                   Dispute window closes in {formatTimeRemaining(market.dispute_deadline)}
@@ -137,9 +137,15 @@ export default function MarketDetail() {
               </div>
             )}
 
-            {!withinDisputeWindow && disputeDeadline && !disputeSuccess && (
+            {!withinDisputeWindow && disputeDeadline && !hasDisputed && (
               <p className="text-xs text-muted" style={{ marginTop: 'var(--space-3)' }}>
                 Dispute window has expired.
+              </p>
+            )}
+
+            {hasDisputed && !disputeSuccess && (
+              <p className="text-xs" style={{ marginTop: 'var(--space-3)', color: 'var(--color-warning)' }}>
+                You already disputed this resolution.
               </p>
             )}
           </div>
