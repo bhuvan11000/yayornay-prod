@@ -14,7 +14,7 @@ export function PlayerRow({ player, rank, metric, isCurrentUser }) {
   const navigate = useNavigate();
   const isTop3 = rank <= 3;
   const medal = isTop3 ? MEDAL_COLORS[rank] : null;
-  const playerRank = getRank(player.coins);
+  const playerRank = player.rank || getRank(player.coins);
 
   const getMetricValue = () => {
     switch (metric) {
