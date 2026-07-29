@@ -9,7 +9,7 @@ export function useClaimReward() {
   const setRewardStatus = useAuthStore((s) => s.setRewardStatus);
   const addToast = useUIStore((s) => s.addToast);
   const addAchievement = useUIStore((s) => s.addAchievement);
-  const triggerLevelUpModal = useUIStore((s) => s.triggerLevelUpModal);
+  const showLevelUpModal = useUIStore((s) => s.showLevelUpModal);
 
   return useMutation({
     mutationFn: () => api.post('/claim-reward', {}),
@@ -60,7 +60,7 @@ export function useClaimReward() {
       }
 
       if (response.levelUp?.leveledUp) {
-        triggerLevelUpModal({
+        showLevelUpModal({
           oldLevel: response.levelUp.oldLevel,
           newLevel: response.levelUp.newLevel,
           unlocks: response.levelUp.unlocks,

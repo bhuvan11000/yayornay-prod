@@ -9,7 +9,7 @@ export function usePredict() {
   const user = useAuthStore((s) => s.user);
   const addToast = useUIStore((s) => s.addToast);
   const addAchievement = useUIStore((s) => s.addAchievement);
-  const triggerLevelUpModal = useUIStore((s) => s.triggerLevelUpModal);
+  const showLevelUpModal = useUIStore((s) => s.showLevelUpModal);
 
   return useMutation({
     mutationFn: (data) => api.post('/predict', data),
@@ -61,7 +61,7 @@ export function usePredict() {
       }
 
       if (response.levelUp?.leveledUp) {
-        triggerLevelUpModal({
+        showLevelUpModal({
           oldLevel: response.levelUp.oldLevel,
           newLevel: response.levelUp.newLevel,
           unlocks: response.levelUp.unlocks,
