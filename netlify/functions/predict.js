@@ -93,13 +93,15 @@ export default async (req, context) => {
     }
 
     try {
-      levelUp = await checkLevelUp(user.id, data.user_xp, data.user_level || 1);
+      // Calculate level from XP before this prediction (RPC returns user_xp = old_xp + 10)
+      const oldLevel = calculateLevel(data.user_xp - 10);
+      levelUp = await checkLevelUp(user.id, data.user_xp, oldLevel);
     } catch (err) {
       console.error('Level-up check failed (non-blocking):', err.message);
     }
 
-    // Add the user's current level (for auth store sync)
-    const userLevel = data.user_xp ? calculateLevel(data.user_xp) : (data.user_level || 1);
+    // Calculate current level from new XP (for auth store sync)
+    const userLevel = data.user_xp ? calculateLevel(data.user_xp) : 1;
 
     const response = {
       ...data,
