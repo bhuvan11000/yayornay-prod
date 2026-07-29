@@ -64,10 +64,16 @@ export function LevelUpModal() {
                     width: p.size,
                     height: p.size,
                     background: p.color,
+                    '--drift': `${(Math.random() - 0.5) * 100}px`,
                   }}
                 />
               ))}
             </div>
+
+            {/* Expanding pulse rings */}
+            <div className={styles.ring} />
+            <div className={styles.ring} />
+            <div className={styles.ring} />
 
             <h1 className={styles.title}>LEVEL UP!</h1>
 
