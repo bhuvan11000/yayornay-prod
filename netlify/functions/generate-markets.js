@@ -191,9 +191,23 @@ async function callGemini(prompt, apiKey) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      tools: [{ googleSearch: {} }],
       generationConfig: {
-        response_mime_type: 'application/json',
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: 'ARRAY',
+          items: {
+            type: 'OBJECT',
+            properties: {
+              title: { type: 'STRING' },
+              description: { type: 'STRING' },
+              category: { type: 'STRING', enum: ['sports', 'tech', 'popculture', 'politics', 'memes'] },
+              resolution_criteria: { type: 'STRING' },
+              closes_at: { type: 'STRING' },
+              suggested_sources: { type: 'ARRAY', items: { type: 'STRING' } },
+            },
+            required: ['title', 'description', 'category', 'resolution_criteria', 'closes_at', 'suggested_sources'],
+          },
+        },
         temperature: 0.7,
       },
     }),
