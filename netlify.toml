@@ -21,8 +21,6 @@
   # Set timeout for AI-related functions that call Gemini
   [functions.generate-markets]
     timeout = 30
-  [functions.resolve]
-    timeout = 30
   [functions.season-transition]
     timeout = 30
   [functions.publish-markets]
