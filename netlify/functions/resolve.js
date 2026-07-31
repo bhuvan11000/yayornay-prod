@@ -38,18 +38,8 @@ async function callGemini(prompt, apiKey) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      tools: [{ googleSearch: {} }],
       generationConfig: {
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: 'OBJECT',
-          properties: {
-            resolution: { type: 'STRING', enum: ['yes', 'no', 'ambiguous'] },
-            confidence: { type: 'NUMBER' },
-            reasoning: { type: 'STRING' },
-            sources: { type: 'ARRAY', items: { type: 'STRING' } },
-          },
-          required: ['resolution', 'confidence', 'reasoning', 'sources'],
-        },
         temperature: 0.2,
       },
     }),
