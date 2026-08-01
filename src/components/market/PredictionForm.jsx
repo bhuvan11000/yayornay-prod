@@ -1,9 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useAuthStore } from '../../stores/authStore';
 import { usePredict } from '../../hooks/usePredict';
 import { calculateShares, getPrice } from '../../lib/amm';
 import { formatCoins } from '../../lib/format';
 import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
+import StarBorder from '../reactbits/StarBorder/StarBorder';
+import CountUp from '../reactbits/CountUp/CountUp';
 import styles from './PredictionForm.module.css';
 
 const CONFIDENCE_OPTIONS = [
@@ -13,6 +15,15 @@ const CONFIDENCE_OPTIONS = [
   { value: 5, label: '5x' },
 ];
 
+function useDebounced(value, delay = 200) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(t);
+  }, [value, delay]);
+  return debounced;
+}
+
 export function PredictionForm({ market, onSuccess }) {
   const user = useAuthStore((s) => s.user);
   const { mutate, isPending, error: mutationError } = usePredict();
@@ -21,7 +32,8 @@ export function PredictionForm({ market, onSuccess }) {
   const [amount, setAmount] = useState('');
   const [confidence, setConfidence] = useState(1);
 
-  const numAmount = parseInt(amount, 10) || 0;
+  const debouncedAmount = useDebounced(amount, 200);
+  const numAmount = parseInt(debouncedAmount, 10) || 0;
   const totalCost = numAmount * confidence;
   const b = market.b || 100;
   const currentPrice = position
@@ -74,20 +86,24 @@ export function PredictionForm({ market, onSuccess }) {
 
       <label className={styles.label}>Your Position</label>
       <div className={styles.positionRow}>
-        <button
-          type="button"
-          className={`${styles.posBtn} ${position === 'yes' ? styles.posYesActive : styles.posYes}`}
-          onClick={() => setPosition('yes')}
-        >
-          YES {market.yes_price != null && `${Math.round(market.yes_price * 100)}c`}
-        </button>
-        <button
-          type="button"
-          className={`${styles.posBtn} ${position === 'no' ? styles.posNoActive : styles.posNo}`}
-          onClick={() => setPosition('no')}
-        >
-          NO {market.no_price != null && `${Math.round(market.no_price * 100)}c`}
-        </button>
+        <ClickSpark sparkColor="#22c55e" className="relative flex-1">
+          <button
+            type="button"
+            className={`${styles.posBtn} w-full ${position === 'yes' ? styles.posYesActive : styles.posYes}`}
+            onClick={() => setPosition('yes')}
+          >
+            YES {market.yes_price != null && `${Math.round(market.yes_price * 100)}c`}
+          </button>
+        </ClickSpark>
+        <ClickSpark sparkColor="#ef4444" className="relative flex-1">
+          <button
+            type="button"
+            className={`${styles.posBtn} w-full ${position === 'no' ? styles.posNoActive : styles.posNo}`}
+            onClick={() => setPosition('no')}
+          >
+            NO {market.no_price != null && `${Math.round(market.no_price * 100)}c`}
+          </button>
+        </ClickSpark>
       </div>
 
       <label className={styles.label}>Amount (coins)</label>
@@ -126,11 +142,15 @@ export function PredictionForm({ market, onSuccess }) {
         <div className={styles.preview}>
           <div className={styles.previewRow}>
             <span className={styles.previewLabel}>You receive</span>
-            <span className={styles.previewValue}>~{projectedShares.toFixed(1)} shares</span>
+            <span className={styles.previewValue}>
+              ~<CountUp to={projectedShares} from={0} duration={0.4} /> shares
+            </span>
           </div>
           <div className={styles.previewRow}>
             <span className={styles.previewLabel}>Total cost</span>
-            <span className={styles.previewValue}>{formatCoins(totalCost)} coins</span>
+            <span className={styles.previewValue}>
+              <CountUp to={totalCost} from={0} duration={0.4} /> coins
+            </span>
           </div>
           <div className={styles.previewRow}>
             <span className={styles.previewLabel}>Entry price</span>
@@ -151,11 +171,15 @@ export function PredictionForm({ market, onSuccess }) {
 
       <ClickSpark
         sparkColor="#4f7df5"
-        className="relative inline-flex w-full"
+        className="relative w-full"
       >
-        <button
+        <StarBorder
+          as="button"
           type="submit"
-          className={`btn-primary ${styles.submitBtn} w-full`}
+          color="#4f7df5"
+          speed="6s"
+          className="w-full rounded-[var(--radius-md)]"
+          contentClassName={`${styles.submitBtn} ${isValid && !isPending ? 'btn-primary' : ''}`}
           disabled={!isValid || isPending}
         >
           {isPending
@@ -163,7 +187,7 @@ export function PredictionForm({ market, onSuccess }) {
             : position
               ? `Predict ${position.toUpperCase()}`
               : 'Select a Position'}
-        </button>
+        </StarBorder>
       </ClickSpark>
     </form>
   );

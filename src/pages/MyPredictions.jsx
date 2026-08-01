@@ -7,6 +7,7 @@ import {
 import { useAuthStore } from '../stores/authStore';
 import { usePredictions } from '../hooks/usePredictions';
 import { PageSkeleton } from '../components/ui/Skeleton';
+import CountUp from '../components/reactbits/CountUp/CountUp';
 import { formatCoins, formatTimeRemaining, formatDateTime } from '../lib/format';
 import styles from './MyPredictions.module.css';
 
@@ -113,7 +114,11 @@ function PredictionRow({ prediction }) {
         {(isWin || isLoss) && (
           <span className={isWin ? styles.resultWon : styles.resultLost}>
             {resultIcon}
-            {isWin ? `Won +${formatCoins(profit)}` : `Lost -${formatCoins(prediction.coins_spent)}`}
+            {isWin ? (
+              <>Won +<CountUp to={profit} from={0} duration={0.8} separator="," /></>
+            ) : (
+              `Lost -${formatCoins(prediction.coins_spent)}`
+            )}
           </span>
         )}
         {isRefunded && (

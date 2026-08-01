@@ -1,27 +1,17 @@
-import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle } from 'lucide-react';
 import { useUIStore } from '../../stores/uiStore';
 import { getUnlockedFeatures } from '../../lib/levels';
-import styles from './LevelUpModal.module.css';
+import { Button } from '../ui/Button';
+import Particles from '../reactbits/Particles/Particles';
+import DecryptedText from '../reactbits/DecryptedText/DecryptedText';
+import CountUp from '../reactbits/CountUp/CountUp';
+import SplitText from '../reactbits/SplitText/SplitText';
+import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 
 export function LevelUpModal() {
   const { showLevelUpModal, levelUpData, hideLevelUpModal } = useUIStore();
-  const [particles, setParticles] = useState([]);
-
-  useEffect(() => {
-    if (showLevelUpModal && levelUpData) {
-      const p = Array.from({ length: 12 }).map((_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        delay: Math.random() * 0.5,
-        size: 4 + Math.random() * 6,
-        color: ['#f59e0b', '#4f7df5', '#22c55e', '#a855f7', '#ef4444'][i % 5],
-      }));
-      setParticles(p);
-    }
-  }, [showLevelUpModal, levelUpData]);
 
   if (!showLevelUpModal || !levelUpData) return null;
 
@@ -38,61 +28,79 @@ export function LevelUpModal() {
     <AnimatePresence>
       {showLevelUpModal && (
         <motion.div
-          className={styles.overlay}
+          className="fixed inset-0 z-[var(--z-modal-backdrop)] flex items-center justify-center overflow-hidden bg-black/70 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           onClick={handleDismiss}
         >
+          <div className="pointer-events-none absolute inset-0 opacity-40">
+            <Particles
+              particleCount={30}
+              particleSpread={12}
+              speed={0.4}
+              particleColors={['#f59e0b', '#ef4444', '#a855f7', '#4f7df5', '#22c55e']}
+              alphaParticles
+              particleBaseSize={60}
+              sizeRandomness={1}
+              className="h-full w-full"
+            />
+          </div>
+
           <motion.div
-            className={styles.card}
+            className="levelup-card relative flex max-h-[90vh] w-[90%] max-w-[420px] flex-col items-center gap-6 overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-10 text-center"
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.5 }}
             transition={{ type: 'spring', stiffness: 200, damping: 15 }}
             onClick={e => e.stopPropagation()}
           >
-            <div className={styles.particles}>
-              {particles.map(p => (
-                <span
-                  key={p.id}
-                  className={styles.particle}
-                  style={{
-                    left: `${p.x}%`,
-                    animationDelay: `${p.delay}s`,
-                    width: p.size,
-                    height: p.size,
-                    background: p.color,
-                    '--drift': `${(Math.random() - 0.5) * 80}px`,
-                  }}
-                />
-              ))}
-            </div>
+            <DecryptedText
+              text="LEVEL UP!"
+              speed={80}
+              animateOn="view"
+              className="levelup-title"
+              encryptedClassName="opacity-40"
+              parentClassName="block"
+            />
 
-            <h1 className={styles.title}>LEVEL UP!</h1>
-
-            <div className={styles.levelRow}>
-              <span className={styles.oldLevel}>Lv.{oldLevel}</span>
-              <span className={styles.arrow}>&rarr;</span>
-              <span className={styles.newLevel}>Lv.{newLevel}</span>
+            <div className="relative z-10 flex items-center gap-4">
+              <span className="levelup-old">Lv.{oldLevel}</span>
+              <span className="levelup-arrow">&rarr;</span>
+              <CountUp
+                to={newLevel}
+                from={oldLevel}
+                duration={1.2}
+                className="levelup-new"
+              />
             </div>
 
             {newUnlocks.length > 0 && (
-              <div className={styles.unlocks}>
-                <p className={styles.unlockTitle}>New Unlocks</p>
+              <div className="relative z-10 flex w-full flex-col gap-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.05em] text-[var(--text-muted)]">
+                  New Unlocks
+                </p>
                 {newUnlocks.map((feature, i) => (
-                  <div key={i} className={styles.unlockItem}>
-                    <CheckCircle size={16} className={styles.unlockIcon} />
-                    <span>{feature}</span>
+                  <div key={i} className="flex items-center gap-2 text-sm text-[var(--text-primary)]">
+                    <CheckCircle size={16} className="shrink-0 text-[var(--color-yes)]" />
+                    <SplitText
+                      text={feature}
+                      delay={25}
+                      duration={0.5}
+                      splitType="chars"
+                      className="text-left"
+                    />
                   </div>
                 ))}
               </div>
             )}
 
-            <button className={styles.continue} onClick={handleDismiss}>
-              Continue
-            </button>
+            <ClickSpark sparkColor="#fbbf24" className="relative inline-flex">
+              <Button variant="primary" onClick={handleDismiss} className="px-8">
+                Continue
+              </Button>
+            </ClickSpark>
           </motion.div>
         </motion.div>
       )}

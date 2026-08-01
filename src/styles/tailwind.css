@@ -486,29 +486,94 @@
 @layer components {
   /* Level-up gradient title (ported from LevelUpModal.module.css, §7.1) */
   .levelup-title {
+    font-family: var(--font-heading);
     font-size: 48px;
     font-weight: 900;
     letter-spacing: 0.1em;
-    background: linear-gradient(
-      90deg,
-      #f59e0b,
-      #ef4444,
-      #a855f7,
-      #3b82f6,
-      #22c55e,
-      #f59e0b
-    );
-    background-size: 600% 100%;
+    background: linear-gradient(135deg, #f59e0b, #ef4444, #a855f7, #4f7df5, #22c55e, #f59e0b);
+    background-size: 300% 300%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: levelup-gradient 6s linear infinite;
+    animation: titleDance 2.5s ease-in-out infinite;
     filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.35));
+    position: relative;
+    z-index: 1;
   }
 
-  @keyframes levelup-gradient {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 600% 50%; }
+  @keyframes titleDance {
+    0% { background-position: 0% 50%; filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.2)); }
+    25% { filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.25)); }
+    50% { background-position: 100% 50%; filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.25)); }
+    75% { filter: drop-shadow(0 0 20px rgba(79, 125, 245, 0.25)); }
+    100% { background-position: 0% 50%; filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.2)); }
+  }
+
+  /* Level-up card border pulse (ported from LevelUpModal.module.css) */
+  .levelup-card {
+    animation: cardBorderPulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes cardBorderPulse {
+    0%, 100% {
+      border-color: rgba(245, 158, 11, 0.3);
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.1), inset 0 0 15px rgba(245, 158, 11, 0.05);
+    }
+    25% {
+      border-color: rgba(239, 68, 68, 0.3);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.15), inset 0 0 15px rgba(239, 68, 68, 0.05);
+    }
+    50% {
+      border-color: rgba(168, 85, 247, 0.3);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.15), inset 0 0 15px rgba(168, 85, 247, 0.05);
+    }
+    75% {
+      border-color: rgba(79, 125, 245, 0.3);
+      box-shadow: 0 0 20px rgba(79, 125, 245, 0.15), inset 0 0 15px rgba(79, 125, 245, 0.05);
+    }
+  }
+
+  /* Level-up old/new level styles (ported from LevelUpModal.module.css) */
+  .levelup-old {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  .levelup-arrow {
+    font-size: var(--text-2xl);
+    color: var(--accent-blue);
+    animation: arrowBounce 0.6s ease infinite alternate;
+  }
+
+  @keyframes arrowBounce {
+    from { transform: translateX(0); }
+    to { transform: translateX(8px); }
+  }
+
+  .levelup-new {
+    font-family: var(--font-heading);
+    font-size: 42px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #4f7df5, #a855f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: newLevelZoom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, newLevelPulse 2s ease-in-out 0.5s infinite;
+    transform-origin: center;
+  }
+
+  @keyframes newLevelZoom {
+    0% { transform: scale(0.3); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes newLevelPulse {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.5); }
   }
 
   /* Achievement icon pop-in (§7.2) */

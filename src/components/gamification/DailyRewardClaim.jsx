@@ -1,9 +1,12 @@
-import { Gift, Lock, Sun } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Gift, Lock, Sun, CheckCircle2 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { getRankColor, getRankLabel } from '../../lib/ranks';
 import { formatCoins } from '../../lib/format';
 import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 import StarBorder from '../reactbits/StarBorder/StarBorder';
+import ShinyText from '../reactbits/ShinyText/ShinyText';
+import CountUp from '../reactbits/CountUp/CountUp';
 import styles from './DailyRewardClaim.module.css';
 
 export function DailyRewardClaim({ onClaim, claiming }) {
@@ -34,7 +37,41 @@ export function DailyRewardClaim({ onClaim, claiming }) {
   }
 
   if (alreadyClaimed || (!can_claim && is_active)) {
-    return null;
+    return (
+      <div className={`${styles.banner} ${styles.claimed}`}>
+        <div className={styles.iconWrapper}>
+          <CheckCircle2 size={24} />
+        </div>
+        <div className={styles.body}>
+          <div className={styles.headerRow}>
+            <span className={styles.header}>Daily Reward Claimed</span>
+            {is_sunday && (
+              <span className={styles.sundayBadge}>
+                <Sun size={12} />
+                3x Sunday Bonus
+              </span>
+            )}
+          </div>
+          <div className={styles.rewardPreview}>
+            <span className={styles.rankBadge} style={{ background: rankColor }}>
+              {rankLabel}
+            </span>
+            <span className={styles.coinAmount}>
+              +<CountUp key={coins || 0} to={coins || 0} from={0} duration={0.8} separator="," />
+            </span>
+            <span className={styles.separator}>•</span>
+            <span className={styles.xpAmount}>+{xp || 0} XP</span>
+          </div>
+          <ShinyText
+            text="Come back tomorrow for another reward!"
+            speed={3}
+            className={styles.claimedMessage}
+            color="#5c6370"
+            shineColor="#9aa0b0"
+          />
+        </div>
+      </div>
+    );
   }
 
   return (

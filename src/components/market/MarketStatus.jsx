@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import DecryptedText from '../reactbits/DecryptedText/DecryptedText';
 import styles from './MarketStatus.module.css';
 
 const statusColors = {
@@ -13,6 +15,23 @@ const statusColors = {
 
 export function MarketStatus({ status }) {
   const colors = statusColors[status] || statusColors.pending;
+
+  if (status === 'resolved') {
+    return (
+      <span
+        className={styles.badge}
+        style={{ background: colors.bg, color: colors.color }}
+      >
+        <DecryptedText
+          text="resolved"
+          speed={60}
+          animateOn="view"
+          className={styles.badgeText}
+          encryptedClassName={styles.badgeText}
+        />
+      </span>
+    );
+  }
 
   return (
     <span

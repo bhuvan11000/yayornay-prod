@@ -1,9 +1,13 @@
+import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { ToastContainer } from './ToastContainer';
-import { LevelUpModal } from '../gamification/LevelUpModal';
 import { AchievementToastContainer } from './AchievementToastContainer';
 import styles from './AppLayout.module.css';
+
+const LevelUpModal = lazy(() =>
+  import('../gamification/LevelUpModal').then((m) => ({ default: m.LevelUpModal }))
+);
 
 export function AppLayout() {
   return (
@@ -14,7 +18,9 @@ export function AppLayout() {
       </main>
       <ToastContainer />
       <AchievementToastContainer />
-      <LevelUpModal />
+      <Suspense fallback={null}>
+        <LevelUpModal />
+      </Suspense>
     </div>
   );
 }
