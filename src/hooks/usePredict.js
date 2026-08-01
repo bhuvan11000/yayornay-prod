@@ -11,6 +11,11 @@ export function usePredict() {
   const addAchievement = useUIStore((s) => s.addAchievement);
   const triggerLevelUpModal = useUIStore((s) => s.triggerLevelUpModal);
 
+  // Defensive: only show the modal when the new level is above the current one.
+  // (user here is the pre-update value from the store closure)
+  const shouldTriggerLevelUp = (levelUp) =>
+    levelUp?.leveledUp && levelUp.newLevel > (user?.level || 0);
+
   return useMutation({
     mutationFn: (data) => api.post('/predict', data),
 
@@ -60,7 +65,7 @@ export function usePredict() {
         }
       }
 
-      if (response.levelUp?.leveledUp) {
+      if (shouldTriggerLevelUp(response.levelUp)) {
         triggerLevelUpModal({
           oldLevel: response.levelUp.oldLevel,
           newLevel: response.levelUp.newLevel,

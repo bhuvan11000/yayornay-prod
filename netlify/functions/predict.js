@@ -50,6 +50,15 @@ export default async (req, context) => {
       });
     }
 
+    // Fetch user's current level BEFORE the RPC — place_prediction does not
+    // return user_level, and passing a fallback of 1 made every XP gain look
+    // like a level-up (calculateLevel(xp) > 1 was always true).
+    const { data: profile } = await supabaseAdmin
+      .from('users')
+      .select('level')
+      .eq('id', user.id)
+      .single();
+
     const { data, error } = await supabaseAdmin.rpc('place_prediction', {
       p_user_id: user.id,
       p_market_id: market_id,
@@ -93,7 +102,7 @@ export default async (req, context) => {
     }
 
     try {
-      levelUp = await checkLevelUp(user.id, data.user_xp, data.user_level || 1);
+      levelUp = await checkLevelUp(user.id, data.user_xp, profile?.level || 1);
     } catch (err) {
       console.error('Level-up check failed (non-blocking):', err.message);
     }

@@ -10,6 +10,11 @@ export function useClaimReward() {
   const addToast = useUIStore((s) => s.addToast);
   const addAchievement = useUIStore((s) => s.addAchievement);
   const triggerLevelUpModal = useUIStore((s) => s.triggerLevelUpModal);
+  const user = useAuthStore((s) => s.user);
+
+  // Defensive: only show the modal when the new level is above the current one.
+  const shouldTriggerLevelUp = (levelUp) =>
+    levelUp?.leveledUp && levelUp.newLevel > (user?.level || 0);
 
   return useMutation({
     mutationFn: () => api.post('/claim-reward', {}),
@@ -20,6 +25,7 @@ export function useClaimReward() {
           coins: response.user_coins,
           xp: response.user_xp,
           rank: response.new_rank,
+          level: response.user_level,
         });
       }
 
@@ -59,7 +65,7 @@ export function useClaimReward() {
         }
       }
 
-      if (response.levelUp?.leveledUp) {
+      if (shouldTriggerLevelUp(response.levelUp)) {
         triggerLevelUpModal({
           oldLevel: response.levelUp.oldLevel,
           newLevel: response.levelUp.newLevel,

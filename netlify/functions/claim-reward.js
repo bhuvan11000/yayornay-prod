@@ -3,7 +3,7 @@ import { corsHeaders } from './_shared/cors.js';
 import { supabaseAdmin } from './_shared/supabase.js';
 import { checkAchievements } from './_shared/achievements.js';
 import { updateQuestProgress } from './_shared/quests.js';
-import { checkLevelUp } from './_shared/levels.js';
+import { checkLevelUp, calculateLevel } from './_shared/levels.js';
 
 export default async (req, context) => {
   if (req.method === 'OPTIONS') {
@@ -54,6 +54,7 @@ export default async (req, context) => {
 
     return new Response(JSON.stringify({
       ...data,
+      user_level: data.user_xp ? calculateLevel(data.user_xp) : undefined,
       achievements,
       completedQuests,
       levelUp,
