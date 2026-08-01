@@ -1,7 +1,8 @@
-import styles from './Input.module.css';
+import { Input as ShadcnInput } from './input';
+import { Label } from './label';
 
 /**
- * Input — Form input with label, error state, and helper text.
+ * Input — form input with label, error state, and helper text.
  *
  * @param {object} props
  * @param {string} [props.type='text']
@@ -24,27 +25,24 @@ export function Input({
   className = '',
   ...props
 }) {
-  const inputClasses = [
-    styles.input,
-    error ? styles.inputError : '',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
-
   return (
-    <div className={styles.wrapper}>
-      {label && <label className={styles.label}>{label}</label>}
-      <input
+    <div className="flex w-full flex-col gap-1.5">
+      {label && <Label className="text-sm font-medium text-[var(--text-secondary)]">{label}</Label>}
+      <ShadcnInput
         type={type}
-        className={inputClasses}
+        className={`h-10 rounded-lg border bg-[var(--bg-input)] px-4 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus-visible:ring-[var(--border-focus)] ${
+          error
+            ? 'border-[var(--color-no)] focus-visible:ring-[rgba(239,68,68,0.15)]'
+            : 'border-[var(--border-subtle)]'
+        } ${className}`}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        aria-invalid={error ? 'true' : undefined}
         {...props}
       />
-      {error && <span className={styles.error}>{error}</span>}
-      {helperText && !error && <span className={styles.helper}>{helperText}</span>}
+      {error && <span className="text-xs text-[var(--color-no)]">{error}</span>}
+      {helperText && !error && <span className="text-xs text-[var(--text-muted)]">{helperText}</span>}
     </div>
   );
 }

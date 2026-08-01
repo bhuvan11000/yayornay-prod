@@ -2,11 +2,12 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { useAuthStore } from './stores/authStore';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
 import { AppLayout } from './components/layout/AppLayout';
 import { PageSkeleton } from './components/ui/Skeleton';
+import { PageTransition } from './components/ui/PageTransition';
 import { ErrorBoundary } from './components/layout/ErrorBoundary';
 import { useUserRealtime } from './hooks/useRealtime';
 
@@ -22,20 +23,6 @@ const Quests = lazy(() => import('./pages/Quests'));
 const Achievements = lazy(() => import('./pages/Achievements'));
 const MyPredictions = lazy(() => import('./pages/MyPredictions'));
 const Settings = lazy(() => import('./pages/Settings'));
-
-const pageVariants = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.2 } },
-  exit: { opacity: 0, y: -10, transition: { duration: 0.15 } },
-};
-
-function AnimatedPage({ children }) {
-  return (
-    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit">
-      {children}
-    </motion.div>
-  );
-}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,9 +43,9 @@ function LazyPage({ Component }) {
   return (
     <Suspense fallback={<PageSkeleton />}>
       <ErrorBoundary>
-        <AnimatedPage>
+        <PageTransition>
           <Component />
-        </AnimatedPage>
+        </PageTransition>
       </ErrorBoundary>
     </Suspense>
   );
@@ -76,9 +63,9 @@ function AppRoutes() {
           element={
             <Suspense fallback={<PageSkeleton />}>
               <ErrorBoundary>
-                <AnimatedPage>
+                <PageTransition>
                   <Auth />
-                </AnimatedPage>
+                </PageTransition>
               </ErrorBoundary>
             </Suspense>
           }

@@ -1,7 +1,7 @@
-import styles from './Tabs.module.css';
+import { Tabs as ShadcnTabs, TabsList, TabsTrigger } from './tabs';
 
 /**
- * Tabs — Horizontal tab navigation.
+ * Tabs — shadcn-backed horizontal tab navigation.
  *
  * @param {object} props
  * @param {Array<{id: string, label: string}>} props.tabs
@@ -10,18 +10,22 @@ import styles from './Tabs.module.css';
  */
 export function Tabs({ tabs, activeTab, onChange }) {
   return (
-    <div className={styles.tabs} role="tablist">
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          className={`${styles.tab} ${activeTab === tab.id ? styles.active : ''}`}
-          onClick={() => onChange(tab.id)}
-          role="tab"
-          aria-selected={activeTab === tab.id}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
+    <ShadcnTabs
+      value={activeTab}
+      onValueChange={(id) => onChange(id)}
+      className="group/tabs w-full"
+    >
+      <TabsList variant="default" className="h-10 w-full bg-[var(--bg-tertiary)] p-[3px]">
+        {tabs.map((tab) => (
+          <TabsTrigger
+            key={tab.id}
+            value={tab.id}
+            className="rounded-md text-sm font-medium text-[var(--text-secondary)] data-active:bg-[var(--bg-secondary)] data-active:text-[var(--text-primary)] data-active:shadow-sm"
+          >
+            {tab.label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </ShadcnTabs>
   );
 }

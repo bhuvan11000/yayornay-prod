@@ -1,7 +1,14 @@
-import styles from './Skeleton.module.css';
+import { Skeleton as ShadcnSkeleton } from './skeleton';
+
+const variantClasses = {
+  text: 'h-4 w-24',
+  circle: 'h-10 w-10 rounded-full',
+  rect: 'h-16 w-full',
+  card: 'h-40 w-full rounded-xl',
+};
 
 /**
- * Skeleton — Loading placeholder with shimmer animation.
+ * Skeleton — loading placeholder with shimmer animation.
  *
  * @param {object} props
  * @param {string} [props.width]
@@ -14,8 +21,8 @@ export function Skeleton({ width, height, variant = 'text' }) {
   if (height) style.height = height;
 
   return (
-    <div
-      className={`${styles.skeleton} ${styles[variant]}`}
+    <ShadcnSkeleton
+      className={`bg-[var(--bg-tertiary)] ${variantClasses[variant] || variantClasses.text}`}
       style={style}
       aria-hidden="true"
     />
@@ -24,17 +31,15 @@ export function Skeleton({ width, height, variant = 'text' }) {
 
 /**
  * PageSkeleton — Full-page loading skeleton.
- * Shows a header bar + 3 card-shaped placeholders with shimmer.
- * Used by ProtectedRoute while auth state is loading.
  */
 export function PageSkeleton() {
   return (
-    <div className={styles.pageSkeleton}>
-      {/* Header skeleton */}
-      <div className={styles.pageSkeletonHeader} />
-
-      {/* Content area */}
-      <div className={styles.pageSkeletonContent}>
+    <div className="flex min-h-screen w-full flex-col gap-6 p-6">
+      <div className="flex items-center justify-between">
+        <ShadcnSkeleton className="h-6 w-40 bg-[var(--bg-tertiary)]" />
+        <ShadcnSkeleton className="h-8 w-8 rounded-full bg-[var(--bg-tertiary)]" />
+      </div>
+      <div className="grid gap-4">
         <Skeleton variant="card" />
         <Skeleton variant="card" />
         <Skeleton variant="card" />
