@@ -57,7 +57,6 @@ const groupA = [
   {
     id: ids.spacex,
     title: 'Will SpaceX complete a successful Starship orbital flight test this month?',
-    description: 'SpaceX Starship completes a full orbital flight test and survives reentry until splashdown.',
     category: 'tech',
     resolution_criteria: 'YES if a Starship flight test reaches orbit and completes a controlled splashdown this month. NO otherwise.',
     closes_at: daysAgo(3),
@@ -68,7 +67,6 @@ const groupA = [
   {
     id: ids.worldcup,
     title: 'Will the 2027 Cricket World Cup final be held at Narendra Modi Stadium?',
-    description: 'The ICC 2027 Cricket World Cup is hosted by South Africa, Zimbabwe and Namibia.',
     category: 'sports',
     resolution_criteria: 'YES if the official final venue for the 2027 Cricket World Cup is confirmed as Narendra Modi Stadium. NO if confirmed elsewhere or unconfirmed.',
     closes_at: daysAgo(2, 6),
@@ -79,7 +77,6 @@ const groupA = [
   {
     id: ids.gpt5,
     title: 'Will OpenAI ship a new flagship frontier model to the public this month?',
-    description: 'OpenAI releases a new flagship model (e.g. next-gen GPT) for general public access.',
     category: 'tech',
     resolution_criteria: 'YES if OpenAI publicly releases a new flagship frontier model this month. NO otherwise.',
     closes_at: daysAgo(4),
@@ -93,7 +90,6 @@ const groupA = [
 const groupB = {
   id: ids.miami,
   title: 'Will Inter Miami win the Leagues Cup final?',
-  description: 'Inter Miami wins the Leagues Cup final in regulation or penalties.',
   category: 'sports',
   resolution_criteria: 'YES if Inter Miami wins the Leagues Cup final. NO if they lose.',
   closes_at: daysAgo(1),
@@ -111,7 +107,6 @@ const groupB = {
 const groupC = {
   id: ids.imax,
   title: 'Will the new Christopher Nolan film release in IMAX 70mm?',
-  description: 'Nolan\'s upcoming film gets a wide IMAX 70mm film release.',
   category: 'popculture',
   resolution_criteria: 'YES if the film is confirmed for IMAX 70mm release. NO otherwise.',
   closes_at: daysAgo(2),

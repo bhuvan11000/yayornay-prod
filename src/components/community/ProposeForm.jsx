@@ -37,7 +37,6 @@ export function ProposeForm() {
   const proposeMutation = usePropose();
 
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [closeDate, setCloseDate] = useState('');
   const [resolutionCriteria, setResolutionCriteria] = useState('');
@@ -50,14 +49,12 @@ export function ProposeForm() {
     return (
       title.length >= 10 &&
       title.length <= 200 &&
-      description.length >= 20 &&
-      description.length <= 500 &&
       category &&
       closeDate &&
       resolutionCriteria.length >= 20 &&
       resolutionCriteria.length <= 300
     );
-  }, [title, description, category, closeDate, resolutionCriteria]);
+  }, [title, category, closeDate, resolutionCriteria]);
 
   const userLevel = user?.level || 1;
   if (userLevel < 3) {
@@ -80,10 +77,6 @@ export function ProposeForm() {
 
     if (title.length < 10 || title.length > 200) {
       setErrors((prev) => ({ ...prev, title: 'Must be 10-200 characters' }));
-      return;
-    }
-    if (description.length < 20 || description.length > 500) {
-      setErrors((prev) => ({ ...prev, description: 'Must be 20-500 characters' }));
       return;
     }
     if (!category) {
@@ -110,7 +103,6 @@ export function ProposeForm() {
     try {
       await proposeMutation.mutateAsync({
         title,
-        description,
         category,
         closes_at: new Date(closeDate).toISOString(),
         resolution_criteria: resolutionCriteria,
@@ -143,24 +135,6 @@ export function ProposeForm() {
           <span className={styles.hint}>{10 - title.length} more characters needed</span>
         )}
         {errors.title && <span className={styles.error}>{errors.title}</span>}
-      </div>
-
-      <div className={styles.field}>
-        <label className={styles.label}>
-          Description <span className={styles.counter}>{description.length}/500</span>
-        </label>
-        <textarea
-          className={`${styles.textarea} ${errors.description ? styles.inputError : ''}`}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Provide context for this market..."
-          maxLength={500}
-          rows={3}
-        />
-        {description.length > 0 && description.length < 20 && (
-          <span className={styles.hint}>{20 - description.length} more characters needed</span>
-        )}
-        {errors.description && <span className={styles.error}>{errors.description}</span>}
       </div>
 
       <div className={styles.field}>

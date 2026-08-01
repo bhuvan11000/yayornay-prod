@@ -31,13 +31,6 @@ export function ProposalCard({ proposal }) {
         <span className={styles.proposerLevel}>Lvl {proposal.proposer_level}</span>
       </div>
 
-      <p className={styles.description}>
-        {proposal.description.length > 150
-          ? proposal.description.slice(0, 150) + '...'
-          : proposal.description
-        }
-      </p>
-
       <div className={styles.criteria}>
         <span className={styles.criteriaLabel}>Resolution:</span>
         <span className={styles.criteriaText}>{proposal.resolution_criteria}</span>

@@ -179,7 +179,6 @@ export default async (req) => {
           .from('markets')
           .insert({
             title: proposal.title,
-            description: proposal.description,
             category: proposal.category,
             resolution_criteria: proposal.resolution_criteria,
             source: 'community',

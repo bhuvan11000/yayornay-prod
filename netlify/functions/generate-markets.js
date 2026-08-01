@@ -46,8 +46,8 @@ function isQuestion(title) {
   return title.trim().endsWith('?') && title.trim().length > 5;
 }
 
-function autoAssignCategory(title, description) {
-  const text = `${title} ${description}`.toLowerCase();
+function autoAssignCategory(title) {
+  const text = `${title}`.toLowerCase();
   const scores = {};
   for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
     scores[cat] = keywords.filter(kw => text.includes(kw)).length;
@@ -67,9 +67,6 @@ function validateMarket(market, existingTitles) {
   // 1. Schema check
   if (!market.title || typeof market.title !== 'string') {
     errors.push('Missing or invalid title');
-  }
-  if (!market.description || typeof market.description !== 'string') {
-    errors.push('Missing or invalid description');
   }
   if (!market.category || typeof market.category !== 'string') {
     errors.push('Missing or invalid category');
@@ -109,7 +106,7 @@ function validateMarket(market, existingTitles) {
   // 4. Category check
   const validCategory = VALID_CATEGORIES.includes(market.category);
   if (!validCategory) {
-    const assigned = autoAssignCategory(market.title, market.description);
+    const assigned = autoAssignCategory(market.title);
     if (assigned) {
       market.category = assigned;
     } else {
@@ -128,7 +125,7 @@ function validateMarket(market, existingTitles) {
   }
 
   // 6. Content filter
-  const combinedText = `${market.title} ${market.description} ${market.resolution_criteria}`;
+  const combinedText = `${market.title} ${market.resolution_criteria}`;
   if (containsBannedContent(combinedText)) {
     errors.push('Contains banned content');
   }
@@ -175,7 +172,6 @@ ${titleList}
 Respond ONLY with a JSON array. Each object must have exactly these fields:
 {
   "title": "Clear, concise question ending with ?",
-  "description": "2-3 sentence context explaining the market",
   "category": "sports | tech | popculture | politics | memes",
   "resolution_criteria": "Specific conditions that determine YES vs NO",
   "closes_at": "ISO 8601 date-time string (UTC)",
@@ -243,7 +239,6 @@ async function insertMarket(market) {
     .from('markets')
     .insert({
       title: market.title.trim(),
-      description: market.description.trim(),
       category: market.category,
       resolution_criteria: market.resolution_criteria.trim(),
       source: 'ai',

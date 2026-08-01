@@ -21,9 +21,9 @@ export default async (req) => {
 
   try {
     const body = await req.json();
-    const { title, description, category, closes_at, resolution_criteria } = body;
+    const { title, category, closes_at, resolution_criteria } = body;
 
-    if (!title || !description || !category || !closes_at || !resolution_criteria) {
+    if (!title || !category || !closes_at || !resolution_criteria) {
       return new Response(JSON.stringify({ error: 'Missing required fields' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -32,13 +32,6 @@ export default async (req) => {
 
     if (title.length < 10 || title.length > 200) {
       return new Response(JSON.stringify({ error: 'Title must be 10-200 characters' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    if (description.length < 20 || description.length > 500) {
-      return new Response(JSON.stringify({ error: 'Description must be 20-500 characters' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -122,7 +115,6 @@ export default async (req) => {
       .insert({
         proposer_id: auth.id,
         title,
-        description,
         category,
         resolution_criteria,
         stake_amount: cost,
