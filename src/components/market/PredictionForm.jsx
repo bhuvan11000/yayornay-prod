@@ -3,6 +3,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { usePredict } from '../../hooks/usePredict';
 import { calculateShares, getPrice } from '../../lib/amm';
 import { formatCoins } from '../../lib/format';
+import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 import StarBorder from '../reactbits/StarBorder/StarBorder';
 import CountUp from '../reactbits/CountUp/CountUp';
@@ -124,18 +125,23 @@ export function PredictionForm({ market, onSuccess }) {
       )}
 
       <label className={styles.label}>Confidence</label>
-      <div className={styles.confidenceRow}>
+      <ToggleGroup
+        type="single"
+        value={String(confidence)}
+        onValueChange={(v) => v && setConfidence(Number(v))}
+        className="w-full"
+      >
         {CONFIDENCE_OPTIONS.map((opt) => (
-          <button
+          <ToggleGroupItem
             key={opt.value}
-            type="button"
-            className={`${styles.confBtn} ${confidence === opt.value ? styles.confActive : ''}`}
-            onClick={() => setConfidence(opt.value)}
+            value={String(opt.value)}
+            variant="outline"
+            className="flex-1 bg-[var(--bg-input)] text-[var(--text-secondary)] data-[state=on]:bg-[var(--accent-blue)] data-[state=on]:text-white"
           >
             {opt.label}
-          </button>
+          </ToggleGroupItem>
         ))}
-      </div>
+      </ToggleGroup>
       <p className={styles.hint}>Max spend: {formatCoins(totalCost)} coins</p>
 
       {position && numAmount >= 10 && (

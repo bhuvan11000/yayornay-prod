@@ -12,6 +12,7 @@ import { SeasonBanner } from '../components/gamification/SeasonBanner';
 import { RankBadge } from '../components/gamification/RankBadge';
 import { XPBar } from '../components/gamification/XPBar';
 import CountUp from '../components/reactbits/CountUp/CountUp';
+import BlurText from '../components/reactbits/BlurText/BlurText';
 import { formatCoins } from '../lib/format';
 import styles from './Home.module.css';
 
@@ -80,7 +81,13 @@ export default function Home() {
         ) : marketsError ? (
           <p className="text-muted text-sm">Failed to load trending markets.</p>
         ) : trendingMarkets.length === 0 ? (
-          <p className="text-muted text-sm">No trending markets right now. Check back soon.</p>
+          <BlurText
+            text="No trending markets right now. Check back soon."
+            delay={100}
+            animateBy="words"
+            direction="top"
+            className="text-sm text-[var(--text-muted)]"
+          />
         ) : (
           <div className={styles.trendingRow}>
             {trendingMarkets.map((market) => (
@@ -140,7 +147,13 @@ export default function Home() {
             })}
           </div>
         ) : (
-          <p className="text-muted text-sm">No active quests. Check the Quest Board to start.</p>
+          <BlurText
+            text="No active quests. Check the Quest Board to start."
+            delay={100}
+            animateBy="words"
+            direction="top"
+            className="text-sm text-[var(--text-muted)]"
+          />
         )}
       </section>
     </div>

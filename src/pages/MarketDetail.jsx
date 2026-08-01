@@ -10,6 +10,16 @@ import { PriceChart } from '../components/market/PriceChart';
 import { PredictionForm } from '../components/market/PredictionForm';
 import { SellForm } from '../components/market/SellForm';
 import { PageSkeleton } from '../components/ui/Skeleton';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from '../components/ui/alert-dialog';
 import { formatTimeRemaining, formatCoins, formatDateTime, pluralize, formatSource } from '../lib/format';
 import styles from './MarketDetail.module.css';
 
@@ -92,42 +102,48 @@ export default function MarketDetail() {
                 <p className={styles.disputeDeadline}>
                   Dispute window closes in {formatTimeRemaining(market.dispute_deadline)}
                 </p>
-                {!showDisputeForm ? (
-                  <button
-                    className={styles.disputeBtn}
-                    onClick={() => setShowDisputeForm(true)}
-                  >
-                    Dispute this resolution
-                  </button>
-                ) : (
-                  <div className={styles.disputeForm}>
+                <AlertDialog open={showDisputeForm} onOpenChange={setShowDisputeForm}>
+                  <AlertDialogTrigger asChild>
+                    <button
+                      className="w-full rounded-lg bg-[var(--color-no-muted)] px-4 py-2.5 text-sm font-semibold text-[var(--color-no)] transition-colors hover:bg-[rgba(239,68,68,0.25)]"
+                      onClick={() => setShowDisputeForm(true)}
+                    >
+                      Dispute this resolution
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Dispute this resolution</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Why is this resolution wrong? Submitting a dispute sends it to review.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
                     <textarea
-                      className={styles.disputeInput}
-                      placeholder="Why is this resolution wrong? (min 10 characters)"
+                      className="min-h-[84px] w-full resize-y rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)]"
+                      placeholder="Explain why this resolution is wrong (min 10 characters)"
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
                       rows={3}
                     />
                     {disputeError && (
-                      <p className={styles.disputeError}>{disputeError.message}</p>
+                      <p className="text-xs text-[var(--color-no)]">{disputeError.message}</p>
                     )}
-                    <div className={styles.disputeActions}>
-                      <button
-                        className={styles.disputeSubmitBtn}
-                        onClick={() => submitDispute()}
-                        disabled={isSubmitting || reason.length < 10}
-                      >
-                        {isSubmitting ? 'Submitting...' : 'Submit Dispute'}
-                      </button>
-                      <button
-                        className={styles.disputeCancelBtn}
+                    <div className="flex gap-2">
+                      <AlertDialogCancel
                         onClick={() => { setShowDisputeForm(false); resetDispute(); setReason(''); }}
                       >
                         Cancel
-                      </button>
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => submitDispute()}
+                        disabled={isSubmitting || reason.length < 10}
+                        className="bg-[var(--accent-blue)] text-white hover:bg-[var(--accent-blue-hover)]"
+                      >
+                        {isSubmitting ? 'Submitting...' : 'Submit Dispute'}
+                      </AlertDialogAction>
                     </div>
-                  </div>
-                )}
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             )}
 

@@ -3,6 +3,7 @@ import { useMarkets } from '../hooks/useMarkets';
 import { MarketCard } from '../components/market/MarketCard';
 import { CategoryTag } from '../components/ui/CategoryTag';
 import { Skeleton } from '../components/ui/Skeleton';
+import BlurText from '../components/reactbits/BlurText/BlurText';
 import styles from './Markets.module.css';
 
 const CATEGORIES = ['All', 'Sports', 'Tech', 'Pop Culture', 'Politics', 'Memes'];
@@ -116,7 +117,13 @@ export default function Markets() {
       ) : markets.length === 0 ? (
         <div className={styles.state}>
           <div className={styles.emptyIcon}>📊</div>
-          <p className="text-secondary">No markets found</p>
+          <BlurText
+            text="No markets found"
+            delay={100}
+            animateBy="words"
+            direction="top"
+            className="font-heading text-lg text-[var(--text-secondary)]"
+          />
           <p className="text-muted text-sm">
             {status === 'open'
               ? 'No open markets right now. Check back soon or try a different category.'

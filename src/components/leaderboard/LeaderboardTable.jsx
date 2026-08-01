@@ -1,4 +1,5 @@
 import { PlayerRow } from './PlayerRow';
+import { Podium } from './Podium';
 import {
   Table,
   TableHeader,
@@ -28,6 +29,7 @@ export function LeaderboardTable({ players, metric, currentUserId, page, totalPa
 
   return (
     <div className={styles.table}>
+      {page === 1 && <Podium players={players} metric={metric} />}
       <Table className="border-[var(--border-subtle)] text-[var(--text-primary)]">
         <TableHeader>
           <TableRow className="border-[var(--border-subtle)] hover:bg-transparent">

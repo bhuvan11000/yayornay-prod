@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
 import { Plus, FileText, BarChart3, Lock } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { useMarkets } from '../hooks/useMarkets';
 import { MarketCard } from '../components/market/MarketCard';
 import { ProposalCard } from '../components/community/ProposalCard';
+import { ProposeDialog } from '../components/community/ProposeDialog';
 import { Tabs } from '../components/ui/Tabs';
 import { Skeleton } from '../components/ui/Skeleton';
 import { supabase } from '../config/supabase';
@@ -17,9 +17,9 @@ const TABS = [
 ];
 
 export default function Community() {
-  const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const [activeTab, setActiveTab] = useState('live');
+  const [showPropose, setShowPropose] = useState(false);
 
   // Fetch fresh user data on mount so level is always current
   const { data: freshUser } = useQuery({
@@ -113,7 +113,7 @@ export default function Community() {
         {canPropose ? (
           <button
             className={styles.proposeBtn}
-            onClick={() => navigate('/community/propose')}
+            onClick={() => setShowPropose(true)}
           >
             <Plus size={16} />
             Propose a Market
@@ -159,7 +159,7 @@ export default function Community() {
               {canPropose && (
                 <button
                   className={styles.emptyBtn}
-                  onClick={() => navigate('/community/propose')}
+                  onClick={() => setShowPropose(true)}
                 >
                   <Plus size={16} />
                   Propose the first market
@@ -194,7 +194,7 @@ export default function Community() {
               {canPropose && (
                 <button
                   className={styles.emptyBtn}
-                  onClick={() => navigate('/community/propose')}
+                  onClick={() => setShowPropose(true)}
                 >
                   <Plus size={16} />
                   Propose a market
@@ -204,6 +204,8 @@ export default function Community() {
           )}
         </div>
       )}
+
+      <ProposeDialog open={showPropose} onOpenChange={setShowPropose} />
     </div>
   );
 }

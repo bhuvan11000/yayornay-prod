@@ -5,6 +5,7 @@ import { useProfile } from '../hooks/useProfile';
 import { useAuthStore } from '../stores/authStore';
 import { RankBadge } from '../components/gamification/RankBadge';
 import { AchievementCard } from '../components/gamification/AchievementCard';
+import TiltedCard from '../components/reactbits/TiltedCard/TiltedCard';
 import { Tabs } from '../components/ui/Tabs';
 import { Skeleton } from '../components/ui/Skeleton';
 import CountUp from '../components/reactbits/CountUp/CountUp';
@@ -93,12 +94,27 @@ export default function Profile() {
               )}
             </div>
             {badges && badges.length > 0 && (
-              <div className={styles.badgesRow}>
+              <div className="flex flex-wrap items-center gap-2">
                 {badges.map((badge) => (
-                  <div key={badge.id} className={styles.badge} title={`Season ${badge.season_number} — ${badge.badge_type}`}>
-                    <Medal size={16} />
-                    <span>S{badge.season_number}</span>
-                  </div>
+                  <TiltedCard
+                    key={badge.id}
+                    imageSrc="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f59e0b' stop-opacity='0.5'/%3E%3Cstop offset='1' stop-color='%23a855f7' stop-opacity='0.2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='14' fill='url(%23g)'/%3E%3C/svg%3E"
+                    altText={`Season ${badge.season_number} — ${badge.badge_type}`}
+                    containerHeight="44px"
+                    containerWidth="44px"
+                    imageHeight="44px"
+                    imageWidth="44px"
+                    rotateAmplitude={8}
+                    scaleOnHover={1.12}
+                    showMobileWarning={false}
+                    showTooltip={false}
+                    displayOverlayContent
+                    overlayContent={
+                      <div className="flex h-full w-full cursor-default items-center justify-center">
+                        <Medal size={16} className="text-[var(--text-primary)]" />
+                      </div>
+                    }
+                  />
                 ))}
               </div>
             )}

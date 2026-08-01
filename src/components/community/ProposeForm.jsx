@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router';
 import { Coins } from 'lucide-react';
 import { usePropose } from '../../hooks/usePropose';
 import { useAuthStore } from '../../stores/authStore';
@@ -7,10 +6,18 @@ import { useUIStore } from '../../stores/uiStore';
 import { getProposalCost } from '../../lib/rewards';
 import { getRankInfo } from '../../lib/ranks';
 import { formatCoins } from '../../lib/format';
-import styles from './ProposeForm.module.css';
+import { Input } from '../ui/Input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 
 const CATEGORIES = [
-  { value: '', label: 'Select a category' },
   { value: 'sports', label: 'Sports' },
   { value: 'tech', label: 'Tech' },
   { value: 'popculture', label: 'Pop Culture' },
@@ -30,8 +37,7 @@ function getMaxDate() {
   return d.toISOString().split('T')[0];
 }
 
-export function ProposeForm() {
-  const navigate = useNavigate();
+export function ProposeForm({ onSuccess }) {
   const user = useAuthStore((s) => s.user);
   const addToast = useUIStore((s) => s.addToast);
   const proposeMutation = usePropose();
@@ -59,12 +65,10 @@ export function ProposeForm() {
   const userLevel = user?.level || 1;
   if (userLevel < 3) {
     return (
-      <div className={styles.locked}>
-        <div className={styles.lockedIcon}>
-          <Coins size={32} />
-        </div>
-        <h3 className={styles.lockedTitle}>Proposals Locked</h3>
-        <p className={styles.lockedText}>
+      <div className="flex flex-col items-center gap-3 p-12 text-center">
+        <Coins size={32} className="text-[var(--text-muted)]" />
+        <h3 className="text-xl text-[var(--text-primary)]">Proposals Locked</h3>
+        <p className="max-w-[400px] text-sm text-[var(--text-muted)]">
           Reach Level 3 to propose community markets. You are currently Level {userLevel}.
         </p>
       </div>
@@ -107,71 +111,82 @@ export function ProposeForm() {
         closes_at: new Date(closeDate).toISOString(),
         resolution_criteria: resolutionCriteria,
       });
-      navigate('/community');
+      onSuccess?.();
     } catch (err) {
       setErrors({ form: err.message });
     }
   };
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
       {errors.form && (
-        <div className={styles.formError}>{errors.form}</div>
+        <div className="rounded-lg border border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.1)] p-3 text-sm text-[var(--color-no)]">
+          {errors.form}
+        </div>
       )}
 
-      <div className={styles.field}>
-        <label className={styles.label}>
-          Title <span className={styles.counter}>{title.length}/200</span>
-        </label>
-        <input
-          className={`${styles.input} ${errors.title ? styles.inputError : ''}`}
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between">
+          <Label className="text-sm font-medium text-[var(--text-secondary)]">Title</Label>
+          <span className="font-mono text-xs text-[var(--text-muted)]">{title.length}/200</span>
+        </div>
+        <Input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. Will GTA 6 release a new trailer before Aug 15?"
           maxLength={200}
+          error={errors.title}
         />
         {title.length > 0 && title.length < 10 && (
-          <span className={styles.hint}>{10 - title.length} more characters needed</span>
+          <span className="text-xs text-[var(--text-muted)]">
+            {10 - title.length} more characters needed
+          </span>
         )}
-        {errors.title && <span className={styles.error}>{errors.title}</span>}
       </div>
 
-      <div className={styles.field}>
-        <label className={styles.label}>Category</label>
-        <select
-          className={`${styles.select} ${errors.category ? styles.inputError : ''}`}
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        >
-          {CATEGORIES.map((c) => (
-            <option key={c.value} value={c.value}>
-              {c.label}
-            </option>
-          ))}
-        </select>
-        {errors.category && <span className={styles.error}>{errors.category}</span>}
+      <div className="flex flex-col gap-1">
+        <Label className="text-sm font-medium text-[var(--text-secondary)]">Category</Label>
+        <Select value={category} onValueChange={(v) => setCategory(v)}>
+          <SelectTrigger className="w-full border-[var(--border-subtle)] bg-[var(--bg-input)] text-[var(--text-primary)]">
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            {CATEGORIES.map((c) => (
+              <SelectItem key={c.value} value={c.value}>
+                {c.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {errors.category && (
+          <span className="text-xs font-medium text-[var(--color-no)]">{errors.category}</span>
+        )}
       </div>
 
-      <div className={styles.field}>
-        <label className={styles.label}>Close Date</label>
-        <input
-          className={`${styles.input} ${errors.closeDate ? styles.inputError : ''}`}
+      <div className="flex flex-col gap-1">
+        <Label className="text-sm font-medium text-[var(--text-secondary)]">Close Date</Label>
+        <Input
           type="date"
           value={closeDate}
           onChange={(e) => setCloseDate(e.target.value)}
           min={getMinDate()}
           max={getMaxDate()}
+          error={errors.closeDate}
         />
-        {errors.closeDate && <span className={styles.error}>{errors.closeDate}</span>}
       </div>
 
-      <div className={styles.field}>
-        <label className={styles.label}>
-          Resolution Criteria <span className={styles.counter}>{resolutionCriteria.length}/300</span>
-        </label>
-        <textarea
-          className={`${styles.textarea} ${errors.resolutionCriteria ? styles.inputError : ''}`}
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between">
+          <Label className="text-sm font-medium text-[var(--text-secondary)]">Resolution Criteria</Label>
+          <span className="font-mono text-xs text-[var(--text-muted)]">{resolutionCriteria.length}/300</span>
+        </div>
+        <Textarea
+          className={`min-h-[80px] w-full resize-y border bg-[var(--bg-input)] px-4 py-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] ${
+            errors.resolutionCriteria
+              ? 'border-[var(--color-no)]'
+              : 'border-[var(--border-subtle)]'
+          }`}
           value={resolutionCriteria}
           onChange={(e) => setResolutionCriteria(e.target.value)}
           placeholder="What exactly determines YES vs NO? Be specific..."
@@ -179,19 +194,26 @@ export function ProposeForm() {
           rows={3}
         />
         {resolutionCriteria.length > 0 && resolutionCriteria.length < 20 && (
-          <span className={styles.hint}>{20 - resolutionCriteria.length} more characters needed</span>
+          <span className="text-xs text-[var(--text-muted)]">
+            {20 - resolutionCriteria.length} more characters needed
+          </span>
         )}
-        {errors.resolutionCriteria && <span className={styles.error}>{errors.resolutionCriteria}</span>}
+        {errors.resolutionCriteria && (
+          <span className="text-xs font-medium text-[var(--color-no)]">{errors.resolutionCriteria}</span>
+        )}
       </div>
 
-      <div className={styles.stakeInfo}>
+      <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-tertiary)] px-4 py-3 text-sm text-[var(--text-secondary)]">
         <Coins size={16} />
-        <span>Stake: <strong>{formatCoins(stake)} coins</strong> (rank-scaled — {rank})</span>
+        <span>
+          Stake: <strong className="font-mono text-[var(--color-warning)]">{formatCoins(stake)} coins</strong>{' '}
+          (rank-scaled — {rank})
+        </span>
       </div>
 
       <button
         type="submit"
-        className={styles.submit}
+        className="w-full cursor-pointer rounded-lg bg-[var(--accent-blue)] px-4 py-4 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-blue-hover)] disabled:cursor-not-allowed disabled:opacity-50"
         disabled={!canSubmit || proposeMutation.isPending}
       >
         {proposeMutation.isPending

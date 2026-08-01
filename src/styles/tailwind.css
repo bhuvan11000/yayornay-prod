@@ -586,6 +586,26 @@
     60% { transform: scale(1.2); }
     100% { transform: scale(1); }
   }
+
+  /* Omniscient rank dot gradient spin (§8) */
+  .omniscient-dot {
+    background: linear-gradient(135deg, #f59e0b, #ef4444, #a855f7, #3b82f6);
+    background-size: 300% 300%;
+    animation: omniscientSpin 2s ease-in-out infinite;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.3), 0 0 16px rgba(168, 85, 247, 0.15);
+  }
+
+  .omniscient-badge {
+    color: #f59e0b;
+  }
+
+  @keyframes omniscientSpin {
+    0% { background-position: 0% 50%; box-shadow: 0 0 8px rgba(245, 158, 11, 0.3); }
+    25% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.3); }
+    50% { background-position: 100% 50%; box-shadow: 0 0 12px rgba(168, 85, 247, 0.3); }
+    75% { box-shadow: 0 0 12px rgba(79, 125, 245, 0.3); }
+    100% { background-position: 0% 50%; box-shadow: 0 0 8px rgba(245, 158, 11, 0.3); }
+  }
 }
 
 /* ── Reduced motion (G5) ── */
