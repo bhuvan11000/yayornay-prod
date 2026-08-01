@@ -3,7 +3,6 @@ import { RankBadge } from '../gamification/RankBadge';
 import { getRank } from '../../lib/ranks';
 import { formatCoins, formatPercent } from '../../lib/format';
 import { TableRow, TableCell } from '../ui/table';
-import styles from './PlayerRow.module.css';
 
 const MEDAL_COLORS = {
   1: { bg: 'linear-gradient(135deg, #f59e0b, #d97706)', label: '#1', color: '#f59e0b' },
@@ -55,39 +54,43 @@ export function PlayerRow({ player, rank, metric, isCurrentUser }) {
 
   return (
     <TableRow
-      className={`${styles.row} ${isCurrentUser ? styles.currentUser : ''} border-[var(--border-subtle)]`}
+      className={`cursor-pointer border-[var(--border-subtle)] ${
+        isCurrentUser
+          ? '!bg-[rgba(79,125,245,0.05)] hover:!bg-[rgba(79,125,245,0.08)] animate-[rankGlow_2s_ease-in-out_infinite]'
+          : 'hover:!bg-[var(--bg-tertiary)]'
+      }`}
       data-current-user={isCurrentUser ? 'true' : undefined}
       onClick={() => navigate(`/profile/${player.username}`)}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/profile/${player.username}`); }}
     >
-      <TableCell className={styles.rankCell}>
+      <TableCell className="flex min-w-9 justify-center max-sm:min-w-7">
         {medal ? (
-          <span className={styles.medal} style={{ background: medal.bg }}>
+          <span className="flex h-7 w-7 items-center justify-center rounded-full font-heading text-xs font-bold text-white" style={{ background: medal.bg }}>
             {medal.label}
           </span>
         ) : (
-          <span className={styles.rankNum}>#{rank}</span>
+          <span className="font-mono text-sm font-bold text-[var(--text-muted)]">#{rank}</span>
         )}
       </TableCell>
 
-      <TableCell className={styles.avatarCell}>
+      <TableCell className="w-10">
         <span
-          className={styles.avatar}
+          className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full font-heading text-xs font-bold uppercase text-[var(--text-secondary)]"
           style={{ background: isCurrentUser ? 'var(--accent-blue)' : 'var(--bg-tertiary)' }}
         >
           {(player.username || '?').charAt(0).toUpperCase()}
         </span>
       </TableCell>
 
-      <TableCell className={styles.info}>
-        <span className={styles.name}>{player.username}</span>
+      <TableCell className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="text-sm font-semibold text-[var(--text-primary)]">{player.username}</span>
         <RankBadge rank={playerRank} size="sm" showLabel />
       </TableCell>
 
       <TableCell className="text-right">
-        <span className={`${styles.mainValue} ${getMetricClass()}`}>
+        <span className={`whitespace-nowrap font-mono text-sm font-bold text-[var(--text-primary)] ${getMetricClass()}`}>
           {getMetricValue()}
         </span>
       </TableCell>
@@ -99,7 +102,7 @@ export function PlayerRow({ player, rank, metric, isCurrentUser }) {
       )}
 
       <TableCell className="text-right">
-        <span className={styles.level}>Lv.{player.level || 1}</span>
+        <span className="whitespace-nowrap rounded-full bg-[var(--bg-tertiary)] px-2 py-0.5 font-mono text-xs font-semibold text-[var(--text-muted)] max-md:hidden">Lv.{player.level || 1}</span>
       </TableCell>
     </TableRow>
   );

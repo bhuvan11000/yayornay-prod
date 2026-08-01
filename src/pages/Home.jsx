@@ -14,7 +14,6 @@ import { XPBar } from '../components/gamification/XPBar';
 import CountUp from '../components/reactbits/CountUp/CountUp';
 import BlurText from '../components/reactbits/BlurText/BlurText';
 import { formatCoins } from '../lib/format';
-import styles from './Home.module.css';
 
 export default function Home() {
   const user = useAuthStore((s) => s.user);
@@ -32,8 +31,8 @@ export default function Home() {
   const weeklyQuests = questsData?.weekly?.filter(q => !q.completed) || [];
 
   return (
-    <div className={styles.home}>
-      <div className={styles.header}>
+    <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-5 p-4 md:p-6">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-heading">
           Welcome{user?.username ? `, ${user.username}` : ''}
         </h1>
@@ -44,36 +43,36 @@ export default function Home() {
       <DailyRewardClaim onClaim={() => claimReward()} claiming={claiming} />
 
       {user && (
-        <div className={styles.statsRow}>
-          <div className={styles.statCard}>
-            <Coins size={18} className={styles.coinIcon} />
-            <CountUp to={user.coins || 0} from={0} duration={0.8} separator="," className={styles.statValue} />
-            <span className={styles.statLabel}>Coins</span>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
+            <Coins size={18} className="shrink-0 text-[var(--color-warning)]" />
+            <CountUp to={user.coins || 0} from={0} duration={0.8} separator="," className="font-mono text-lg font-bold text-[var(--text-primary)]" />
+            <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Coins</span>
           </div>
-          <div className={styles.statCard}>
+          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
             <RankBadge rank={user.rank} size="md" showLabel />
           </div>
-          <div className={styles.statCard}>
+          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
             <StreakCounter streak={user.betting_streak || 0} longest={user.longest_streak} size="md" />
           </div>
-          <div className={styles.statCard}>
+          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
             <XPBar xp={user.xp} variant="mini" />
           </div>
         </div>
       )}
 
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h2 className="text-xl font-heading">Trending Markets</h2>
-          <Link to="/markets" className={styles.viewAll}>
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="flex items-center gap-2 text-xl font-heading">Trending Markets</h2>
+          <Link to="/markets" className="text-sm font-medium text-[var(--accent-blue)] transition-colors duration-150 hover:text-[var(--accent-blue-hover)]">
             View All &rarr;
           </Link>
         </div>
 
         {marketsLoading ? (
-          <div className={styles.trendingRow}>
+          <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className={styles.trendingCard}>
+              <div key={i} className="shrink-0 basis-[320px] snap-start">
                 <Skeleton variant="card" />
               </div>
             ))}
@@ -89,9 +88,9 @@ export default function Home() {
             className="text-sm text-[var(--text-muted)]"
           />
         ) : (
-          <div className={styles.trendingRow}>
+          <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
             {trendingMarkets.map((market) => (
-              <div key={market.id} className={styles.trendingCard}>
+              <div key={market.id} className="shrink-0 basis-[320px] snap-start">
                 <MarketCard market={market} />
               </div>
             ))}
@@ -99,31 +98,31 @@ export default function Home() {
         )}
       </section>
 
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h2 className="text-xl font-heading">
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="flex items-center gap-2 text-xl font-heading">
             <TrendingUp size={18} />
             Active Quests
           </h2>
-          <Link to="/quests" className={styles.viewAll}>
+          <Link to="/quests" className="text-sm font-medium text-[var(--accent-blue)] transition-colors duration-150 hover:text-[var(--accent-blue-hover)]">
             View All &rarr;
           </Link>
         </div>
         {dailyQuests.length > 0 || weeklyQuests.length > 0 ? (
-          <div className={styles.questMiniList}>
+          <div className="flex flex-col gap-2">
             {dailyQuests.slice(0, 2).map((q) => {
               const pct = q.target > 0 ? Math.min(Math.round((q.progress / q.target) * 100), 100) : 0;
               return (
-                <div key={q.id} className={styles.questMiniRow}>
-                  <div className={styles.questMiniInfo}>
-                    <span className={styles.questMiniTitle}>{q.title}</span>
-                    <span className={styles.questMiniType}>Daily</span>
+                <div key={q.id} className="flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">{q.title}</span>
+                    <span className="shrink-0 rounded-[var(--radius-sm)] bg-[var(--accent-blue-muted)] px-1 py-[1px] text-[10px] font-semibold uppercase tracking-[0.05em] text-[var(--accent-blue)]">Daily</span>
                   </div>
-                  <div className={styles.questMiniProgress}>
-                    <div className={styles.questMiniTrack}>
-                      <div className={styles.questMiniFill} style={{ width: `${pct}%` }} />
+                  <div className="flex shrink-0 items-center gap-2">
+                    <div className="h-1 w-20 overflow-hidden rounded-[var(--radius-full)] bg-[var(--bg-tertiary)]">
+                      <div className="h-full rounded-[var(--radius-full)] bg-[var(--accent-blue)] transition-[width] duration-500" style={{ width: `${pct}%` }} />
                     </div>
-                    <span className={styles.questMiniCount}>{q.progress}/{q.target}</span>
+                    <span className="min-w-8 text-right font-mono text-xs text-[var(--text-muted)]">{q.progress}/{q.target}</span>
                   </div>
                 </div>
               );
@@ -131,16 +130,16 @@ export default function Home() {
             {weeklyQuests.slice(0, 1).map((q) => {
               const pct = q.target > 0 ? Math.min(Math.round((q.progress / q.target) * 100), 100) : 0;
               return (
-                <div key={q.id} className={styles.questMiniRow}>
-                  <div className={styles.questMiniInfo}>
-                    <span className={styles.questMiniTitle}>{q.title}</span>
-                    <span className={styles.questMiniType}>Weekly</span>
+                <div key={q.id} className="flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">{q.title}</span>
+                    <span className="shrink-0 rounded-[var(--radius-sm)] bg-[var(--accent-blue-muted)] px-1 py-[1px] text-[10px] font-semibold uppercase tracking-[0.05em] text-[var(--accent-blue)]">Weekly</span>
                   </div>
-                  <div className={styles.questMiniProgress}>
-                    <div className={styles.questMiniTrack}>
-                      <div className={styles.questMiniFill} style={{ width: `${pct}%` }} />
+                  <div className="flex shrink-0 items-center gap-2">
+                    <div className="h-1 w-20 overflow-hidden rounded-[var(--radius-full)] bg-[var(--bg-tertiary)]">
+                      <div className="h-full rounded-[var(--radius-full)] bg-[var(--accent-blue)] transition-[width] duration-500" style={{ width: `${pct}%` }} />
                     </div>
-                    <span className={styles.questMiniCount}>{q.progress}/{q.target}</span>
+                    <span className="min-w-8 text-right font-mono text-xs text-[var(--text-muted)]">{q.progress}/{q.target}</span>
                   </div>
                 </div>
               );

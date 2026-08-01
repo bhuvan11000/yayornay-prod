@@ -8,7 +8,6 @@ import { Skeleton } from '../components/ui/Skeleton';
 import CountUp from '../components/reactbits/CountUp/CountUp';
 import { formatCoins, formatDate } from '../lib/format';
 import { getRankLabel } from '../lib/ranks';
-import styles from './Leaderboard.module.css';
 
 const TABS = [
   { id: 'coins', label: 'Coins' },
@@ -79,11 +78,11 @@ export default function Leaderboard() {
   };
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
+    <div className="mx-auto flex w-full max-w-[900px] flex-col gap-6 p-4 md:p-6">
+      <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-heading">Global Leaderboard</h1>
-          <p className={styles.seasonInfo}>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
             Season <span id="season-number">1</span> — Compete to reach the top
           </p>
         </div>
@@ -91,21 +90,21 @@ export default function Leaderboard() {
 
       {/* Current user rank summary */}
       {user && userRank && (
-        <div className={styles.userSummary}>
-          <div className={styles.summaryMain}>
-            <span className={styles.summaryLabel}>Your Rank</span>
-            <span className={styles.summaryRank}>#{userRank}</span>
+        <div className="flex flex-wrap items-center gap-4 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-5 py-4 md:flex-nowrap">
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm text-[var(--text-muted)]">Your Rank</span>
+            <span className="font-heading text-2xl font-bold text-[var(--accent-blue)]">#{userRank}</span>
           </div>
-          <div className={styles.summaryMeta}>
-            <span className={styles.summaryStat}>
+          <div className="flex flex-col gap-[2px]">
+            <span className="text-xs text-[var(--text-secondary)]">
               {getRankLabel(user.rank || 'Unranked')}
             </span>
-            <span className={styles.summaryStat}>
+            <span className="text-xs text-[var(--text-secondary)]">
               <CountUp to={user.coins || 0} from={0} duration={0.8} separator="," /> coins
             </span>
           </div>
           {!userOnCurrentPage && totalPages > 1 && (
-            <button className={styles.jumpBtn} onClick={handleJumpToMyRank}>
+            <button className="flex w-full cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-[var(--radius-md)] border border-[rgba(79,125,245,0.3)] bg-[var(--accent-blue-muted)] px-3 py-2 text-xs font-medium text-[var(--accent-blue)] transition-colors duration-150 hover:border-[var(--accent-blue)] hover:bg-[rgba(79,125,245,0.25)] md:ml-auto md:w-auto" onClick={handleJumpToMyRank}>
               <ArrowUp size={14} />
               Jump to my rank
             </button>
@@ -114,10 +113,10 @@ export default function Leaderboard() {
       )}
 
       {/* Tabs + Time filter */}
-      <div className={styles.controls}>
+      <div className="flex flex-col items-stretch gap-4 md:flex-row md:flex-wrap md:items-center md:justify-between">
         <Tabs tabs={TABS} activeTab={activeTab} onChange={handleTabChange} />
         <select
-          className={styles.timeSelect}
+          className="cursor-pointer rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-2 text-sm text-[var(--text-primary)] transition-colors duration-150 hover:border-[var(--text-muted)] focus:border-[var(--border-focus)] focus:outline-none"
           value={timeframe}
           onChange={handleTimeframeChange}
         >
@@ -130,13 +129,13 @@ export default function Leaderboard() {
       {/* Content */}
       <div ref={listRef}>
         {isLoading ? (
-          <div className={styles.list}>
+          <div className="flex flex-col gap-2">
             {Array.from({ length: 20 }).map((_, i) => (
               <Skeleton key={i} variant="rect" />
             ))}
           </div>
         ) : isError ? (
-          <div className={styles.errorState}>
+          <div className="flex flex-col items-center gap-3 p-12">
             <p className="text-muted">Failed to load leaderboard.</p>
             <button
               className="btn-primary btn-sm"

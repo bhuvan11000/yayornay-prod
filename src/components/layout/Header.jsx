@@ -17,7 +17,6 @@ import { xpProgress } from '../../lib/levels';
 import { RankBadge } from '../gamification/RankBadge';
 import { XPBar } from '../gamification/XPBar';
 import CountUp from '../reactbits/CountUp/CountUp';
-import styles from './Header.module.css';
 
 /**
  * Header — Persistent top navigation bar.
@@ -39,6 +38,23 @@ const NAV_ITEMS = [
   { to: '/leaderboard', label: 'Leaderboard' },
   { to: '/quests', label: 'Quests' },
 ];
+
+const NAV_LINK_BASE =
+  'rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium whitespace-nowrap text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] max-lg:px-2 max-lg:text-xs';
+
+const NAV_LINK_ACTIVE =
+  'relative bg-[var(--accent-blue-muted)] text-[var(--accent-blue)] after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:w-3/5 after:-translate-x-1/2 after:rounded-full after:bg-[var(--accent-blue)] after:content-[""]';
+
+const MOBILE_NAV_LINK_BASE =
+  'flex items-center rounded-[var(--radius-md)] px-4 py-3 text-base font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]';
+
+const MOBILE_NAV_LINK_ACTIVE = 'bg-[var(--accent-blue-muted)] text-[var(--accent-blue)]';
+
+const DROPDOWN_ITEM_BASE =
+  'flex w-full cursor-pointer items-center gap-2 border-none bg-transparent px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]';
+
+const LOGO_CLASS =
+  'font-heading text-lg font-bold whitespace-nowrap text-[var(--text-primary)] transition-colors duration-150 hover:text-[var(--accent-blue)]';
 
 export function Header() {
   const { user, logout, getRankColor } = useAuthStore();
@@ -82,21 +98,21 @@ export function Header() {
   const avatarLetter = (user.username || 'U').charAt(0).toUpperCase();
 
   return (
-    <header className={styles.header}>
-      <div className={styles.inner}>
+    <header className="sticky top-0 z-[var(--z-sticky)] flex h-16 items-center border-b border-[var(--border-subtle)] bg-[var(--bg-secondary)]">
+      <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-4 px-6 max-md:px-4">
         {/* ── Left: Logo + Desktop Nav ── */}
-        <div className={styles.left}>
-          <Link to="/" className={styles.logo} onClick={handleNavClick}>
+        <div className="flex items-center gap-8">
+          <Link to="/" className={LOGO_CLASS} onClick={handleNavClick}>
             Predict Arena
           </Link>
 
-          <nav className={styles.desktopNav}>
+          <nav className="hidden items-center gap-1 md:flex max-lg:gap-0">
             {NAV_ITEMS.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
+                  `${NAV_LINK_BASE} ${isActive ? NAV_LINK_ACTIVE : ''}`
                 }
               >
                 {item.label}
@@ -106,17 +122,20 @@ export function Header() {
         </div>
 
         {/* ── Right: Stats + Avatar ── */}
-        <div className={styles.right}>
+        <div className="flex items-center gap-4">
           {/* Coin Balance */}
-          <div className={styles.coinBalance} title={formatCoins(coins)}>
-            <Coins size={16} className={styles.coinIcon} />
+          <div
+            className="flex items-center gap-1 whitespace-nowrap rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] px-2 py-1 animate-[coinPulse_0.3s_ease]"
+            title={formatCoins(coins)}
+          >
+            <Coins size={16} className="shrink-0 text-[var(--color-warning)]" />
             <CountUp
               key={coins}
               to={coins}
               from={0}
               duration={0.8}
               separator=","
-              className={styles.coinAmount}
+              className="font-mono text-sm font-semibold text-[var(--text-primary)]"
             />
           </div>
 
@@ -124,64 +143,67 @@ export function Header() {
           <RankBadge rank={rank} size="md" showLabel />
 
           {/* XP Progress Bar (desktop only) */}
-          <div className={styles.xpBar} title={`Level ${progress.currentLevel} — ${formatCoins(progress.xpInLevel)} / ${formatCoins(progress.xpRequiredForNext)} XP`}>
+          <div
+            className="flex cursor-help items-center gap-2 max-md:hidden"
+            title={`Level ${progress.currentLevel} — ${formatCoins(progress.xpInLevel)} / ${formatCoins(progress.xpRequiredForNext)} XP`}
+          >
             <XPBar xp={xp} variant="mini" />
           </div>
 
           {/* Streak Counter (if > 0) */}
           {streak > 0 && (
-            <div className={styles.streak}>
-              <Flame size={14} className={styles.streakIcon} />
-              <span className={styles.streakCount}>{streak}</span>
+            <div className="flex items-center gap-0.5 rounded-[var(--radius-md)] border border-[rgba(245,158,11,0.2)] bg-[rgba(245,158,11,0.1)] px-2 py-1">
+              <Flame size={14} className="shrink-0 text-[var(--color-warning)]" />
+              <span className="font-mono text-xs font-bold text-[var(--color-warning)]">{streak}</span>
             </div>
           )}
 
           {/* Avatar Dropdown */}
-          <div className={styles.avatarWrapper} ref={dropdownRef}>
+          <div className="relative max-md:hidden" ref={dropdownRef}>
             <button
-              className={styles.avatarButton}
+              className="flex cursor-pointer items-center gap-1 border-none bg-transparent p-0 text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]"
               onClick={() => setAvatarDropdownOpen(!avatarDropdownOpen)}
               aria-expanded={avatarDropdownOpen}
               aria-haspopup="true"
             >
               <div
-                className={styles.avatar}
+                className="flex size-8 items-center justify-center rounded-full font-heading text-sm font-bold text-white uppercase select-none"
                 style={{ background: rankColor }}
               >
                 {avatarLetter}
               </div>
               <ChevronDown
                 size={14}
-                className={`${styles.chevron} ${avatarDropdownOpen ? styles.chevronOpen : ''}`}
+                className={`transition-transform duration-150 ${avatarDropdownOpen ? 'rotate-180' : ''}`}
               />
             </button>
 
             {avatarDropdownOpen && (
-              <div className={styles.dropdown}>
-                <div className={styles.dropdownHeader}>
-                  <span className={styles.dropdownUsername}>{user.username}</span>
-                  <span className={styles.dropdownRank} style={{ color: rankColor }}>
+              <div className="absolute right-0 top-[calc(100%+8px)] z-[var(--z-dropdown)] w-[200px] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] animate-[headerScaleIn_0.15s_ease]">
+                <div className="flex flex-col gap-0.5 px-4 py-3">
+                  <span className="text-sm font-semibold text-[var(--text-primary)]">{user.username}</span>
+                  <span className="text-xs font-medium" style={{ color: rankColor }}>
                     {getRankLabel(rank)}
                   </span>
                 </div>
-                <div className={styles.dropdownDivider} />
+                <div className="h-px bg-[var(--border-subtle)]" />
                 <button
-                  className={styles.dropdownItem}
+                  className={DROPDOWN_ITEM_BASE}
                   onClick={() => { handleNavClick(); navigate(`/profile/${user.username}`); }}
                 >
                   <User size={14} />
                   Profile
                 </button>
                 <button
-                  className={styles.dropdownItem}
+                  className={DROPDOWN_ITEM_BASE}
                   onClick={() => { handleNavClick(); navigate('/settings'); }}
                 >
                   <Settings size={14} />
                   Settings
                 </button>
-                <div className={styles.dropdownDivider} />
+                <div className="h-px bg-[var(--border-subtle)]" />
                 <button
-                  className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
+                  className={`${DROPDOWN_ITEM_BASE} text-[var(--color-no)] hover:bg-[var(--color-no-muted)] hover:text-[var(--color-no)]`}
                   onClick={handleLogout}
                 >
                   <LogOut size={14} />
@@ -193,7 +215,7 @@ export function Header() {
 
           {/* Hamburger (mobile only) */}
           <button
-            className={styles.hamburger}
+            className="hidden size-9 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-transparent text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] max-md:flex"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
             aria-expanded={mobileMenuOpen}
@@ -206,7 +228,7 @@ export function Header() {
       {/* ── Mobile Sidebar Overlay ── */}
       {mobileMenuOpen && (
         <div
-          className={styles.mobileOverlay}
+          className="fixed inset-0 z-[calc(var(--z-sticky)+1)] bg-black/50 animate-[fadeIn_0.2s_ease] md:hidden"
           onClick={() => setMobileMenuOpen(false)}
           aria-hidden="true"
         />
@@ -214,15 +236,15 @@ export function Header() {
 
       {/* ── Mobile Sidebar ── */}
       <aside
-        className={`${styles.mobileSidebar} ${mobileMenuOpen ? styles.mobileSidebarOpen : ''}`}
+        className={`fixed inset-y-0 left-0 z-[calc(var(--z-sticky)+2)] flex w-[280px] max-w-[80vw] flex-col border-r border-[var(--border-subtle)] bg-[var(--bg-secondary)] transition-transform duration-[var(--transition-normal)] md:hidden ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
         aria-hidden={!mobileMenuOpen}
       >
-        <div className={styles.sidebarHeader}>
-          <Link to="/" className={styles.logo} onClick={handleNavClick}>
+        <div className="flex items-center justify-between border-b border-[var(--border-subtle)] p-4">
+          <Link to="/" className={LOGO_CLASS} onClick={handleNavClick}>
             Predict Arena
           </Link>
           <button
-            className={styles.sidebarClose}
+            className="flex size-8 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border-none bg-transparent text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]"
             onClick={() => setMobileMenuOpen(false)}
             aria-label="Close navigation menu"
           >
@@ -231,12 +253,12 @@ export function Header() {
         </div>
 
         {/* Mobile nav links */}
-        <nav className={styles.mobileNav}>
+        <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-2">
           <NavLink
             to="/"
             end
             className={({ isActive }) =>
-              `${styles.mobileNavLink} ${isActive ? styles.mobileNavLinkActive : ''}`
+              `${MOBILE_NAV_LINK_BASE} ${isActive ? MOBILE_NAV_LINK_ACTIVE : ''}`
             }
             onClick={handleNavClick}
           >
@@ -247,7 +269,7 @@ export function Header() {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `${styles.mobileNavLink} ${isActive ? styles.mobileNavLinkActive : ''}`
+                `${MOBILE_NAV_LINK_BASE} ${isActive ? MOBILE_NAV_LINK_ACTIVE : ''}`
               }
               onClick={handleNavClick}
             >
@@ -257,7 +279,7 @@ export function Header() {
           <NavLink
             to="/achievements"
             className={({ isActive }) =>
-              `${styles.mobileNavLink} ${isActive ? styles.mobileNavLinkActive : ''}`
+              `${MOBILE_NAV_LINK_BASE} ${isActive ? MOBILE_NAV_LINK_ACTIVE : ''}`
             }
             onClick={handleNavClick}
           >
@@ -266,16 +288,16 @@ export function Header() {
         </nav>
 
         {/* Mobile sidebar footer stats */}
-        <div className={styles.sidebarFooter}>
+        <div className="flex flex-col gap-3 border-t border-[var(--border-subtle)] p-4">
           {/* XP bar (mobile) */}
-          <div className={styles.sidebarXpRow}>
+          <div className="flex flex-col gap-1">
             <XPBar xp={xp} variant="full" />
           </div>
 
           {/* Streak (mobile) */}
           {streak > 0 && (
-            <div className={styles.sidebarRow}>
-              <Flame size={14} className={styles.streakIcon} />
+            <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+              <Flame size={14} className="shrink-0 text-[var(--color-warning)]" />
               <span>{streak}-day betting streak</span>
             </div>
           )}

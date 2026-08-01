@@ -7,7 +7,6 @@ import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 import StarBorder from '../reactbits/StarBorder/StarBorder';
 import CountUp from '../reactbits/CountUp/CountUp';
-import styles from './PredictionForm.module.css';
 
 const CONFIDENCE_OPTIONS = [
   { value: 1, label: '1x' },
@@ -74,23 +73,27 @@ export function PredictionForm({ market, onSuccess }) {
 
   if (isExpired) {
     return (
-      <div className={`${styles.card} card`}>
-        <h3 className={styles.title}>Market Closed</h3>
+      <div className="card flex flex-col gap-[var(--space-3)] rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-[var(--space-5)]">
+        <h3 className="font-heading text-lg font-semibold">Market Closed</h3>
         <p className="text-muted text-sm">This market is no longer accepting predictions.</p>
       </div>
     );
   }
 
   return (
-    <form className={styles.card} onSubmit={handleSubmit}>
-      <h3 className={styles.title}>Place Prediction</h3>
+    <form className="flex flex-col gap-[var(--space-3)] rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-[var(--space-5)]" onSubmit={handleSubmit}>
+      <h3 className="font-heading text-lg font-semibold">Place Prediction</h3>
 
-      <label className={styles.label}>Your Position</label>
-      <div className={styles.positionRow}>
+      <label className="text-xs font-medium uppercase tracking-[0.05em] text-[var(--text-muted)]">Your Position</label>
+      <div className="flex gap-[var(--space-2)]">
         <ClickSpark sparkColor="#22c55e" className="relative flex-1">
           <button
             type="button"
-            className={`${styles.posBtn} w-full ${position === 'yes' ? styles.posYesActive : styles.posYes}`}
+            className={`flex w-full flex-1 cursor-pointer items-center justify-center gap-[var(--space-2)] rounded-[var(--radius-md)] px-[var(--space-4)] py-[var(--space-3)] font-heading text-base font-bold transition-all duration-[var(--transition-fast)] hover:bg-[rgba(34,197,94,0.25)] ${
+              position === 'yes'
+                ? 'border border-[var(--color-yes)] bg-[var(--color-yes)] text-white'
+                : 'border border-[var(--color-yes-border)] bg-[var(--color-yes-muted)] text-[var(--color-yes)]'
+            }`}
             onClick={() => setPosition('yes')}
           >
             YES {market.yes_price != null && `${Math.round(market.yes_price * 100)}c`}
@@ -99,7 +102,11 @@ export function PredictionForm({ market, onSuccess }) {
         <ClickSpark sparkColor="#ef4444" className="relative flex-1">
           <button
             type="button"
-            className={`${styles.posBtn} w-full ${position === 'no' ? styles.posNoActive : styles.posNo}`}
+            className={`flex w-full flex-1 cursor-pointer items-center justify-center gap-[var(--space-2)] rounded-[var(--radius-md)] px-[var(--space-4)] py-[var(--space-3)] font-heading text-base font-bold transition-all duration-[var(--transition-fast)] hover:bg-[rgba(239,68,68,0.25)] ${
+              position === 'no'
+                ? 'border border-[var(--color-no)] bg-[var(--color-no)] text-white'
+                : 'border border-[var(--color-no-border)] bg-[var(--color-no-muted)] text-[var(--color-no)]'
+            }`}
             onClick={() => setPosition('no')}
           >
             NO {market.no_price != null && `${Math.round(market.no_price * 100)}c`}
@@ -107,11 +114,11 @@ export function PredictionForm({ market, onSuccess }) {
         </ClickSpark>
       </div>
 
-      <label className={styles.label}>Amount (coins)</label>
-      <div className={styles.inputWrap}>
-        <span className={styles.inputPrefix}>🪙</span>
+      <label className="text-xs font-medium uppercase tracking-[0.05em] text-[var(--text-muted)]">Amount (coins)</label>
+      <div className="flex items-center gap-[var(--space-2)] rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-input)] px-[var(--space-3)] focus-within:border-[var(--border-focus)] focus-within:shadow-[0_0_0_3px_rgba(79,125,245,0.15)]">
+        <span className="text-sm leading-none">🪙</span>
         <input
-          className={styles.input}
+          className="flex-1 bg-transparent py-[var(--space-3)] font-mono text-base text-[var(--text-primary)] outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           type="number"
           min={10}
           max={10000}
@@ -121,10 +128,10 @@ export function PredictionForm({ market, onSuccess }) {
         />
       </div>
       {numAmount > 0 && numAmount < 10 && (
-        <p className={styles.error}>Minimum: 10 coins</p>
+        <p className="text-xs text-[var(--color-no)]">Minimum: 10 coins</p>
       )}
 
-      <label className={styles.label}>Confidence</label>
+      <label className="text-xs font-medium uppercase tracking-[0.05em] text-[var(--text-muted)]">Confidence</label>
       <ToggleGroup
         type="single"
         value={String(confidence)}
@@ -142,37 +149,37 @@ export function PredictionForm({ market, onSuccess }) {
           </ToggleGroupItem>
         ))}
       </ToggleGroup>
-      <p className={styles.hint}>Max spend: {formatCoins(totalCost)} coins</p>
+      <p className="text-right font-mono text-xs text-[var(--text-muted)]">Max spend: {formatCoins(totalCost)} coins</p>
 
       {position && numAmount >= 10 && (
-        <div className={styles.preview}>
-          <div className={styles.previewRow}>
-            <span className={styles.previewLabel}>You receive</span>
-            <span className={styles.previewValue}>
+        <div className="flex flex-col gap-[var(--space-2)] rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] p-[var(--space-3)]">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-[var(--text-muted)]">You receive</span>
+            <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">
               ~<CountUp to={projectedShares} from={0} duration={0.4} /> shares
             </span>
           </div>
-          <div className={styles.previewRow}>
-            <span className={styles.previewLabel}>Total cost</span>
-            <span className={styles.previewValue}>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-[var(--text-muted)]">Total cost</span>
+            <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">
               <CountUp to={totalCost} from={0} duration={0.4} /> coins
             </span>
           </div>
-          <div className={styles.previewRow}>
-            <span className={styles.previewLabel}>Entry price</span>
-            <span className={styles.previewValue}>~{Math.round(currentPrice * 100)}c</span>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-[var(--text-muted)]">Entry price</span>
+            <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">~{Math.round(currentPrice * 100)}c</span>
           </div>
         </div>
       )}
 
       {!hasEnoughCoins && numAmount > 0 && (
-        <p className={styles.error}>
+        <p className="text-xs text-[var(--color-no)]">
           Insufficient coins. You have {formatCoins(user?.coins || 0)}.
         </p>
       )}
 
       {mutationError && (
-        <p className={styles.error}>{mutationError.message}</p>
+        <p className="text-xs text-[var(--color-no)]">{mutationError.message}</p>
       )}
 
       <ClickSpark
@@ -185,7 +192,7 @@ export function PredictionForm({ market, onSuccess }) {
           color="#4f7df5"
           speed="6s"
           className="w-full rounded-[var(--radius-md)]"
-          contentClassName={`${styles.submitBtn} ${isValid && !isPending ? 'btn-primary' : ''}`}
+          contentClassName={`w-full justify-center mt-[var(--space-1)] ${isValid && !isPending ? 'btn-primary' : ''}`}
           disabled={!isValid || isPending}
         >
           {isPending

@@ -9,7 +9,6 @@ import { Tabs } from '../components/ui/Tabs';
 import { Skeleton } from '../components/ui/Skeleton';
 import { supabase } from '../config/supabase';
 import { useQuery } from '@tanstack/react-query';
-import styles from './Community.module.css';
 
 const TABS = [
   { id: 'live', label: 'Live Markets' },
@@ -102,24 +101,24 @@ export default function Community() {
   });
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
+    <div className="mx-auto flex w-full max-w-[900px] flex-col gap-5 p-4 md:p-6">
+      <div className="flex flex-col items-start justify-between gap-4 md:flex-row">
         <div>
           <h1 className="text-2xl font-heading">Community Markets</h1>
-          <p className={styles.subtitle}>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
             Propose and vote on community-driven prediction markets
           </p>
         </div>
         {canPropose ? (
           <button
-            className={styles.proposeBtn}
+            className="flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-[var(--radius-md)] bg-[var(--accent-blue)] px-5 py-3 text-sm font-semibold text-white transition-all duration-150 hover:-translate-y-px hover:bg-[var(--accent-blue-hover)]"
             onClick={() => setShowPropose(true)}
           >
             <Plus size={16} />
             Propose a Market
           </button>
         ) : (
-          <div className={styles.levelLock}>
+          <div className="flex items-center gap-1 whitespace-nowrap rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] px-3 py-2 text-xs text-[var(--text-muted)]">
             <Lock size={14} />
             <span>Level 3+</span>
           </div>
@@ -127,7 +126,7 @@ export default function Community() {
       </div>
 
       {!canVote && (
-        <div className={styles.voteLocked}>
+        <div className="flex items-center gap-2 rounded-[var(--radius-md)] border border-[rgba(245,158,11,0.2)] bg-[rgba(245,158,11,0.1)] px-3 py-3 text-sm text-[var(--color-warning)]">
           <Lock size={16} />
           <span>Reach Level 3 to vote on proposals</span>
         </div>
@@ -136,29 +135,29 @@ export default function Community() {
       <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
       {activeTab === 'live' && (
-        <div className={styles.content}>
+        <div className="flex flex-col">
           {marketsLoading ? (
-            <div className={styles.grid}>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {Array.from({ length: 3 }).map((_, i) => (
                 <Skeleton key={i} variant="card" />
               ))}
             </div>
           ) : markets && markets.length > 0 ? (
-            <div className={styles.grid}>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {markets.map((market) => (
                 <MarketCard key={market.id} market={market} />
               ))}
             </div>
           ) : (
-            <div className={styles.empty}>
-              <BarChart3 size={32} className={styles.emptyIcon} />
-              <h3 className={styles.emptyTitle}>No community markets yet</h3>
-              <p className={styles.emptyText}>
+            <div className="flex flex-col items-center gap-3 p-12 text-center">
+              <BarChart3 size={32} className="opacity-50 text-[var(--text-muted)]" />
+              <h3 className="text-lg text-[var(--text-primary)]">No community markets yet</h3>
+              <p className="max-w-[400px] text-sm text-[var(--text-muted)]">
                 Approved proposals will appear here as live markets.
               </p>
               {canPropose && (
                 <button
-                  className={styles.emptyBtn}
+                  className="mt-2 flex cursor-pointer items-center gap-2 rounded-[var(--radius-md)] bg-[var(--accent-blue)] px-5 py-3 text-sm font-semibold text-white transition-colors duration-150 hover:bg-[var(--accent-blue-hover)]"
                   onClick={() => setShowPropose(true)}
                 >
                   <Plus size={16} />
@@ -171,29 +170,29 @@ export default function Community() {
       )}
 
       {activeTab === 'pending' && (
-        <div className={styles.content}>
+        <div className="flex flex-col">
           {proposalsLoading ? (
-            <div className={styles.list}>
+            <div className="flex flex-col gap-3">
               {Array.from({ length: 3 }).map((_, i) => (
                 <Skeleton key={i} variant="rect" />
               ))}
             </div>
           ) : proposals && proposals.length > 0 ? (
-            <div className={styles.list}>
+            <div className="flex flex-col gap-3">
               {proposals.map((proposal) => (
                 <ProposalCard key={proposal.id} proposal={proposal} />
               ))}
             </div>
           ) : (
-            <div className={styles.empty}>
-              <FileText size={32} className={styles.emptyIcon} />
-              <h3 className={styles.emptyTitle}>No pending proposals</h3>
-              <p className={styles.emptyText}>
+            <div className="flex flex-col items-center gap-3 p-12 text-center">
+              <FileText size={32} className="opacity-50 text-[var(--text-muted)]" />
+              <h3 className="text-lg text-[var(--text-primary)]">No pending proposals</h3>
+              <p className="max-w-[400px] text-sm text-[var(--text-muted)]">
                 Be the first to propose a community market.
               </p>
               {canPropose && (
                 <button
-                  className={styles.emptyBtn}
+                  className="mt-2 flex cursor-pointer items-center gap-2 rounded-[var(--radius-md)] bg-[var(--accent-blue)] px-5 py-3 text-sm font-semibold text-white transition-colors duration-150 hover:bg-[var(--accent-blue-hover)]"
                   onClick={() => setShowPropose(true)}
                 >
                   <Plus size={16} />

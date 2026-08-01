@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import DecryptedText from '../reactbits/DecryptedText/DecryptedText';
-import styles from './MarketStatus.module.css';
 
 const statusColors = {
   open: { bg: 'rgba(34, 197, 94, 0.15)', color: '#22c55e' },
@@ -19,15 +18,15 @@ export function MarketStatus({ status }) {
   if (status === 'resolved') {
     return (
       <span
-        className={styles.badge}
+        className="inline-flex items-center rounded-[var(--radius-full)] px-[10px] py-[3px] text-xs font-semibold capitalize whitespace-nowrap"
         style={{ background: colors.bg, color: colors.color }}
       >
         <DecryptedText
           text="resolved"
           speed={60}
           animateOn="view"
-          className={styles.badgeText}
-          encryptedClassName={styles.badgeText}
+          className="text-xs font-semibold capitalize"
+          encryptedClassName="text-xs font-semibold capitalize"
         />
       </span>
     );
@@ -35,7 +34,7 @@ export function MarketStatus({ status }) {
 
   return (
     <span
-      className={styles.badge}
+      className="inline-flex items-center rounded-[var(--radius-full)] px-[10px] py-[3px] text-xs font-semibold capitalize whitespace-nowrap"
       style={{ background: colors.bg, color: colors.color }}
     >
       {status}

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { createChart } from 'lightweight-charts';
-import styles from './PriceChart.module.css';
 
 const RANGES = [
   { label: '1H', ms: 60 * 60 * 1000 },
@@ -112,31 +111,35 @@ export function PriceChart({ priceHistory = [], yesPrice, noPrice }) {
 
   if (!priceHistory.length) {
     return (
-      <div className={styles.wrapper}>
-        <div className={styles.empty}>
-          <p className={styles.emptyText}>No trades yet. Prices start at 50/50.</p>
+      <div className="flex flex-col gap-[var(--space-3)] rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-[var(--space-4)]">
+        <div className="flex h-[300px] items-center justify-center rounded-[var(--radius-md)] bg-[var(--bg-tertiary)]">
+          <p className="text-sm text-[var(--text-muted)]">No trades yet. Prices start at 50/50.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.wrapper}>
-      <div ref={chartContainerRef} className={styles.chart} />
-      <div className={styles.toolbar}>
+    <div className="flex flex-col gap-[var(--space-3)] rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-[var(--space-4)]">
+      <div ref={chartContainerRef} className="h-[300px] w-full" />
+      <div className="flex gap-[var(--space-2)]">
         {RANGES.map((r) => (
           <button
             key={r.label}
-            className={`${styles.rangeBtn} ${range === r.label ? styles.activeRange : ''}`}
+            className={`cursor-pointer rounded-[var(--radius-sm)] border px-[var(--space-3)] py-[var(--space-1)] text-xs font-semibold transition-all duration-[var(--transition-fast)] ${
+              range === r.label
+                ? 'border-[var(--accent-blue)] bg-[var(--accent-blue-muted)] text-[var(--accent-blue)]'
+                : 'border-[var(--border-subtle)] bg-transparent text-[var(--text-secondary)] hover:border-[var(--text-muted)] hover:text-[var(--text-primary)]'
+            }`}
             onClick={() => setRange(r.label)}
           >
             {r.label}
           </button>
         ))}
       </div>
-      <div className={styles.prices}>
-        <span className={styles.priceYes}>YES {Math.round((yesPrice || 0.5) * 100)}c</span>
-        <span className={styles.priceNo}>NO {Math.round((noPrice || 0.5) * 100)}c</span>
+      <div className="flex justify-between font-mono text-sm font-bold">
+        <span className="text-[var(--color-yes)]">YES {Math.round((yesPrice || 0.5) * 100)}c</span>
+        <span className="text-[var(--color-no)]">NO {Math.round((noPrice || 0.5) * 100)}c</span>
       </div>
     </div>
   );

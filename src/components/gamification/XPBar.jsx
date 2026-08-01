@@ -1,6 +1,5 @@
 import { xpProgress } from '../../lib/levels';
 import { formatXP } from '../../lib/format';
-import styles from './XPBar.module.css';
 
 export function XPBar({ xp, level, variant = 'full' }) {
   const progress = xpProgress(xp);
@@ -8,23 +7,23 @@ export function XPBar({ xp, level, variant = 'full' }) {
   const pct = Math.round(progress.progress * 100);
 
   return (
-    <div className={`${styles.bar} ${styles[variant]}`}>
+    <div className={`flex items-center gap-2 ${variant === 'full' ? 'flex-col items-stretch gap-1' : 'flex-row'}`}>
       {variant === 'full' && (
-        <div className={styles.header}>
-          <span className={styles.level}>Level {currentLevel}</span>
-          <span className={styles.progressText}>
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold text-[var(--text-muted)]">Level {currentLevel}</span>
+          <span className="font-mono text-xs text-[var(--text-muted)]">
             {formatXP(progress.xpInLevel)} / {formatXP(progress.xpRequiredForNext)} XP
           </span>
         </div>
       )}
-      <div className={styles.track}>
+      <div className={`h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg-tertiary)] ${variant === 'mini' ? 'h-1 w-[60px]' : ''}`}>
         <div
-          className={styles.fill}
+          className="h-full rounded-full bg-[var(--accent-blue)] transition-[width] duration-[var(--transition-normal)] ease"
           style={{ width: `${pct}%` }}
         />
       </div>
       {variant === 'mini' && (
-        <span className={styles.miniLevel}>Lv.{currentLevel}</span>
+        <span className="text-xs font-semibold whitespace-nowrap text-[var(--text-muted)]">Lv.{currentLevel}</span>
       )}
     </div>
   );

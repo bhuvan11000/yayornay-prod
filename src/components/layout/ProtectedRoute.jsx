@@ -1,7 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { PageSkeleton } from '../ui/Skeleton';
-import styles from './ProtectedRoute.module.css';
 
 /**
  * ProtectedRoute — Auth guard wrapper.
@@ -15,7 +14,7 @@ export function ProtectedRoute({ children }) {
 
   if (loading) {
     return (
-      <div className={styles.wrapper}>
+      <div className="flex min-h-screen flex-col">
         <PageSkeleton />
       </div>
     );
