@@ -16,6 +16,7 @@ import { getRankColor, getRankLabel } from '../../lib/ranks';
 import { xpProgress } from '../../lib/levels';
 import { RankBadge } from '../gamification/RankBadge';
 import { XPBar } from '../gamification/XPBar';
+import CountUp from '../reactbits/CountUp/CountUp';
 import styles from './Header.module.css';
 
 /**
@@ -107,9 +108,16 @@ export function Header() {
         {/* ── Right: Stats + Avatar ── */}
         <div className={styles.right}>
           {/* Coin Balance */}
-          <div className={styles.coinBalance}>
+          <div className={styles.coinBalance} title={formatCoins(coins)}>
             <Coins size={16} className={styles.coinIcon} />
-            <span className={styles.coinAmount}>{formatCoins(coins)}</span>
+            <CountUp
+              key={coins}
+              to={coins}
+              from={0}
+              duration={0.8}
+              separator=","
+              className={styles.coinAmount}
+            />
           </div>
 
           {/* Rank Badge */}

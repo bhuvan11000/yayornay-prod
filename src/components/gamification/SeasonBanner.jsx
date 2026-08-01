@@ -5,6 +5,7 @@ import { useSeasons } from '../../hooks/useSeasons';
 import { getRankColor } from '../../lib/ranks';
 import { useAuthStore } from '../../stores/authStore';
 import { supabase } from '../../config/supabase';
+import ShinyText from '../reactbits/ShinyText/ShinyText';
 import styles from './SeasonBanner.module.css';
 
 export function SeasonBanner() {
@@ -73,7 +74,13 @@ export function SeasonBanner() {
         >
           <div className={styles.left}>
             <Calendar size={14} className={styles.icon} />
-            <span className={styles.title}>Season {season.season_number}</span>
+            <ShinyText
+              text={`Season ${season.season_number}`}
+              speed={3}
+              className={styles.title}
+              color="#9aa0b0"
+              shineColor="#ffffff"
+            />
             <span className={styles.countdown}>
               {remainingDays > 0
                 ? `${remainingDays} day${remainingDays !== 1 ? 's' : ''} remaining`

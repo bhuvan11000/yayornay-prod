@@ -7,6 +7,7 @@ import { RankBadge } from '../components/gamification/RankBadge';
 import { AchievementCard } from '../components/gamification/AchievementCard';
 import { Tabs } from '../components/ui/Tabs';
 import { Skeleton } from '../components/ui/Skeleton';
+import CountUp from '../components/reactbits/CountUp/CountUp';
 import { formatCoins, formatDate, formatPercent } from '../lib/format';
 import { getRankColor } from '../lib/ranks';
 import styles from './Profile.module.css';
@@ -107,17 +108,17 @@ export default function Profile() {
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
             <Coins size={18} className={styles.coinIcon} />
-            <span className={styles.statValue}>{formatCoins(profile.coins)}</span>
+            <CountUp to={profile.coins || 0} from={0} duration={0.8} separator="," className={styles.statValue} />
             <span className={styles.statLabel}>Coins</span>
           </div>
           <div className={styles.statCard}>
             <Target size={18} className={styles.targetIcon} />
-            <span className={styles.statValue}>{formatPercent(accuracy)}</span>
-            <span className={styles.statLabel}>Accuracy</span>
+            <CountUp to={Math.round(accuracy * 100)} from={0} duration={0.8} className={styles.statValue} />
+            <span className={styles.statLabel}>Accuracy %</span>
           </div>
           <div className={styles.statCard}>
             <BarChart3 size={18} className={styles.chartIcon} />
-            <span className={styles.statValue}>{profile.total_predictions || 0}</span>
+            <CountUp to={profile.total_predictions || 0} from={0} duration={0.8} className={styles.statValue} />
             <span className={styles.statLabel}>Total Predictions</span>
           </div>
           <div className={styles.statCard}>

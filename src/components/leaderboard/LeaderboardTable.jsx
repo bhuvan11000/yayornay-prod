@@ -1,11 +1,18 @@
 import { PlayerRow } from './PlayerRow';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+} from '../ui/table';
 import styles from './LeaderboardTable.module.css';
 
 const COLUMN_HEADERS = {
-  coins: ['#', 'Player', 'Rank', 'Coins'],
-  accuracy: ['#', 'Player', 'Rank', 'Accuracy', 'Bets'],
-  profit: ['#', 'Player', 'Rank', 'Net Profit'],
-  streak: ['#', 'Player', 'Rank', 'Streak', 'Longest'],
+  coins: ['Coins'],
+  accuracy: ['Accuracy', 'Bets'],
+  profit: ['Net Profit'],
+  streak: ['Streak', 'Longest'],
 };
 
 const PAGE_SIZE = 50;
@@ -21,15 +28,32 @@ export function LeaderboardTable({ players, metric, currentUserId, page, totalPa
 
   return (
     <div className={styles.table}>
-      {players.map((player, i) => (
-        <PlayerRow
-          key={player.id}
-          player={player}
-          rank={(page - 1) * PAGE_SIZE + i + 1}
-          metric={metric}
-          isCurrentUser={player.id === currentUserId}
-        />
-      ))}
+      <Table className="border-[var(--border-subtle)] text-[var(--text-primary)]">
+        <TableHeader>
+          <TableRow className="border-[var(--border-subtle)] hover:bg-transparent">
+            <TableHead className="text-[var(--text-muted)]">#</TableHead>
+            <TableHead className="text-[var(--text-muted)]">Player</TableHead>
+            <TableHead className="text-[var(--text-muted)]">Rank</TableHead>
+            {COLUMN_HEADERS[metric].map((h) => (
+              <TableHead key={h} className="text-right text-[var(--text-muted)]">
+                {h}
+              </TableHead>
+            ))}
+            <TableHead className="text-right text-[var(--text-muted)]">Lv.</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {players.map((player, i) => (
+            <PlayerRow
+              key={player.id}
+              player={player}
+              rank={(page - 1) * PAGE_SIZE + i + 1}
+              metric={metric}
+              isCurrentUser={player.id === currentUserId}
+            />
+          ))}
+        </TableBody>
+      </Table>
 
       {totalPages > 1 && (
         <div className={styles.pagination}>

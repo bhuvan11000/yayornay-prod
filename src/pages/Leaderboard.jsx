@@ -5,6 +5,7 @@ import { useLeaderboard } from '../hooks/useLeaderboard';
 import { LeaderboardTable } from '../components/leaderboard/LeaderboardTable';
 import { Tabs } from '../components/ui/Tabs';
 import { Skeleton } from '../components/ui/Skeleton';
+import CountUp from '../components/reactbits/CountUp/CountUp';
 import { formatCoins, formatDate } from '../lib/format';
 import { getRankLabel } from '../lib/ranks';
 import styles from './Leaderboard.module.css';
@@ -100,7 +101,7 @@ export default function Leaderboard() {
               {getRankLabel(user.rank || 'Unranked')}
             </span>
             <span className={styles.summaryStat}>
-              {formatCoins(user.coins || 0)} coins
+              <CountUp to={user.coins || 0} from={0} duration={0.8} separator="," /> coins
             </span>
           </div>
           {!userOnCurrentPage && totalPages > 1 && (

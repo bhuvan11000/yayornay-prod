@@ -2,6 +2,7 @@ import { ThumbsUp, ThumbsDown } from 'lucide-react';
 import { useVote } from '../../hooks/useVote';
 import { useAuthStore } from '../../stores/authStore';
 import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
+import CountUp from '../reactbits/CountUp/CountUp';
 import styles from './VoteButton.module.css';
 
 export function VoteButton({ proposal, userVote }) {
@@ -35,7 +36,7 @@ export function VoteButton({ proposal, userVote }) {
           title={getTitle()}
         >
           <ThumbsUp size={16} />
-          <span>{proposal.upvotes || 0}</span>
+          <CountUp key={proposal.upvotes || 0} to={proposal.upvotes || 0} from={0} duration={0.6} />
         </button>
       </ClickSpark>
       <ClickSpark sparkColor="#ef4444" className="relative inline-flex">
@@ -46,7 +47,7 @@ export function VoteButton({ proposal, userVote }) {
           title={getTitle()}
         >
           <ThumbsDown size={16} />
-          <span>{proposal.downvotes || 0}</span>
+          <CountUp key={proposal.downvotes || 0} to={proposal.downvotes || 0} from={0} duration={0.6} />
         </button>
       </ClickSpark>
     </div>

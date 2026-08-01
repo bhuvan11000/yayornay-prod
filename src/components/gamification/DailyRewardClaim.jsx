@@ -3,6 +3,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { getRankColor, getRankLabel } from '../../lib/ranks';
 import { formatCoins } from '../../lib/format';
 import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
+import StarBorder from '../reactbits/StarBorder/StarBorder';
 import styles from './DailyRewardClaim.module.css';
 
 export function DailyRewardClaim({ onClaim, claiming }) {
@@ -61,13 +62,17 @@ export function DailyRewardClaim({ onClaim, claiming }) {
           <span className={styles.xpAmount}>+{xp} XP</span>
         </div>
         <ClickSpark sparkColor="#fbbf24" className="relative inline-flex">
-          <button
-            className={styles.claimButton}
+          <StarBorder
+            as="button"
+            color="#22c55e"
+            speed="5s"
+            className="rounded-[var(--radius-md)]"
+            contentClassName={styles.claimButton}
             onClick={onClaim}
             disabled={claiming}
           >
             {claiming ? 'Claiming...' : 'Claim Daily Reward'}
-          </button>
+          </StarBorder>
         </ClickSpark>
       </div>
       <div className={styles.sparkleContainer}>

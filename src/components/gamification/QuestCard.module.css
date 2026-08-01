@@ -75,6 +75,15 @@
   gap: var(--space-3);
 }
 
+.progressSection [data-slot="progress-indicator"] {
+  background: var(--accent-blue);
+  border-radius: var(--radius-full);
+}
+
+.progressSection [data-slot-complete="true"] [data-slot="progress-indicator"] {
+  background: var(--color-yes);
+}
+
 .progressTrack {
   flex: 1;
   height: 8px;

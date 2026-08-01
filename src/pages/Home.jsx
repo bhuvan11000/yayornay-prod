@@ -11,6 +11,7 @@ import { StreakCounter } from '../components/gamification/StreakCounter';
 import { SeasonBanner } from '../components/gamification/SeasonBanner';
 import { RankBadge } from '../components/gamification/RankBadge';
 import { XPBar } from '../components/gamification/XPBar';
+import CountUp from '../components/reactbits/CountUp/CountUp';
 import { formatCoins } from '../lib/format';
 import styles from './Home.module.css';
 
@@ -45,7 +46,7 @@ export default function Home() {
         <div className={styles.statsRow}>
           <div className={styles.statCard}>
             <Coins size={18} className={styles.coinIcon} />
-            <span className={styles.statValue}>{formatCoins(user.coins)}</span>
+            <CountUp to={user.coins || 0} from={0} duration={0.8} separator="," className={styles.statValue} />
             <span className={styles.statLabel}>Coins</span>
           </div>
           <div className={styles.statCard}>

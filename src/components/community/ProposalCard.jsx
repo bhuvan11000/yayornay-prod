@@ -4,6 +4,7 @@ import { RankBadge } from '../gamification/RankBadge';
 import { VoteButton } from './VoteButton';
 import { formatTimeRemaining, formatCoins } from '../../lib/format';
 import { useAuthStore } from '../../stores/authStore';
+import SpotlightCard from '../reactbits/SpotlightCard/SpotlightCard';
 import styles from './ProposalCard.module.css';
 
 export function ProposalCard({ proposal }) {
@@ -14,7 +15,7 @@ export function ProposalCard({ proposal }) {
   const progress = Math.min((proposal.upvotes || 0) / 15, 1);
 
   return (
-    <div className={styles.card}>
+    <SpotlightCard spotlightColor="rgba(168, 85, 247, 0.15)" className={styles.card}>
       <div className={styles.top}>
         <CategoryTag category={proposal.category} />
         {proposal.status === 'pending' && (
@@ -64,6 +65,6 @@ export function ProposalCard({ proposal }) {
         </div>
         <VoteButton proposal={proposal} userVote={userVote} />
       </div>
-    </div>
+    </SpotlightCard>
   );
 }

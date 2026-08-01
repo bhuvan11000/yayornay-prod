@@ -1,13 +1,26 @@
+import { useEffect, useState } from 'react';
 import { CheckCircle, Clock } from 'lucide-react';
 import { formatCoins, formatTimeRemaining } from '../../lib/format';
+import { Progress } from '../ui/progress';
+import SpotlightCard from '../reactbits/SpotlightCard/SpotlightCard';
 import styles from './QuestCard.module.css';
 
 export function QuestCard({ quest, onComplete }) {
   const { title, description, target, xp_reward, coin_reward, progress, completed, reset_at } = quest;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
   const pct = target > 0 ? Math.min(Math.round((progress / target) * 100), 100) : 0;
 
   return (
-    <div className={`${styles.card} ${completed ? styles.completed : ''}`}>
+    <SpotlightCard
+      spotlightColor="rgba(245, 158, 11, 0.15)"
+      className={`${styles.card} ${completed ? styles.completed : ''}`}
+    >
       <div className={styles.body}>
         <div className={styles.headerRow}>
           <div className={styles.titleGroup}>
@@ -23,12 +36,11 @@ export function QuestCard({ quest, onComplete }) {
         </div>
 
         <div className={styles.progressSection}>
-          <div className={styles.progressTrack}>
-            <div
-              className={`${styles.progressFill} ${completed ? styles.progressComplete : ''}`}
-              style={{ width: `${completed ? 100 : pct}%` }}
-            />
-          </div>
+          <Progress
+            value={mounted ? (completed ? 100 : pct) : 0}
+            className="h-2 bg-[var(--bg-tertiary)]"
+            data-slot-complete={completed ? 'true' : undefined}
+          />
           <span className={styles.progressText}>
             {Math.min(progress, target)}/{target}
           </span>
@@ -47,6 +59,6 @@ export function QuestCard({ quest, onComplete }) {
           )}
         </div>
       </div>
-    </div>
+    </SpotlightCard>
   );
 }

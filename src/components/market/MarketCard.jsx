@@ -1,24 +1,25 @@
 import { useNavigate } from 'react-router';
-import { motion } from 'framer-motion';
 import { CategoryTag } from '../ui/CategoryTag';
 import { MarketStatus } from './MarketStatus';
 import { PriceBar } from './PriceBar';
 import { RankBadge } from '../gamification/RankBadge';
 import { formatTimeRemaining, formatCoins, pluralize, formatSource } from '../../lib/format';
+import SpotlightCard from '../reactbits/SpotlightCard/SpotlightCard';
 import styles from './MarketCard.module.css';
 
 export function MarketCard({ market }) {
   const navigate = useNavigate();
 
+  const open = () => navigate(`/markets/${market.id}`);
+
   return (
-    <motion.article
+    <SpotlightCard
+      spotlightColor="rgba(79, 125, 245, 0.18)"
       className={styles.card}
-      onClick={() => navigate(`/markets/${market.id}`)}
+      onClick={open}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/markets/${market.id}`); }}
-      whileHover={{ scale: 1.02, boxShadow: '0 8px 25px rgba(0,0,0,0.3)' }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      onKeyDown={(e) => { if (e.key === 'Enter') open(); }}
     >
       <h3 className={styles.title}>{market.title}</h3>
 
@@ -48,6 +49,6 @@ export function MarketCard({ market }) {
         </span>
         <MarketStatus status={market.status} />
       </div>
-    </motion.article>
+    </SpotlightCard>
   );
 }

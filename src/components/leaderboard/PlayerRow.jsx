@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router';
 import { RankBadge } from '../gamification/RankBadge';
 import { getRank } from '../../lib/ranks';
 import { formatCoins, formatPercent } from '../../lib/format';
+import { TableRow, TableCell } from '../ui/table';
 import styles from './PlayerRow.module.css';
 
 const MEDAL_COLORS = {
@@ -50,16 +51,18 @@ export function PlayerRow({ player, rank, metric, isCurrentUser }) {
     return null;
   };
 
+  const secondary = getSecondaryValue();
+
   return (
-    <div
-      className={`${styles.row} ${isCurrentUser ? styles.currentUser : ''}`}
+    <TableRow
+      className={`${styles.row} ${isCurrentUser ? styles.currentUser : ''} border-[var(--border-subtle)]`}
       data-current-user={isCurrentUser ? 'true' : undefined}
       onClick={() => navigate(`/profile/${player.username}`)}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/profile/${player.username}`); }}
     >
-      <div className={styles.rankCell}>
+      <TableCell className={styles.rankCell}>
         {medal ? (
           <span className={styles.medal} style={{ background: medal.bg }}>
             {medal.label}
@@ -67,27 +70,37 @@ export function PlayerRow({ player, rank, metric, isCurrentUser }) {
         ) : (
           <span className={styles.rankNum}>#{rank}</span>
         )}
-      </div>
+      </TableCell>
 
-      <div className={styles.avatar} style={{ background: isCurrentUser ? 'var(--accent-blue)' : 'var(--bg-tertiary)' }}>
-        {(player.username || '?').charAt(0).toUpperCase()}
-      </div>
+      <TableCell className={styles.avatarCell}>
+        <span
+          className={styles.avatar}
+          style={{ background: isCurrentUser ? 'var(--accent-blue)' : 'var(--bg-tertiary)' }}
+        >
+          {(player.username || '?').charAt(0).toUpperCase()}
+        </span>
+      </TableCell>
 
-      <div className={styles.info}>
+      <TableCell className={styles.info}>
         <span className={styles.name}>{player.username}</span>
         <RankBadge rank={playerRank} size="sm" showLabel />
-      </div>
+      </TableCell>
 
-      <div className={styles.metrics}>
+      <TableCell className="text-right">
         <span className={`${styles.mainValue} ${getMetricClass()}`}>
           {getMetricValue()}
         </span>
-        {getSecondaryValue() && (
-          <span className={styles.secondaryValue}>{getSecondaryValue()}</span>
-        )}
-      </div>
+      </TableCell>
 
-      <span className={styles.level}>Lv.{player.level || 1}</span>
-    </div>
+      {secondary && (
+        <TableCell className="text-right text-[var(--text-muted)]">
+          <span className="font-mono text-xs">{secondary}</span>
+        </TableCell>
+      )}
+
+      <TableCell className="text-right">
+        <span className={styles.level}>Lv.{player.level || 1}</span>
+      </TableCell>
+    </TableRow>
   );
 }
