@@ -5,6 +5,7 @@ import { supabase, isSupabaseConfigured } from '../config/supabase';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import ClickSpark from '../components/reactbits/ClickSpark/ClickSpark';
 import styles from './Auth.module.css';
 
 /**
@@ -137,15 +138,20 @@ export default function Auth() {
             <div className={styles.error}>{error}</div>
           )}
 
-          <Button
-            variant="primary"
-            size="lg"
-            loading={loading}
-            disabled={!configured}
-            className={styles.submitButton}
+          <ClickSpark
+            sparkColor="#4f7df5"
+            className="relative w-full"
           >
-            {tab === 'login' ? 'Sign In' : 'Sign Up'}
-          </Button>
+            <Button
+              variant="primary"
+              size="lg"
+              loading={loading}
+              disabled={!configured}
+              className={`${styles.submitButton} w-full`}
+            >
+              {tab === 'login' ? 'Sign In' : 'Sign Up'}
+            </Button>
+          </ClickSpark>
         </form>
 
         {!configured && (

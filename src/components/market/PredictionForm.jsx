@@ -3,6 +3,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { usePredict } from '../../hooks/usePredict';
 import { calculateShares, getPrice } from '../../lib/amm';
 import { formatCoins } from '../../lib/format';
+import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 import styles from './PredictionForm.module.css';
 
 const CONFIDENCE_OPTIONS = [
@@ -148,17 +149,22 @@ export function PredictionForm({ market, onSuccess }) {
         <p className={styles.error}>{mutationError.message}</p>
       )}
 
-      <button
-        type="submit"
-        className={`btn-primary ${styles.submitBtn}`}
-        disabled={!isValid || isPending}
+      <ClickSpark
+        sparkColor="#4f7df5"
+        className="relative inline-flex w-full"
       >
-        {isPending
-          ? 'Placing...'
-          : position
-            ? `Predict ${position.toUpperCase()}`
-            : 'Select a Position'}
-      </button>
+        <button
+          type="submit"
+          className={`btn-primary ${styles.submitBtn} w-full`}
+          disabled={!isValid || isPending}
+        >
+          {isPending
+            ? 'Placing...'
+            : position
+              ? `Predict ${position.toUpperCase()}`
+              : 'Select a Position'}
+        </button>
+      </ClickSpark>
     </form>
   );
 }

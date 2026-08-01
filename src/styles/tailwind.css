@@ -225,6 +225,13 @@
     line-height: 1.2;
   }
 
+  /* Tailwind preflight resets heading sizes to inherit; restore a
+     sensible scale for bare headings (Phase 1 §5.2 preflight pass). */
+  h1 { font-size: var(--text-2xl); }
+  h2 { font-size: var(--text-xl); }
+  h3 { font-size: var(--text-lg); }
+  h4, h5, h6 { font-size: var(--text-base); }
+
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;

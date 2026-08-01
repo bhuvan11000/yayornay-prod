@@ -2,6 +2,7 @@ import { Gift, Lock, Sun } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { getRankColor, getRankLabel } from '../../lib/ranks';
 import { formatCoins } from '../../lib/format';
+import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 import styles from './DailyRewardClaim.module.css';
 
 export function DailyRewardClaim({ onClaim, claiming }) {
@@ -59,13 +60,15 @@ export function DailyRewardClaim({ onClaim, claiming }) {
           <span className={styles.separator}>•</span>
           <span className={styles.xpAmount}>+{xp} XP</span>
         </div>
-        <button
-          className={styles.claimButton}
-          onClick={onClaim}
-          disabled={claiming}
-        >
-          {claiming ? 'Claiming...' : 'Claim Daily Reward'}
-        </button>
+        <ClickSpark sparkColor="#fbbf24" className="relative inline-flex">
+          <button
+            className={styles.claimButton}
+            onClick={onClaim}
+            disabled={claiming}
+          >
+            {claiming ? 'Claiming...' : 'Claim Daily Reward'}
+          </button>
+        </ClickSpark>
       </div>
       <div className={styles.sparkleContainer}>
         {Array.from({ length: 6 }).map((_, i) => (

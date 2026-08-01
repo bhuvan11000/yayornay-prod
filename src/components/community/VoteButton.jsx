@@ -1,6 +1,7 @@
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
 import { useVote } from '../../hooks/useVote';
 import { useAuthStore } from '../../stores/authStore';
+import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 import styles from './VoteButton.module.css';
 
 export function VoteButton({ proposal, userVote }) {
@@ -26,24 +27,28 @@ export function VoteButton({ proposal, userVote }) {
 
   return (
     <div className={styles.container}>
-      <button
-        className={`${styles.btn} ${styles.upBtn} ${userVote === 'up' ? styles.upActive : ''}`}
-        onClick={() => handleVote('up')}
-        disabled={isDisabled}
-        title={getTitle()}
-      >
-        <ThumbsUp size={16} />
-        <span>{proposal.upvotes || 0}</span>
-      </button>
-      <button
-        className={`${styles.btn} ${styles.downBtn} ${userVote === 'down' ? styles.downActive : ''}`}
-        onClick={() => handleVote('down')}
-        disabled={isDisabled}
-        title={getTitle()}
-      >
-        <ThumbsDown size={16} />
-        <span>{proposal.downvotes || 0}</span>
-      </button>
+      <ClickSpark sparkColor="#22c55e" className="relative inline-flex">
+        <button
+          className={`${styles.btn} ${styles.upBtn} ${userVote === 'up' ? styles.upActive : ''}`}
+          onClick={() => handleVote('up')}
+          disabled={isDisabled}
+          title={getTitle()}
+        >
+          <ThumbsUp size={16} />
+          <span>{proposal.upvotes || 0}</span>
+        </button>
+      </ClickSpark>
+      <ClickSpark sparkColor="#ef4444" className="relative inline-flex">
+        <button
+          className={`${styles.btn} ${styles.downBtn} ${userVote === 'down' ? styles.downActive : ''}`}
+          onClick={() => handleVote('down')}
+          disabled={isDisabled}
+          title={getTitle()}
+        >
+          <ThumbsDown size={16} />
+          <span>{proposal.downvotes || 0}</span>
+        </button>
+      </ClickSpark>
     </div>
   );
 }

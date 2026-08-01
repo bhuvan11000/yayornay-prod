@@ -8,6 +8,7 @@ const ClickSpark = ({
   duration = 400,
   easing = 'ease-out',
   extraScale = 1.0,
+  className = 'relative w-full h-full',
   children
 }) => {
   const canvasRef = useRef(null);
@@ -133,7 +134,7 @@ const ClickSpark = ({
   };
 
   return (
-    <div className="relative w-full h-full" onClick={handleClick}>
+    <div className={className} onClick={handleClick}>
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
       {children}
     </div>
