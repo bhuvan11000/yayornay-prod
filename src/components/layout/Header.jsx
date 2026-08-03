@@ -14,6 +14,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { formatCoins } from '../../lib/format';
 import { getRankColor, getRankLabel } from '../../lib/ranks';
 import { xpProgress } from '../../lib/levels';
+import { useShouldAnimate } from '../../lib/countUpSession';
 import { RankBadge } from '../gamification/RankBadge';
 import { XPBar } from '../gamification/XPBar';
 import CountUp from '../reactbits/CountUp/CountUp';
@@ -63,6 +64,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const coinsAnimate = useShouldAnimate('header-coins', user?.coins ?? 0);
 
   // Close avatar dropdown on click outside
   useEffect(() => {
@@ -129,14 +131,20 @@ export function Header() {
             title={formatCoins(coins)}
           >
             <Coins size={16} className="shrink-0 text-[var(--color-warning)]" />
-            <CountUp
-              key={coins}
-              to={coins}
-              from={0}
-              duration={0.8}
-              separator=","
-              className="font-mono text-sm font-semibold text-[var(--text-primary)]"
-            />
+            {coinsAnimate ? (
+              <CountUp
+                key={coins}
+                to={coins}
+                from={0}
+                duration={0.8}
+                separator=","
+                className="font-mono text-sm font-semibold text-[var(--text-primary)]"
+              />
+            ) : (
+              <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">
+                {formatCoins(coins)}
+              </span>
+            )}
           </div>
 
           {/* Rank Badge */}

@@ -14,6 +14,7 @@ import { XPBar } from '../components/gamification/XPBar';
 import CountUp from '../components/reactbits/CountUp/CountUp';
 import BlurText from '../components/reactbits/BlurText/BlurText';
 import { formatCoins } from '../lib/format';
+import { useShouldAnimate } from '../lib/countUpSession';
 
 export default function Home() {
   const user = useAuthStore((s) => s.user);
@@ -25,6 +26,7 @@ export default function Home() {
   });
   const { data: questsData } = useQuests();
   const { mutate: claimReward, isPending: claiming } = useClaimReward();
+  const coinsAnimate = useShouldAnimate('home-coins', user?.coins ?? 0);
 
   const trendingMarkets = marketsData?.markets || [];
   const dailyQuests = questsData?.daily?.filter(q => !q.completed) || [];
@@ -46,7 +48,11 @@ export default function Home() {
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
             <Coins size={18} className="shrink-0 text-[var(--color-warning)]" />
-            <CountUp to={user.coins || 0} from={0} duration={0.8} separator="," className="font-mono text-lg font-bold text-[var(--text-primary)]" />
+            {coinsAnimate ? (
+              <CountUp to={user.coins || 0} from={0} duration={0.8} separator="," className="font-mono text-lg font-bold text-[var(--text-primary)]" />
+            ) : (
+              <span className="font-mono text-lg font-bold text-[var(--text-primary)]">{formatCoins(user.coins || 0)}</span>
+            )}
             <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Coins</span>
           </div>
           <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
