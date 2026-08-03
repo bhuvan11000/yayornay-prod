@@ -46,8 +46,8 @@ export default function Home() {
 
       {user && (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
-            <Coins size={18} className="shrink-0 text-[var(--color-warning)]" />
+          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] border-l-2 border-l-amber-500 bg-[var(--bg-secondary)] px-4 py-3">
+            <Coins size={18} className="shrink-0 text-amber-500" />
             {coinsAnimate ? (
               <CountUp to={user.coins || 0} from={0} duration={0.8} separator="," className="font-mono text-lg font-bold text-[var(--text-primary)]" />
             ) : (
@@ -55,13 +55,13 @@ export default function Home() {
             )}
             <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Coins</span>
           </div>
-          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
+          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] border-l-2 border-l-emerald-500 bg-[var(--bg-secondary)] px-4 py-3">
             <RankBadge rank={user.rank} size="md" showLabel />
           </div>
-          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
+          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] border-l-2 border-l-orange-500 bg-[var(--bg-secondary)] px-4 py-3">
             <StreakCounter streak={user.betting_streak || 0} longest={user.longest_streak} size="md" />
           </div>
-          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
+          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] border-l-2 border-l-blue-500 bg-[var(--bg-secondary)] px-4 py-3">
             <XPBar xp={user.xp} variant="mini" />
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function Home() {
             {dailyQuests.slice(0, 2).map((q) => {
               const pct = q.target > 0 ? Math.min(Math.round((q.progress / q.target) * 100), 100) : 0;
               return (
-                <div key={q.id} className="flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
+                <div key={q.id} className="flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--border-subtle)] border-l-2 border-l-blue-500 bg-[var(--bg-secondary)] px-4 py-3">
                   <div className="flex min-w-0 items-center gap-2">
                     <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">{q.title}</span>
                     <span className="shrink-0 rounded-[var(--radius-sm)] bg-[var(--accent-blue-muted)] px-1 py-[1px] text-[10px] font-semibold uppercase tracking-[0.05em] text-[var(--accent-blue)]">Daily</span>
@@ -136,14 +136,14 @@ export default function Home() {
             {weeklyQuests.slice(0, 1).map((q) => {
               const pct = q.target > 0 ? Math.min(Math.round((q.progress / q.target) * 100), 100) : 0;
               return (
-                <div key={q.id} className="flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
+                <div key={q.id} className="flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--border-subtle)] border-l-2 border-l-purple-500 bg-[var(--bg-secondary)] px-4 py-3">
                   <div className="flex min-w-0 items-center gap-2">
                     <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">{q.title}</span>
-                    <span className="shrink-0 rounded-[var(--radius-sm)] bg-[var(--accent-blue-muted)] px-1 py-[1px] text-[10px] font-semibold uppercase tracking-[0.05em] text-[var(--accent-blue)]">Weekly</span>
+                    <span className="shrink-0 rounded-[var(--radius-sm)] bg-purple-500/15 px-1 py-[1px] text-[10px] font-semibold uppercase tracking-[0.05em] text-purple-400">Weekly</span>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
                     <div className="h-1 w-20 overflow-hidden rounded-[var(--radius-full)] bg-[var(--bg-tertiary)]">
-                      <div className="h-full rounded-[var(--radius-full)] bg-[var(--accent-blue)] transition-[width] duration-500" style={{ width: `${pct}%` }} />
+                      <div className="h-full rounded-[var(--radius-full)] bg-purple-500 transition-[width] duration-500" style={{ width: `${pct}%` }} />
                     </div>
                     <span className="min-w-8 text-right font-mono text-xs text-[var(--text-muted)]">{q.progress}/{q.target}</span>
                   </div>
