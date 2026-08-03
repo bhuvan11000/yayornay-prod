@@ -90,7 +90,7 @@ export default function Auth() {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--bg-primary)] p-4">
       {/* Aurora background */}
-      <div className="pointer-events-none fixed inset-0 z-0 opacity-20">
+      <div className="pointer-events-none fixed inset-0 z-0 opacity-45">
         <Aurora colorStops={['#4f7df5', '#a855f7', '#22c55e']} amplitude={1} blend={0.6} speed={0.8} />
       </div>
       <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--bg-primary)_85%)]" />
