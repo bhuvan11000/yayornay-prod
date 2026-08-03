@@ -21,7 +21,7 @@ import CountUp from '../reactbits/CountUp/CountUp';
  *
  * Desktop:
  *  Left:  App name + nav links (Markets, Community, Leaderboard, Quests)
- *  Right: Coin balance, rank badge, XP bar, streak counter, avatar dropdown
+ *  Right: Coin balance, rank badge, avatar dropdown
  *
  * Mobile (< 768px):
  *  Left:  Hamburger menu, app name
@@ -273,21 +273,6 @@ export function Header() {
           </NavLink>
         </nav>
 
-        {/* Mobile sidebar footer stats */}
-        <div className="flex flex-col gap-3 border-t border-[var(--border-subtle)] p-4">
-          {/* XP bar (mobile) */}
-          <div className="flex flex-col gap-1">
-            <XPBar xp={xp} variant="full" />
-          </div>
-
-          {/* Streak (mobile) */}
-          {streak > 0 && (
-            <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-              <Flame size={14} className="shrink-0 text-[var(--color-warning)]" />
-              <span>{streak}-day betting streak</span>
-            </div>
-          )}
-        </div>
       </aside>
     </header>
   );
