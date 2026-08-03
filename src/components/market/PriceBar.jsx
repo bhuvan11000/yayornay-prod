@@ -13,13 +13,26 @@ export function PriceBar({ yesPrice = 0.5, noPrice = 0.5 }) {
   const noPct = Math.round(noPrice * 100);
 
   return (
-    <div className="flex h-[28px] w-full overflow-hidden rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)]">
-      <div className="flex min-w-0 items-center justify-start bg-[var(--color-yes)] pl-2 transition-[width] duration-300" style={{ width: mounted ? `${yesPct}%` : '0%' }}>
-        <span className="font-mono text-xs font-bold leading-none whitespace-nowrap text-white">YES {yesPct}%</span>
+    <div className="flex items-center gap-1.5">
+      {/* YES label - always outside on the left */}
+      <span className="shrink-0 font-mono text-xs font-bold text-[var(--color-yes)] w-[52px]">
+        YES {yesPct}%
+      </span>
+      {/* Bar */}
+      <div className="flex h-2 flex-1 overflow-hidden rounded-full bg-[var(--bg-tertiary)]">
+        <div
+          className="rounded-l-full bg-[var(--color-yes)] transition-[width] duration-300"
+          style={{ width: mounted ? `${yesPct}%` : '0%' }}
+        />
+        <div
+          className="rounded-r-full bg-[var(--color-no)] transition-[width] duration-300"
+          style={{ width: mounted ? `${noPct}%` : '0%' }}
+        />
       </div>
-      <div className="flex min-w-0 items-center justify-end bg-[var(--color-no)] pr-2 transition-[width] duration-300" style={{ width: mounted ? `${noPct}%` : '0%' }}>
-        <span className="font-mono text-xs font-bold leading-none whitespace-nowrap text-white">NO {noPct}%</span>
-      </div>
+      {/* NO label - always outside on the right */}
+      <span className="shrink-0 font-mono text-xs font-bold text-[var(--color-no)] w-[44px] text-right">
+        NO {noPct}%
+      </span>
     </div>
   );
 }
