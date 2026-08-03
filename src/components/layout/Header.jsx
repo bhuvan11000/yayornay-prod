@@ -4,7 +4,6 @@ import {
   Menu,
   X,
   Coins,
-  Flame,
   ChevronDown,
   User,
   Settings,
@@ -13,10 +12,8 @@ import {
 import { useAuthStore } from '../../stores/authStore';
 import { formatCoins } from '../../lib/format';
 import { getRankColor, getRankLabel } from '../../lib/ranks';
-import { xpProgress } from '../../lib/levels';
 import { useShouldAnimate } from '../../lib/countUpSession';
 import { RankBadge } from '../gamification/RankBadge';
-import { XPBar } from '../gamification/XPBar';
 import CountUp from '../reactbits/CountUp/CountUp';
 
 /**
@@ -92,11 +89,8 @@ export function Header() {
   if (!user) return null;
 
   const coins = user.coins ?? 0;
-  const xp = user.xp ?? 0;
   const rank = user.rank || 'Unranked';
   const rankColor = getRankColor();
-  const streak = user.betting_streak ?? 0;
-  const progress = xpProgress(xp);
   const avatarLetter = (user.username || 'U').charAt(0).toUpperCase();
 
   return (
@@ -149,22 +143,6 @@ export function Header() {
 
           {/* Rank Badge */}
           <RankBadge rank={rank} size="md" showLabel />
-
-          {/* XP Progress Bar (desktop only) */}
-          <div
-            className="flex cursor-help items-center gap-2 max-md:hidden"
-            title={`Level ${progress.currentLevel} — ${formatCoins(progress.xpInLevel)} / ${formatCoins(progress.xpRequiredForNext)} XP`}
-          >
-            <XPBar xp={xp} variant="mini" />
-          </div>
-
-          {/* Streak Counter (if > 0) */}
-          {streak > 0 && (
-            <div className="flex items-center gap-0.5 rounded-[var(--radius-md)] border border-[rgba(245,158,11,0.2)] bg-[rgba(245,158,11,0.1)] px-2 py-1">
-              <Flame size={14} className="shrink-0 text-[var(--color-warning)]" />
-              <span className="font-mono text-xs font-bold text-[var(--color-warning)]">{streak}</span>
-            </div>
-          )}
 
           {/* Avatar Dropdown */}
           <div className="relative max-md:hidden" ref={dropdownRef}>
