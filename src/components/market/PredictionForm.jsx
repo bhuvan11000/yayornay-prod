@@ -6,7 +6,6 @@ import { formatCoins } from '../../lib/format';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 import StarBorder from '../reactbits/StarBorder/StarBorder';
-import CountUp from '../reactbits/CountUp/CountUp';
 
 const CONFIDENCE_OPTIONS = [
   { value: 1, label: '1x' },
@@ -156,13 +155,13 @@ export function PredictionForm({ market, onSuccess }) {
           <div className="flex items-center justify-between">
             <span className="text-xs text-[var(--text-muted)]">You receive</span>
             <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">
-              ~<CountUp to={projectedShares} from={0} duration={0.4} /> shares
+              ~{Math.round(projectedShares)} shares
             </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-xs text-[var(--text-muted)]">Total cost</span>
             <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">
-              <CountUp to={totalCost} from={0} duration={0.4} /> coins
+              {formatCoins(totalCost)} coins
             </span>
           </div>
           <div className="flex items-center justify-between">
