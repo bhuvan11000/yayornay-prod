@@ -38,6 +38,7 @@ export function Podium({ players, metric }) {
         const medal = MEDAL_STYLES[rank];
         const playerRank = player.rank || getRank(player.coins);
         const isFirst = rank === 1;
+        const isThird = rank === 3;
 
         return (
           <div
@@ -50,16 +51,16 @@ export function Podium({ players, metric }) {
           >
             {/* Card */}
             <div
-              className={`flex flex-col items-center justify-end gap-2 rounded-xl border bg-[var(--bg-secondary)] p-4 text-center ${isFirst ? 'w-[160px] pb-5 sm:w-[180px]' : 'w-[130px] sm:w-[140px]'}`}
+              className={`flex flex-col items-center justify-end gap-2 rounded-xl border bg-[var(--bg-secondary)] p-4 text-center ${isFirst ? 'w-[160px] pb-5 sm:w-[180px]' : isThird ? 'w-[120px] sm:w-[130px]' : 'w-[130px] sm:w-[140px]'}`}
               style={{
                 borderColor: medal.ring,
                 boxShadow: `0 0 20px ${medal.ring}, inset 0 1px 0 ${medal.ring}`,
-                paddingTop: isFirst ? '2rem' : '1.25rem',
+                paddingTop: isFirst ? '2rem' : isThird ? '1rem' : '1.25rem',
               }}
             >
               {/* Avatar circle */}
               <div
-                className={`flex items-center justify-center rounded-full font-heading font-black text-white shadow-lg ${isFirst ? 'h-16 w-16 text-xl' : 'h-12 w-12 text-base'}`}
+                className={`flex items-center justify-center rounded-full font-heading font-black text-white shadow-lg ${isFirst ? 'h-16 w-16 text-xl' : isThird ? 'h-10 w-10 text-sm' : 'h-12 w-12 text-base'}`}
                 style={{ background: medal.bg }}
               >
                 {(player.username || '?').charAt(0).toUpperCase()}
