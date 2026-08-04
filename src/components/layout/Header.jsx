@@ -262,15 +262,36 @@ export function Header() {
               {item.label}
             </NavLink>
           ))}
+
+          <div className="my-2 h-px bg-[var(--border-subtle)]" />
+
           <NavLink
-            to="/achievements"
+            to={`/profile/${user?.username ?? ''}`}
             className={({ isActive }) =>
               `${MOBILE_NAV_LINK_BASE} ${isActive ? MOBILE_NAV_LINK_ACTIVE : ''}`
             }
             onClick={handleNavClick}
           >
-            Achievements
+            <User size={18} className="mr-2" />
+            Profile
           </NavLink>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              `${MOBILE_NAV_LINK_BASE} ${isActive ? MOBILE_NAV_LINK_ACTIVE : ''}`
+            }
+            onClick={handleNavClick}
+          >
+            <Settings size={18} className="mr-2" />
+            Settings
+          </NavLink>
+          <button
+            className={`${MOBILE_NAV_LINK_BASE} w-full cursor-pointer border-none bg-transparent text-left text-[var(--color-no)] hover:bg-[var(--color-no-muted)] hover:text-[var(--color-no)]`}
+            onClick={handleLogout}
+          >
+            <LogOut size={18} className="mr-2" />
+            Logout
+          </button>
         </nav>
 
       </aside>

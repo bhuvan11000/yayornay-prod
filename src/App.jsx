@@ -20,7 +20,6 @@ const CommunityPropose = lazy(() => import('./pages/CommunityPropose'));
 const Leaderboard = lazy(() => import('./pages/Leaderboard'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Quests = lazy(() => import('./pages/Quests'));
-const Achievements = lazy(() => import('./pages/Achievements'));
 const MyPredictions = lazy(() => import('./pages/MyPredictions'));
 const Settings = lazy(() => import('./pages/Settings'));
 
@@ -86,7 +85,6 @@ function AppRoutes() {
           <Route path="leaderboard" element={<LazyPage Component={Leaderboard} />} />
           <Route path="profile/:username" element={<LazyPage Component={Profile} />} />
           <Route path="quests" element={<LazyPage Component={Quests} />} />
-          <Route path="achievements" element={<LazyPage Component={Achievements} />} />
           <Route path="my-predictions" element={<LazyPage Component={MyPredictions} />} />
           <Route path="settings" element={<LazyPage Component={Settings} />} />
 

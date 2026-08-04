@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router';
 import { Coins, Target, BarChart3, TrendingUp, Calendar, Flame, Award, Medal, User, CheckCircle, XCircle, Minus } from 'lucide-react';
 import { useProfile } from '../hooks/useProfile';
+import { useAchievements } from '../hooks/useAchievements';
 import { useAuthStore } from '../stores/authStore';
 import { RankBadge } from '../components/gamification/RankBadge';
 import { AchievementCard } from '../components/gamification/AchievementCard';
@@ -246,24 +247,48 @@ export default function Profile() {
       )}
 
       {activeTab === 'achievements' && (
-        <div className="flex flex-col gap-3">
-          {achievements && achievements.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {achievements.map((ach) => (
-                <AchievementCard
-                  key={ach.slug || ach.id}
-                  achievement={{ ...ach, unlocked: true, unlocked_at: ach.unlocked_at }}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center gap-2 p-12 text-center">
-              <Award size={24} className="opacity-40 text-[var(--text-muted)]" />
-              <p className="text-muted">No achievements unlocked yet.</p>
-            </div>
-          )}
-        </div>
+        <ProfileAchievements isOwn={isOwn} profileAchievements={achievements} />
       )}
+    </div>
+  );
+}
+
+/**
+ * ProfileAchievements — shows all achievements with unlock/lock styling.
+ * For own profile: uses useAchievements to get full list with progress.
+ * For other users: falls back to profile's unlocked achievements only.
+ */
+function ProfileAchievements({ isOwn, profileAchievements }) {
+  const { data: allAchievements, isLoading } = useAchievements();
+
+  // For own profile, use the full achievements list (with progress for locked ones)
+  // For other users, show only their unlocked achievements from the profile endpoint
+  const achievementsList = isOwn ? allAchievements : profileAchievements?.map(a => ({ ...a, unlocked: true }));
+
+  if (isLoading && isOwn) {
+    return (
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} variant="card" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!achievementsList || achievementsList.length === 0) {
+    return (
+      <div className="flex flex-col items-center gap-2 p-12 text-center">
+        <Award size={24} className="opacity-40 text-[var(--text-muted)]" />
+        <p className="text-muted">No achievements unlocked yet.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {achievementsList.map((ach) => (
+        <AchievementCard key={ach.slug || ach.id} achievement={ach} />
+      ))}
     </div>
   );
 }
