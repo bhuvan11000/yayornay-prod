@@ -16,9 +16,9 @@ export function XPBar({ xp, level, variant = 'full' }) {
           </span>
         </div>
       )}
-      <div className={`h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg-tertiary)] ${variant === 'mini' ? 'h-1 w-[60px]' : ''}`}>
+      <div className={`h-1.5 w-full overflow-hidden rounded-[2px] bg-[var(--bg-tertiary)] ${variant === 'mini' ? 'h-1 w-[60px]' : ''}`}>
         <div
-          className="h-full rounded-full bg-[var(--accent-blue)] transition-[width] duration-[var(--transition-normal)] ease"
+          className="h-full rounded-[2px] bg-[var(--accent-amber)] transition-[width] duration-[var(--transition-normal)] ease"
           style={{ width: `${pct}%` }}
         />
       </div>

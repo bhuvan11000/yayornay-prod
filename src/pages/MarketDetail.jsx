@@ -22,6 +22,8 @@ import {
 } from '../components/ui/alert-dialog';
 import { formatTimeRemaining, formatCoins, formatDateTime, pluralize, formatSource } from '../lib/format';
 
+const PANEL = 'rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-5';
+
 export default function MarketDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -38,8 +40,8 @@ export default function MarketDetail() {
     return (
       <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-5 p-4 md:p-6">
         <div className="flex flex-col items-center justify-center gap-2 px-4 py-12 text-center">
-          <p className="text-secondary">Failed to load market</p>
-          <p className="text-muted text-sm">{error?.message}</p>
+          <p className="text-[var(--text-secondary)]">Failed to load market</p>
+          <p className="text-sm text-[var(--text-muted)]">{error?.message}</p>
           <button className="btn-primary" onClick={() => navigate('/markets')} style={{ marginTop: 'var(--space-4)' }}>
             Back to Markets
           </button>
@@ -71,9 +73,9 @@ export default function MarketDetail() {
         return <PredictionForm market={market} onSuccess={handlePredictionSuccess} />;
       case 'closed':
         return (
-          <div className="card flex flex-col gap-3">
-            <h3 className="font-heading text-lg font-semibold">Market Closed</h3>
-            <p className="text-muted text-sm">
+          <div className={`${PANEL} flex flex-col gap-3`}>
+            <h3 className="font-heading text-lg font-bold uppercase tracking-[0.06em]">Market Closed</h3>
+            <p className="text-sm text-[var(--text-muted)]">
               Market closed. Awaiting resolution.
             </p>
           </div>
@@ -81,17 +83,24 @@ export default function MarketDetail() {
       case 'resolved': {
         const disputeDeadline = market.dispute_deadline ? new Date(market.dispute_deadline) : null;
         const withinDisputeWindow = disputeDeadline && new Date() < disputeDeadline;
+        const won = market.resolution === 'yes';
 
         return (
-          <div className="card flex flex-col gap-3">
-            <h3 className="font-heading text-lg font-semibold">Resolved</h3>
+          <div className={`${PANEL} flex flex-col gap-3`}>
+            <h3 className="font-heading text-lg font-bold uppercase tracking-[0.06em]">Final Result</h3>
             <div className="flex justify-center p-4">
-              <span className={market.resolution === 'yes' ? 'inline-flex items-center gap-2 rounded-[var(--radius-lg)] border-2 border-[var(--color-yes-border)] bg-[var(--color-yes-muted)] px-6 py-3 font-heading text-2xl font-bold text-[var(--color-yes)]' : 'inline-flex items-center gap-2 rounded-[var(--radius-lg)] border-2 border-[var(--color-no-border)] bg-[var(--color-no-muted)] px-6 py-3 font-heading text-2xl font-bold text-[var(--color-no)]'}>
+              <span
+                className={`inline-flex items-center gap-2 rounded-[4px] border-2 px-8 py-4 font-heading text-3xl font-bold uppercase tracking-[0.12em] ${
+                  won
+                    ? 'border-[var(--color-yes-border)] bg-[var(--color-yes-muted)] text-[var(--color-yes)]'
+                    : 'border-[var(--color-no-border)] bg-[var(--color-no-muted)] text-[var(--color-no)]'
+                }`}
+              >
                 {market.resolution?.toUpperCase()}
               </span>
             </div>
             {market.resolution_source && (
-              <p className="text-xs text-muted" style={{ marginTop: 'var(--space-2)' }}>
+              <p className="text-xs text-[var(--text-muted)]" style={{ marginTop: 'var(--space-2)' }}>
                 Source: {market.resolution_source}
               </p>
             )}
@@ -104,7 +113,7 @@ export default function MarketDetail() {
                 <AlertDialog open={showDisputeForm} onOpenChange={setShowDisputeForm}>
                   <AlertDialogTrigger asChild>
                     <button
-                      className="w-full rounded-lg bg-[var(--color-no-muted)] px-4 py-2.5 text-sm font-semibold text-[var(--color-no)] transition-colors hover:bg-[rgba(239,68,68,0.25)]"
+                      className="w-full cursor-pointer rounded-[3px] bg-[var(--color-no-muted)] px-4 py-2.5 font-heading text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-no)] transition-colors hover:bg-[rgba(239,68,68,0.2)]"
                       onClick={() => setShowDisputeForm(true)}
                     >
                       Dispute this resolution
@@ -118,7 +127,7 @@ export default function MarketDetail() {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <textarea
-                      className="min-h-[84px] w-full resize-y rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)]"
+                      className="min-h-[84px] w-full resize-y rounded-[3px] border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)]"
                       placeholder="Explain why this resolution is wrong (min 10 characters)"
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
@@ -136,9 +145,9 @@ export default function MarketDetail() {
                       <AlertDialogAction
                         onClick={() => submitDispute()}
                         disabled={isSubmitting || reason.length < 10}
-                        className="bg-[var(--accent-blue)] text-white hover:bg-[var(--accent-blue-hover)]"
+                        className="bg-[var(--accent-amber)] text-[var(--primary-foreground)] hover:bg-[var(--accent-amber-hover)]"
                       >
-                        {isSubmitting ? 'Submitting...' : 'Submit Dispute'}
+                        {isSubmitting ? 'Submitting…' : 'Submit Dispute'}
                       </AlertDialogAction>
                     </div>
                   </AlertDialogContent>
@@ -147,13 +156,13 @@ export default function MarketDetail() {
             )}
 
             {disputeSuccess && (
-              <div className="mt-3 rounded-[var(--radius-md)] border border-[var(--color-yes-border)] bg-[var(--color-yes-muted)] px-4 py-3 text-sm font-medium text-[var(--color-yes)]">
+              <div className="mt-3 rounded-[var(--radius-sm)] border border-[var(--color-yes-border)] bg-[var(--color-yes-muted)] px-4 py-3 text-sm font-medium text-[var(--color-yes)]">
                 Dispute submitted. {withinDisputeWindow ? 'Others can still dispute.' : ''}
               </div>
             )}
 
             {!withinDisputeWindow && disputeDeadline && !hasDisputed && (
-              <p className="text-xs text-muted" style={{ marginTop: 'var(--space-3)' }}>
+              <p className="text-xs text-[var(--text-muted)]" style={{ marginTop: 'var(--space-3)' }}>
                 Dispute window has expired.
               </p>
             )}
@@ -168,16 +177,16 @@ export default function MarketDetail() {
       }
       case 'review':
         return (
-          <div className="card flex flex-col gap-3">
-            <h3 className="font-heading text-lg font-semibold">Under Review</h3>
-            <p className="text-muted text-sm">
+          <div className={`${PANEL} flex flex-col gap-3`}>
+            <h3 className="font-heading text-lg font-bold uppercase tracking-[0.06em]">Under Review</h3>
+            <p className="text-sm text-[var(--text-muted)]">
               This market is under review due to disputes.
             </p>
           </div>
         );
       default:
         return (
-          <div className="card flex flex-col gap-3">
+          <div className={`${PANEL} flex flex-col gap-3`}>
             <MarketStatus status={market.status} />
           </div>
         );
@@ -185,31 +194,40 @@ export default function MarketDetail() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-5 p-4 md:p-6">
-      <button className="inline-flex w-fit cursor-pointer items-center gap-1 border-0 bg-transparent p-0 text-sm font-medium text-[var(--accent-blue)] hover:text-[var(--accent-blue-hover)]" onClick={() => navigate('/markets')}>
+    <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-5">
+      <button
+        className="inline-flex w-fit cursor-pointer items-center gap-1 border-0 bg-transparent p-0 font-heading text-xs font-semibold uppercase tracking-[0.1em] text-[var(--accent-amber)] transition-colors duration-150 hover:text-[var(--accent-amber-hover)]"
+        onClick={() => navigate('/markets')}
+      >
         ← Back to Markets
       </button>
 
-      <h1 className="text-2xl font-heading leading-[1.2]">{market.title}</h1>
+      <div>
+        <h1 className="font-heading text-[26px] font-bold leading-[1.1] tracking-[0.02em] text-[var(--text-primary)] md:text-[30px]">
+          {market.title}
+        </h1>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <CategoryTag category={market.category} />
-        <span className="rounded-[var(--radius-full)] bg-[var(--bg-tertiary)] px-2 py-[3px] text-xs font-semibold uppercase text-[var(--text-secondary)]">
-          {formatSource(market.source)}
-        </span>
-        <span className="font-mono text-xs text-[var(--text-muted)]">{formatTimeRemaining(market.closes_at)}</span>
-        <span className="font-mono text-xs text-[var(--text-secondary)]">{pluralize(market.participant_count || 0, 'player')}</span>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <CategoryTag category={market.category} />
+          <span className="rounded-[3px] bg-[var(--bg-tertiary)] px-1.5 py-[2px] font-heading text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-secondary)]">
+            {formatSource(market.source)}
+          </span>
+          <span className="font-mono text-xs text-[var(--text-muted)]">{formatTimeRemaining(market.closes_at)}</span>
+          <span className="font-mono text-xs text-[var(--text-secondary)]">{pluralize(market.participant_count || 0, 'player')}</span>
+        </div>
       </div>
 
       {hasPredicted && (
-        <div className="rounded-[var(--radius-md)] border border-[var(--accent-blue)] bg-[var(--accent-blue-muted)] px-4 py-3 text-sm text-[var(--text-primary)]">
-          You predicted{' '}
-          <strong className={pendingPredictions[0].position === 'yes' ? 'text-yes' : 'text-no'}>
-            {pendingPredictions[0].position.toUpperCase()}
-          </strong>
-          {' — '}
-          {pendingPredictions[0].shares.toFixed(1)} shares @{' '}
-          {Math.round(pendingPredictions[0].entry_price * 100)}c
+        <div className="flex items-center justify-between gap-3 rounded-[var(--radius-sm)] border border-[var(--accent-amber)] bg-[var(--accent-amber-muted)] px-4 py-3 text-sm text-[var(--text-primary)]">
+          <span>
+            You hold{' '}
+            <strong className={pendingPredictions[0].position === 'yes' ? 'text-yes' : 'text-no'}>
+              {pendingPredictions[0].position.toUpperCase()}
+            </strong>
+            {' — '}
+            <span className="font-mono">{pendingPredictions[0].shares.toFixed(1)} shares @ {Math.round(pendingPredictions[0].entry_price * 100)}c</span>
+          </span>
+          <span className="eyebrow hidden md:block">In play</span>
         </div>
       )}
 
@@ -222,57 +240,46 @@ export default function MarketDetail() {
           />
 
           {market.resolution_criteria && (
-            <section className="card flex flex-col gap-3">
-              <h3 className="font-heading text-base font-semibold text-[var(--text-primary)]">Resolution Criteria</h3>
-              <p className="text-sm text-secondary">{market.resolution_criteria}</p>
+            <section className={`${PANEL} flex flex-col gap-3`}>
+              <h3 className="font-heading text-base font-bold uppercase tracking-[0.08em] text-[var(--text-primary)]">Resolution Criteria</h3>
+              <p className="text-sm text-[var(--text-secondary)]">{market.resolution_criteria}</p>
             </section>
           )}
 
-          <section className="card flex flex-col gap-3">
-            <h3 className="font-heading text-base font-semibold text-[var(--text-primary)]">Market Stats</h3>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Volume</span>
-                <span className="font-mono text-sm text-[var(--text-primary)]">{formatCoins(market.volume || 0)} coins</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Players</span>
-                <span className="font-mono text-sm text-[var(--text-primary)]">{market.participant_count || 0}</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Source</span>
-                <span className="font-mono text-sm text-[var(--text-primary)]">{formatSource(market.source)}</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Opens</span>
-                <span className="font-mono text-sm text-[var(--text-primary)]">{formatDateTime(market.opens_at)}</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Closes</span>
-                <span className="font-mono text-sm text-[var(--text-primary)]">{formatDateTime(market.closes_at)}</span>
-              </div>
-              {market.resolved_at && (
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Resolved</span>
-                  <span className="font-mono text-sm text-[var(--text-primary)]">{formatDateTime(market.resolved_at)}</span>
-                </div>
-              )}
+          <section className={`${PANEL} flex flex-col gap-3`}>
+            <h3 className="font-heading text-base font-bold uppercase tracking-[0.08em] text-[var(--text-primary)]">Market Stats</h3>
+            <div className="divide-y divide-[var(--border-subtle)] overflow-hidden rounded-[3px] border border-[var(--border-subtle)]">
+              {[
+                ['Volume', `${formatCoins(market.volume || 0)} coins`],
+                ['Players', market.participant_count || 0],
+                ['Source', formatSource(market.source)],
+                ['Opens', formatDateTime(market.opens_at)],
+                ['Closes', formatDateTime(market.closes_at)],
+                market.resolved_at ? ['Resolved', formatDateTime(market.resolved_at)] : null,
+              ]
+                .filter(Boolean)
+                .map(([label, value]) => (
+                  <div key={label} className="flex items-center justify-between gap-3 px-3 py-2">
+                    <span className="eyebrow">{label}</span>
+                    <span className="font-mono text-sm text-[var(--text-primary)]">{value}</span>
+                  </div>
+                ))}
             </div>
           </section>
 
           {totalPlayers > 0 && (
-            <section className="card flex flex-col gap-3">
-              <h3 className="font-heading text-base font-semibold text-[var(--text-primary)]">Prediction Distribution</h3>
+            <section className={`${PANEL} flex flex-col gap-3`}>
+              <h3 className="font-heading text-base font-bold uppercase tracking-[0.08em] text-[var(--text-primary)]">Prediction Distribution</h3>
               <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] px-3 py-2">
-                  <span className="text-yes font-mono">YES</span>
-                  <span className="text-secondary text-sm">
+                <div className="flex items-center justify-between rounded-[3px] border border-[var(--color-yes-border)] bg-[var(--color-yes-muted)] px-3 py-2">
+                  <span className="font-heading text-xs font-bold uppercase tracking-[0.12em] text-yes">Yes</span>
+                  <span className="font-mono text-sm text-[var(--text-secondary)]">
                     {pluralize(yesPlayers, 'player')} ({yesPct}%)
                   </span>
                 </div>
-                <div className="flex items-center justify-between rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] px-3 py-2">
-                  <span className="text-no font-mono">NO</span>
-                  <span className="text-secondary text-sm">
+                <div className="flex items-center justify-between rounded-[3px] border border-[var(--color-no-border)] bg-[var(--color-no-muted)] px-3 py-2">
+                  <span className="font-heading text-xs font-bold uppercase tracking-[0.12em] text-no">No</span>
+                  <span className="font-mono text-sm text-[var(--text-secondary)]">
                     {pluralize(noPlayers, 'player')} ({noPct}%)
                   </span>
                 </div>
@@ -281,17 +288,17 @@ export default function MarketDetail() {
           )}
         </div>
 
-        <div className="md:min-w-[280px] md:flex-[2]">
+        <div className="md:min-w-[300px] md:flex-[2]">
           {renderRightColumn()}
         </div>
       </div>
 
-      <section className="card flex flex-col gap-3">
-        <h3 className="font-heading text-base font-semibold text-[var(--text-primary)]">Your Positions</h3>
+      <section className={`${PANEL} flex flex-col gap-3`}>
+        <h3 className="font-heading text-base font-bold uppercase tracking-[0.08em] text-[var(--text-primary)]">Your Positions</h3>
         {predsLoading ? (
-          <p className="text-muted text-sm">Loading positions...</p>
+          <p className="text-sm text-[var(--text-muted)]">Loading positions…</p>
         ) : pendingPredictions.length === 0 ? (
-          <p className="text-muted text-sm">
+          <p className="text-sm text-[var(--text-muted)]">
             {user ? 'You have no active positions on this market.' : 'Log in to place predictions.'}
           </p>
         ) : (
@@ -303,9 +310,9 @@ export default function MarketDetail() {
         )}
       </section>
 
-      <section className="card flex flex-col gap-3">
-        <h3 className="font-heading text-base font-semibold text-[var(--text-primary)]">Participant Activity</h3>
-        <p className="text-muted text-sm">Recent participant activity will appear here.</p>
+      <section className={`${PANEL} flex flex-col gap-3`}>
+        <h3 className="font-heading text-base font-bold uppercase tracking-[0.08em] text-[var(--text-primary)]">Participant Activity</h3>
+        <p className="text-sm text-[var(--text-muted)]">Recent participant activity will appear here.</p>
       </section>
     </div>
   );

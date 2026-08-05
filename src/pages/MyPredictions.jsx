@@ -13,7 +13,7 @@ import { formatCoins, formatTimeRemaining, formatDateTime } from '../lib/format'
 const STATUS_GROUP_LABELS = {
   attention: { label: 'Needs Attention', icon: AlertTriangle, color: 'var(--color-warning)' },
   resolved: { label: 'Recently Resolved', icon: Trophy, color: 'var(--color-yes)' },
-  active: { label: 'Active Markets', icon: RefreshCw, color: 'var(--color-info)' },
+  active: { label: 'Active Markets', icon: RefreshCw, color: 'var(--accent-amber)' },
   other: { label: 'Past Predictions', icon: Eye, color: 'var(--text-muted)' },
 };
 
@@ -58,7 +58,7 @@ function PredictionRow({ prediction }) {
     switch (market.status) {
       case 'closed': return { label: 'Awaiting Resolution', className: 'bg-[rgba(245,158,11,0.15)] text-[var(--color-warning)]' };
       case 'review': return { label: 'Under Review', className: 'bg-[rgba(239,68,68,0.15)] text-[var(--color-no)]' };
-      case 'resolving': return { label: 'Resolving...', className: 'bg-[rgba(99,102,241,0.15)] text-[var(--color-info)]' };
+      case 'resolving': return { label: 'Resolving...', className: 'bg-[rgba(99,102,241,0.15)] text-[var(--accent-amber)]' };
       case 'resolved': return null;
       case 'open': return { label: 'Open', className: 'bg-[rgba(34,197,94,0.15)] text-[var(--color-yes)]' };
       default: return { label: market.status, className: 'bg-[var(--bg-tertiary)] text-[var(--text-muted)]' };
@@ -71,12 +71,12 @@ function PredictionRow({ prediction }) {
     : <Minus size={14} className="text-[var(--text-muted)]" />;
 
   return (
-    <Link to={`/markets/${prediction.market_id}`} className="flex flex-col items-start justify-between gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3 text-inherit no-underline transition-all duration-150 hover:border-[var(--border-focus)] hover:bg-[var(--bg-tertiary)] md:flex-row md:items-start md:gap-3">
+    <Link to={`/markets/${prediction.market_id}`} className="flex flex-col items-start justify-between gap-2 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3 text-inherit no-underline transition-all duration-150 hover:border-[var(--border-focus)] hover:bg-[var(--bg-tertiary)] md:flex-row md:items-start md:gap-3">
       <div className="min-w-0 flex-1">
         <div className="mb-1 flex flex-col items-start gap-2 md:flex-row md:items-center">
           <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold">{market.title || 'Unknown Market'}</span>
           {statusBadge && (
-            <span className={`shrink-0 whitespace-nowrap rounded-full px-[6px] py-[1px] text-[10px] font-semibold ${statusBadge.className}`}>{statusBadge.label}</span>
+            <span className={`shrink-0 whitespace-nowrap rounded-[3px] px-[6px] py-[1px] text-[10px] font-semibold ${statusBadge.className}`}>{statusBadge.label}</span>
           )}
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -178,7 +178,7 @@ export default function MyPredictions() {
 
       {/* Summary cards */}
       <div className="mb-5 grid grid-cols-3 gap-2 md:gap-3">
-        <Link to="?filter=attention" className={`flex flex-col items-center gap-1 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-[var(--text-primary)] no-underline transition-all duration-150 hover:-translate-y-px hover:border-[var(--border-focus)] md:p-4 border-l-[3px] border-l-[var(--color-warning)]`} onClick={(e) => { e.preventDefault(); setFilter('attention'); }}>
+        <Link to="?filter=attention" className={`flex flex-col items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-[var(--text-primary)] no-underline transition-all duration-150 hover:-translate-y-px hover:border-[var(--border-focus)] md:p-4 border-l-[3px] border-l-[var(--color-warning)]`} onClick={(e) => { e.preventDefault(); setFilter('attention'); }}>
           <AlertTriangle size={20} />
           <span className="font-mono text-lg font-bold md:text-2xl">{counts.attention}</span>
           <span className="text-xs text-[var(--text-muted)]">Need Attention</span>
@@ -186,12 +186,12 @@ export default function MyPredictions() {
         {(filter === 'attention' && counts.attention > 0) && (
           <button className="absolute top-1 right-1 cursor-pointer border-0 bg-transparent text-xs text-[var(--color-warning)]" onClick={() => setFilter('all')}>Clear filter</button>
         )}
-        <Link to="?filter=active" className={`flex flex-col items-center gap-1 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-[var(--text-primary)] no-underline transition-all duration-150 hover:-translate-y-px hover:border-[var(--border-focus)] md:p-4 border-l-[3px] border-l-[var(--color-info)]`} onClick={(e) => { e.preventDefault(); setFilter('active'); }}>
+        <Link to="?filter=active" className={`flex flex-col items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-[var(--text-primary)] no-underline transition-all duration-150 hover:-translate-y-px hover:border-[var(--border-focus)] md:p-4 border-l-[3px] border-l-[var(--accent-amber)]`} onClick={(e) => { e.preventDefault(); setFilter('active'); }}>
           <RefreshCw size={20} />
           <span className="font-mono text-lg font-bold md:text-2xl">{counts.active}</span>
           <span className="text-xs text-[var(--text-muted)]">Active</span>
         </Link>
-        <Link to="?filter=resolved" className={`flex flex-col items-center gap-1 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-[var(--text-primary)] no-underline transition-all duration-150 hover:-translate-y-px hover:border-[var(--border-focus)] md:p-4 border-l-[3px] border-l-[var(--color-yes)]`} onClick={(e) => { e.preventDefault(); setFilter('resolved'); }}>
+        <Link to="?filter=resolved" className={`flex flex-col items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-[var(--text-primary)] no-underline transition-all duration-150 hover:-translate-y-px hover:border-[var(--border-focus)] md:p-4 border-l-[3px] border-l-[var(--color-yes)]`} onClick={(e) => { e.preventDefault(); setFilter('resolved'); }}>
           <Trophy size={20} />
           <span className="font-mono text-lg font-bold md:text-2xl">{counts.resolved}</span>
           <span className="text-xs text-[var(--text-muted)]">Recent Results</span>
@@ -199,12 +199,12 @@ export default function MyPredictions() {
       </div>
 
       {/* Filter bar */}
-      <div className="mb-5 flex flex-wrap items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-2">
+      <div className="mb-5 flex flex-wrap items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-2">
         <Filter size={14} className="ml-2 text-[var(--text-muted)]" />
         {['all', 'attention', 'active', 'resolved'].map(key => (
           <button
             key={key}
-            className={`cursor-pointer rounded-[var(--radius-md)] border border-transparent bg-transparent px-3 py-1 text-sm font-medium text-[var(--text-muted)] transition-all duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-secondary)] ${filter === key ? 'border-[var(--border-subtle)] bg-[var(--bg-tertiary)] text-[var(--text-primary)]' : ''}`}
+            className={`cursor-pointer rounded-[var(--radius-sm)] border border-transparent bg-transparent px-3 py-1 text-sm font-medium text-[var(--text-muted)] transition-all duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-secondary)] ${filter === key ? 'border-[var(--border-subtle)] bg-[var(--bg-tertiary)] text-[var(--text-primary)]' : ''}`}
             onClick={() => setFilter(key)}
           >
             {STATUS_GROUP_LABELS[key]?.label || key}
@@ -224,7 +224,7 @@ export default function MyPredictions() {
               <div className="mb-3 flex items-center gap-2 border-b border-[var(--border-subtle)] pb-2">
                 <Icon size={16} style={{ color: groupDef.color }} />
                 <h2 className="font-heading text-base font-semibold">{groupDef.label}</h2>
-                <span className="rounded-full bg-[var(--bg-tertiary)] px-2 py-[2px] font-mono text-xs text-[var(--text-muted)]">{groupPredictions.length}</span>
+                <span className="rounded-[3px] bg-[var(--bg-tertiary)] px-2 py-[2px] font-mono text-xs text-[var(--text-muted)]">{groupPredictions.length}</span>
               </div>
               <div className="flex flex-col gap-2">
                 {groupPredictions.map(p => (

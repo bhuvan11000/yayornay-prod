@@ -8,7 +8,7 @@ import { useUIStore } from '../../stores/uiStore';
 function PredictionToastContent({ title, message, coins }) {
   return (
     <div className="flex items-start gap-3">
-      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-yes-muted)] text-[var(--color-yes)]">
+      <div className="flex size-8 shrink-0 items-center justify-center rounded-[3px] bg-[var(--color-yes-muted)] text-[var(--color-yes)]">
         <TrendingUp size={16} />
       </div>
       <div className="min-w-0">

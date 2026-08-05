@@ -18,7 +18,7 @@ export function QuestCard({ quest, onComplete }) {
   return (
     <SpotlightCard
       spotlightColor="rgba(245, 158, 11, 0.15)"
-      className={`rounded-[var(--radius-lg)] border bg-[var(--bg-secondary)] p-5 transition-[border-color,box-shadow] duration-150 hover:shadow-[var(--shadow-sm)] ${completed ? 'border-[rgba(34,197,94,0.3)] opacity-60 hover:border-[rgba(34,197,94,0.5)]' : 'border-[var(--border-subtle)] hover:border-[var(--bg-tertiary)]'}`}
+      className={`rounded-[var(--radius-sm)] border bg-[var(--bg-secondary)] p-5 transition-[border-color,box-shadow] duration-150 hover:shadow-[var(--shadow-sm)] ${completed ? 'border-[rgba(34,197,94,0.3)] opacity-60 hover:border-[rgba(34,197,94,0.5)]' : 'border-[var(--border-subtle)] hover:border-[var(--bg-tertiary)]'}`}
     >
       <div className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-3">
@@ -29,7 +29,7 @@ export function QuestCard({ quest, onComplete }) {
             <p className="mt-0.5 text-sm text-[var(--text-secondary)]">{description}</p>
           </div>
           {completed && (
-            <div className="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-[rgba(34,197,94,0.15)] px-2 py-1 text-xs font-semibold text-[var(--color-yes)]">
+            <div className="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-[3px] bg-[rgba(34,197,94,0.15)] px-2 py-1 text-xs font-semibold text-[var(--color-yes)]">
               <CheckCircle size={16} />
               <span>Claimed</span>
             </div>

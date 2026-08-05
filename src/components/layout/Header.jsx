@@ -17,16 +17,9 @@ import { RankBadge } from '../gamification/RankBadge';
 import CountUp from '../reactbits/CountUp/CountUp';
 
 /**
- * Header — Persistent top navigation bar.
- *
- * Desktop:
- *  Left:  App name + nav links (Markets, Community, Leaderboard, Quests)
- *  Right: Coin balance, rank badge, avatar dropdown
- *
- * Mobile (< 768px):
- *  Left:  Hamburger menu, app name
- *  Right: Coin balance, rank badge
- *  Slide-out sidebar with all nav links + additional info
+ * Header — the arena scoreboard bar.
+ * Condensed-caps nav with amber underline for the active station,
+ * a coin chip, rank badge and avatar dropdown.
  */
 
 const NAV_ITEMS = [
@@ -38,21 +31,18 @@ const NAV_ITEMS = [
 ];
 
 const NAV_LINK_BASE =
-  'rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium whitespace-nowrap text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] max-lg:px-2 max-lg:text-xs';
+  'font-heading text-[13px] font-semibold uppercase tracking-[0.1em] whitespace-nowrap px-3 py-1.5 text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)] max-lg:px-2 max-lg:text-xs';
 
 const NAV_LINK_ACTIVE =
-  'relative bg-[var(--accent-blue-muted)] text-[var(--accent-blue)] after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:w-3/5 after:-translate-x-1/2 after:rounded-full after:bg-[var(--accent-blue)] after:content-[""]';
+  'relative text-[var(--accent-amber)] after:absolute after:inset-x-2 after:bottom-0 after:h-[2px] after:bg-[var(--accent-amber)] after:content-[""]';
 
 const MOBILE_NAV_LINK_BASE =
-  'flex items-center rounded-[var(--radius-md)] px-4 py-3 text-base font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]';
+  'flex items-center font-heading text-base font-semibold uppercase tracking-[0.08em] rounded-[var(--radius-sm)] px-4 py-3 text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]';
 
-const MOBILE_NAV_LINK_ACTIVE = 'bg-[var(--accent-blue-muted)] text-[var(--accent-blue)]';
+const MOBILE_NAV_LINK_ACTIVE = 'bg-[var(--accent-amber-muted)] text-[var(--accent-amber)]';
 
 const DROPDOWN_ITEM_BASE =
   'flex w-full cursor-pointer items-center gap-2 border-none bg-transparent px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]';
-
-const LOGO_CLASS =
-  'font-heading text-lg font-bold whitespace-nowrap text-[var(--text-primary)] transition-colors duration-150 hover:text-[var(--accent-blue)]';
 
 export function Header() {
   const { user, logout, getRankColor } = useAuthStore();
@@ -94,15 +84,20 @@ export function Header() {
   const avatarLetter = (user.username || 'U').charAt(0).toUpperCase();
 
   return (
-    <header className="sticky top-0 z-[var(--z-sticky)] flex h-16 items-center border-b border-[var(--border-subtle)] bg-[var(--bg-secondary)]">
-      <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-4 px-6 max-md:px-4">
+    <header className="relative z-[var(--z-sticky)] h-16 border-b border-[var(--border-subtle)] bg-[var(--bg-secondary)]">
+      <div className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between gap-4 px-4 md:px-6">
         {/* ── Left: Logo + Desktop Nav ── */}
-        <div className="flex items-center gap-8">
-          <Link to="/" className={LOGO_CLASS} onClick={handleNavClick}>
-            Predict Arena
+        <div className="flex items-center gap-6 lg:gap-8">
+          <Link to="/" className="group flex items-center gap-2.5" onClick={handleNavClick}>
+            <span className="flex size-7 items-center justify-center rounded-[3px] bg-[var(--accent-amber)] font-mono text-[11px] font-bold text-[#16100a] shadow-[var(--shadow-sm)] transition-transform duration-150 group-hover:-rotate-6">
+              PA
+            </span>
+            <span className="font-heading text-lg font-bold uppercase leading-none tracking-[0.08em] text-[var(--text-primary)]">
+              Predict <span className="text-[var(--accent-amber)]">Arena</span>
+            </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 md:flex max-lg:gap-0">
+          <nav className="hidden items-center md:flex max-lg:gap-0">
             {NAV_ITEMS.map((item) => (
               <NavLink
                 key={item.to}
@@ -118,13 +113,13 @@ export function Header() {
         </div>
 
         {/* ── Right: Stats + Avatar ── */}
-        <div className="flex items-center gap-4">
-          {/* Coin Balance */}
+        <div className="flex items-center gap-3">
+          {/* Coin chip */}
           <div
-            className="flex items-center gap-1 whitespace-nowrap rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] px-2 py-1 animate-[coinPulse_0.3s_ease]"
+            className="flex items-center gap-1.5 whitespace-nowrap rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] px-2.5 py-1.5 animate-[coinPulse_0.3s_ease]"
             title={formatCoins(coins)}
           >
-            <Coins size={16} className="shrink-0 text-[var(--color-warning)]" />
+            <Coins size={15} className="shrink-0 text-[var(--color-warning)]" />
             {coinsAnimate ? (
               <CountUp
                 key={coins}
@@ -153,7 +148,7 @@ export function Header() {
               aria-haspopup="true"
             >
               <div
-                className="flex size-8 items-center justify-center rounded-full font-heading text-sm font-bold text-white uppercase select-none"
+                className="flex size-8 items-center justify-center rounded-[3px] font-heading text-sm font-bold text-white uppercase select-none"
                 style={{ background: rankColor }}
               >
                 {avatarLetter}
@@ -165,10 +160,10 @@ export function Header() {
             </button>
 
             {avatarDropdownOpen && (
-              <div className="absolute right-0 top-[calc(100%+8px)] z-[var(--z-dropdown)] w-[200px] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] animate-[headerScaleIn_0.15s_ease]">
+              <div className="absolute right-0 top-[calc(100%+8px)] z-[var(--z-dropdown)] w-[200px] overflow-hidden rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] animate-[headerScaleIn_0.15s_ease]">
                 <div className="flex flex-col gap-0.5 px-4 py-3">
                   <span className="text-sm font-semibold text-[var(--text-primary)]">{user.username}</span>
-                  <span className="text-xs font-medium" style={{ color: rankColor }}>
+                  <span className="font-heading text-xs font-semibold uppercase tracking-[0.1em]" style={{ color: rankColor }}>
                     {getRankLabel(rank)}
                   </span>
                 </div>
@@ -201,7 +196,7 @@ export function Header() {
 
           {/* Hamburger (mobile only) */}
           <button
-            className="hidden size-9 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-transparent text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] max-md:flex"
+            className="hidden size-9 cursor-pointer items-center justify-center rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-transparent text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] max-md:flex"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
             aria-expanded={mobileMenuOpen}
@@ -214,7 +209,7 @@ export function Header() {
       {/* ── Mobile Sidebar Overlay ── */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-[calc(var(--z-sticky)+1)] bg-black/50 animate-[fadeIn_0.2s_ease] md:hidden"
+          className="fixed inset-0 z-[calc(var(--z-sticky)+1)] bg-black/60 animate-[fadeIn_0.2s_ease] md:hidden"
           onClick={() => setMobileMenuOpen(false)}
           aria-hidden="true"
         />
@@ -226,11 +221,16 @@ export function Header() {
         aria-hidden={!mobileMenuOpen}
       >
         <div className="flex items-center justify-between border-b border-[var(--border-subtle)] p-4">
-          <Link to="/" className={LOGO_CLASS} onClick={handleNavClick}>
-            Predict Arena
+          <Link to="/" className="flex items-center gap-2.5" onClick={handleNavClick}>
+            <span className="flex size-7 items-center justify-center rounded-[3px] bg-[var(--accent-amber)] font-mono text-[11px] font-bold text-[#16100a]">
+              PA
+            </span>
+            <span className="font-heading text-lg font-bold uppercase leading-none tracking-[0.08em] text-[var(--text-primary)]">
+              Predict <span className="text-[var(--accent-amber)]">Arena</span>
+            </span>
           </Link>
           <button
-            className="flex size-8 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border-none bg-transparent text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]"
+            className="flex size-8 cursor-pointer items-center justify-center rounded-[var(--radius-sm)] border-none bg-transparent text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]"
             onClick={() => setMobileMenuOpen(false)}
             aria-label="Close navigation menu"
           >
@@ -293,7 +293,6 @@ export function Header() {
             Logout
           </button>
         </nav>
-
       </aside>
     </header>
   );

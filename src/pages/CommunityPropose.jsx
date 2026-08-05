@@ -30,7 +30,7 @@ export default function CommunityPropose() {
         </p>
       </div>
 
-      <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6">
+      <div className="rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6">
         <ProposeForm onSuccess={() => navigate('/community')} />
       </div>
     </div>

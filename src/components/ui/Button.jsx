@@ -9,14 +9,14 @@ const sizeClasses = {
 
 const variantClasses = {
   primary:
-    'bg-[var(--accent-blue)] text-white hover:bg-[var(--accent-blue-hover)] border border-transparent',
+    'bg-[var(--accent-amber)] text-[var(--primary-foreground)] hover:bg-[var(--accent-amber-hover)] border border-transparent shadow-sm hover:shadow-[var(--shadow-glow-amber)] font-heading font-bold uppercase tracking-[0.08em]',
   secondary:
     'bg-[var(--bg-tertiary)] text-[var(--text-primary)] hover:bg-[var(--bg-input)] border border-[var(--border-subtle)]',
   ghost:
     'bg-transparent text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] hover:border-[var(--text-muted)]',
-  yes: 'bg-[var(--color-yes-muted)] text-[var(--color-yes)] border border-[var(--color-yes-border)] hover:bg-[rgba(34,197,94,0.25)]',
-  no: 'bg-[var(--color-no-muted)] text-[var(--color-no)] border border-[var(--color-no-border)] hover:bg-[rgba(239,68,68,0.25)]',
-  danger: 'bg-[var(--color-no-muted)] text-[var(--color-no)] border border-[var(--color-no-border)] hover:bg-[rgba(239,68,68,0.25)]',
+  yes: 'bg-[var(--color-yes-muted)] text-[var(--color-yes)] border border-[var(--color-yes-border)] hover:bg-[rgba(34,197,94,0.2)] font-heading font-bold uppercase tracking-[0.08em]',
+  no: 'bg-[var(--color-no-muted)] text-[var(--color-no)] border border-[var(--color-no-border)] hover:bg-[rgba(239,68,68,0.2)] font-heading font-bold uppercase tracking-[0.08em]',
+  danger: 'bg-[var(--color-no-muted)] text-[var(--color-no)] border border-[var(--color-no-border)] hover:bg-[rgba(239,68,68,0.2)]',
 };
 
 /**

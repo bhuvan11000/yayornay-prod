@@ -39,9 +39,15 @@ export function SellForm({ prediction, market }) {
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-[var(--space-3)] rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] p-[var(--space-3)]">
-      <div className="flex flex-wrap items-center gap-[var(--space-3)]">
-        <span className="rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] px-2 py-[2px] font-heading text-sm font-bold">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] px-3 py-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <span
+          className="rounded-[3px] px-2 py-[2px] font-heading text-sm font-bold uppercase tracking-[0.08em]"
+          style={{
+            background: prediction.position === 'yes' ? 'var(--color-yes-muted)' : 'var(--color-no-muted)',
+            color: prediction.position === 'yes' ? 'var(--color-yes)' : 'var(--color-no)',
+          }}
+        >
           {prediction.position.toUpperCase()}
         </span>
         <span className="font-mono text-xs text-[var(--text-secondary)]">
@@ -54,16 +60,16 @@ export function SellForm({ prediction, market }) {
 
       {!isOpen ? (
         <button
-          className={`btn-ghost btn-sm shrink-0`}
+          className="btn-ghost btn-sm shrink-0"
           onClick={() => setIsOpen(true)}
         >
           Sell
         </button>
       ) : (
-        <form className="flex w-full flex-col gap-[var(--space-2)]" onSubmit={handleSell}>
-          <div className="flex items-center gap-[var(--space-2)]">
+        <form className="flex w-full flex-col gap-2" onSubmit={handleSell}>
+          <div className="flex items-center gap-2">
             <input
-              className="max-w-[120px] flex-1 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-input)] px-[var(--space-3)] py-[var(--space-2)] font-mono text-sm text-[var(--text-primary)] outline-none focus:border-[var(--border-focus)]"
+              className="max-w-[120px] flex-1 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2 font-mono text-sm text-[var(--text-primary)] outline-none focus:border-[var(--border-focus)] focus:shadow-[0_0_0_3px_rgba(245,165,36,0.13)]"
               type="number"
               min={1}
               max={prediction.shares}
@@ -71,7 +77,7 @@ export function SellForm({ prediction, market }) {
               value={sharesToSell}
               onChange={(e) => setSharesToSell(e.target.value)}
             />
-            <span className="cursor-pointer rounded-[var(--radius-sm)] px-[var(--space-2)] py-[var(--space-1)] text-xs font-semibold text-[var(--accent-blue)] hover:bg-[var(--accent-blue-muted)]" onClick={() => setSharesToSell(prediction.shares.toString())}>
+            <span className="cursor-pointer rounded-[var(--radius-sm)] px-2 py-1 font-heading text-xs font-semibold uppercase tracking-[0.08em] text-[var(--accent-amber)] hover:bg-[var(--accent-amber-muted)]" onClick={() => setSharesToSell(prediction.shares.toString())}>
               Max
             </span>
           </div>
@@ -80,9 +86,9 @@ export function SellForm({ prediction, market }) {
               You&apos;ll receive ~{Math.floor(revenue)} coins
             </p>
           )}
-          <div className="flex gap-[var(--space-2)]">
+          <div className="flex gap-2">
             <button type="submit" className="btn-primary btn-sm" disabled={!isValid}>
-              {isPending ? 'Selling...' : 'Confirm'}
+              {isPending ? 'Selling…' : 'Confirm'}
             </button>
             <button
               type="button"

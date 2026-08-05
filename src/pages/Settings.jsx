@@ -42,14 +42,14 @@ export default function Settings() {
     <div className="mx-auto flex w-full max-w-[640px] flex-col gap-6 p-4 md:p-6">
       <h1 className="text-2xl font-heading">Settings</h1>
 
-      <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6">
+      <div className="flex flex-col gap-4 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6">
         <h2 className="flex items-center gap-2 text-lg text-[var(--text-primary)]">
           <User size={18} />
           Profile
         </h2>
 
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[var(--accent-blue)] font-heading text-xl font-bold uppercase text-white select-none">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[3px] bg-[var(--accent-amber)] font-heading text-xl font-bold uppercase text-[#0B0E0C] select-none">
             {avatarLetter}
           </div>
           <p className="text-sm text-muted">Avatar selection coming soon</p>
@@ -72,7 +72,7 @@ export default function Settings() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6">
+      <div className="flex flex-col gap-4 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6">
         <h2 className="flex items-center gap-2 text-lg text-[var(--text-primary)]">
           <Award size={18} />
           Progression
@@ -87,7 +87,7 @@ export default function Settings() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6">
+      <div className="flex flex-col gap-4 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6">
         <h2 className="flex items-center gap-2 text-lg text-[var(--text-primary)]">
           <Mail size={18} />
           Account Info
@@ -111,7 +111,7 @@ export default function Settings() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6">
+      <div className="flex flex-col gap-4 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6">
         <Button onClick={handleLogout} variant="danger" className="w-full">
           <LogOut size={16} />
           Logout

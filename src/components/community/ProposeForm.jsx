@@ -120,7 +120,7 @@ export function ProposeForm({ onSuccess }) {
   return (
     <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
       {errors.form && (
-        <div className="rounded-lg border border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.1)] p-3 text-sm text-[var(--color-no)]">
+        <div className="rounded-[var(--radius-sm)] border border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.1)] p-3 text-sm text-[var(--color-no)]">
           {errors.form}
         </div>
       )}
@@ -203,7 +203,7 @@ export function ProposeForm({ onSuccess }) {
         )}
       </div>
 
-      <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-tertiary)] px-4 py-3 text-sm text-[var(--text-secondary)]">
+      <div className="flex items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] px-4 py-3 text-sm text-[var(--text-secondary)]">
         <Coins size={16} />
         <span>
           Stake: <strong className="font-mono text-[var(--color-warning)]">{formatCoins(stake)} coins</strong>{' '}
@@ -213,7 +213,7 @@ export function ProposeForm({ onSuccess }) {
 
       <button
         type="submit"
-        className="w-full cursor-pointer rounded-lg bg-[var(--accent-blue)] px-4 py-4 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-blue-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full cursor-pointer rounded-[var(--radius-sm)] bg-[var(--accent-amber)] px-4 py-4 text-base font-semibold text-[#0B0E0C] transition-colors hover:bg-[var(--accent-amber-hover)] disabled:cursor-not-allowed disabled:opacity-50"
         disabled={!canSubmit || proposeMutation.isPending}
       >
         {proposeMutation.isPending

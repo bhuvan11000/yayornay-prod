@@ -57,7 +57,7 @@ export default function Quests() {
             )}
           </div>
           {daily.length > 0 && (
-            <span className="rounded-full bg-[var(--accent-blue-muted)] px-2 py-1 text-xs font-medium text-[var(--accent-blue)]">
+            <span className="rounded-[3px] bg-[var(--accent-amber-muted)] px-2 py-1 text-xs font-medium text-[var(--accent-amber)]">
               {daily.filter(q => !q.completed).length} active
             </span>
           )}
@@ -70,7 +70,7 @@ export default function Quests() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-10">
+          <div className="flex flex-col items-center gap-3 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-10">
             <CheckCircle size={32} className="text-[var(--color-yes)]" />
             <p className="text-sm text-[var(--text-muted)]">All daily quests completed!</p>
           </div>
@@ -90,7 +90,7 @@ export default function Quests() {
             )}
           </div>
           {weekly.length > 0 && (
-            <span className="rounded-full bg-[var(--accent-blue-muted)] px-2 py-1 text-xs font-medium text-[var(--accent-blue)]">
+            <span className="rounded-[3px] bg-[var(--accent-amber-muted)] px-2 py-1 text-xs font-medium text-[var(--accent-amber)]">
               {weekly.filter(q => !q.completed).length} active
             </span>
           )}
@@ -103,7 +103,7 @@ export default function Quests() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-10">
+          <div className="flex flex-col items-center gap-3 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-10">
             <CheckCircle size={32} className="text-[var(--color-yes)]" />
             <p className="text-sm text-[var(--text-muted)]">All weekly quests completed!</p>
           </div>

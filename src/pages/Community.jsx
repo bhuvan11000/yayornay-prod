@@ -111,14 +111,14 @@ export default function Community() {
         </div>
         {canPropose ? (
           <button
-            className="flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-[var(--radius-md)] bg-[var(--accent-blue)] px-5 py-3 text-sm font-semibold text-white transition-all duration-150 hover:-translate-y-px hover:bg-[var(--accent-blue-hover)]"
+            className="flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-[var(--radius-sm)] bg-[var(--accent-amber)] px-5 py-3 text-sm font-semibold text-[#0B0E0C] transition-all duration-150 hover:-translate-y-px hover:bg-[var(--accent-amber-hover)]"
             onClick={() => setShowPropose(true)}
           >
             <Plus size={16} />
             Propose a Market
           </button>
         ) : (
-          <div className="flex items-center gap-1 whitespace-nowrap rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] px-3 py-2 text-xs text-[var(--text-muted)]">
+          <div className="flex items-center gap-1 whitespace-nowrap rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] px-3 py-2 text-xs text-[var(--text-muted)]">
             <Lock size={14} />
             <span>Level 3+</span>
           </div>
@@ -126,7 +126,7 @@ export default function Community() {
       </div>
 
       {!canVote && (
-        <div className="flex items-center gap-2 rounded-[var(--radius-md)] border border-[rgba(245,158,11,0.2)] bg-[rgba(245,158,11,0.1)] px-3 py-3 text-sm text-[var(--color-warning)]">
+        <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[rgba(245,158,11,0.2)] bg-[rgba(245,158,11,0.1)] px-3 py-3 text-sm text-[var(--color-warning)]">
           <Lock size={16} />
           <span>Reach Level 3 to vote on proposals</span>
         </div>
@@ -157,7 +157,7 @@ export default function Community() {
               </p>
               {canPropose && (
                 <button
-                  className="mt-2 flex cursor-pointer items-center gap-2 rounded-[var(--radius-md)] bg-[var(--accent-blue)] px-5 py-3 text-sm font-semibold text-white transition-colors duration-150 hover:bg-[var(--accent-blue-hover)]"
+                  className="mt-2 flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--accent-amber)] px-5 py-3 text-sm font-semibold text-[#0B0E0C] transition-colors duration-150 hover:bg-[var(--accent-amber-hover)]"
                   onClick={() => setShowPropose(true)}
                 >
                   <Plus size={16} />
@@ -192,7 +192,7 @@ export default function Community() {
               </p>
               {canPropose && (
                 <button
-                  className="mt-2 flex cursor-pointer items-center gap-2 rounded-[var(--radius-md)] bg-[var(--accent-blue)] px-5 py-3 text-sm font-semibold text-white transition-colors duration-150 hover:bg-[var(--accent-blue-hover)]"
+                  className="mt-2 flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--accent-amber)] px-5 py-3 text-sm font-semibold text-[#0B0E0C] transition-colors duration-150 hover:bg-[var(--accent-amber-hover)]"
                   onClick={() => setShowPropose(true)}
                 >
                   <Plus size={16} />

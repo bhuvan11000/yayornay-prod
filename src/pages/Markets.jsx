@@ -3,7 +3,6 @@ import { useMarkets } from '../hooks/useMarkets';
 import { MarketCard } from '../components/market/MarketCard';
 import { CategoryTag } from '../components/ui/CategoryTag';
 import { Skeleton } from '../components/ui/Skeleton';
-import BlurText from '../components/reactbits/BlurText/BlurText';
 
 const CATEGORIES = ['All', 'Sports', 'Tech', 'Pop Culture', 'Politics', 'Memes'];
 const CATEGORY_MAP = {
@@ -20,6 +19,9 @@ const SORT_OPTIONS = [
   { value: 'volume', label: 'Most Active' },
   { value: 'closes_at', label: 'Closing Soon' },
 ];
+
+const SELECT_CLASS =
+  'cursor-pointer rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2 font-heading text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-primary)] transition-colors duration-150 hover:border-[var(--text-muted)] focus:border-[var(--border-focus)] focus:outline-none';
 
 export default function Markets() {
   const [category, setCategory] = useState(null);
@@ -55,30 +57,47 @@ export default function Markets() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-5 p-4 md:p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-heading">Markets</h1>
+    <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-5">
+      {/* ── Header ── */}
+      <div className="flex items-end justify-between gap-3">
+        <div>
+          <p className="eyebrow">The board</p>
+          <h1 className="mt-1 font-heading text-[28px] font-bold uppercase leading-none tracking-[0.04em] text-[var(--text-primary)]">
+            Markets
+          </h1>
+        </div>
         {!isLoading && (
-          <span className="font-mono text-sm text-[var(--text-secondary)]">{count} market{count !== 1 ? 's' : ''}</span>
+          <span className="pb-1 font-mono text-xs text-[var(--text-secondary)]">
+            {count} {status === 'open' ? 'live' : status} market{count !== 1 ? 's' : ''}
+          </span>
         )}
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat}
-            className={`cursor-pointer rounded-[var(--radius-full)] border border-[var(--border-subtle)] bg-transparent px-3.5 py-1 transition-all duration-150 hover:border-[var(--accent-blue)] ${category === CATEGORY_MAP[cat] ? 'border-[var(--accent-blue)] bg-[var(--accent-blue-muted)]' : ''}`}
-            onClick={() => handleCategoryClick(cat)}
-          >
-            {cat === 'All' ? 'All' : <CategoryTag category={CATEGORY_MAP[cat]} />}
-          </button>
-        ))}
+      {/* ── Category board ── */}
+      <div className="flex flex-wrap gap-1.5">
+        {CATEGORIES.map((cat) => {
+          const active = category === CATEGORY_MAP[cat];
+          return (
+            <button
+              key={cat}
+              className={`cursor-pointer rounded-[3px] border px-3 py-1.5 font-heading text-xs font-semibold uppercase tracking-[0.1em] transition-all duration-150 ${
+                active
+                  ? 'border-[var(--accent-amber)] bg-[var(--accent-amber-muted)] text-[var(--accent-amber)] shadow-[var(--shadow-sm)]'
+                  : 'border-[var(--border-subtle)] bg-transparent text-[var(--text-secondary)] hover:border-[var(--text-muted)] hover:text-[var(--text-primary)]'
+              }`}
+              onClick={() => handleCategoryClick(cat)}
+            >
+              {cat === 'All' ? 'All' : <CategoryTag category={CATEGORY_MAP[cat]} />}
+            </button>
+          );
+        })}
       </div>
 
-      <div className="flex flex-wrap items-end gap-4">
+      {/* ── Status + sort ── */}
+      <div className="flex flex-wrap items-center gap-4">
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium uppercase tracking-[0.05em] text-[var(--text-muted)]">Status</label>
-          <select className="min-w-[140px] cursor-pointer rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--border-focus)] focus:outline-none" value={status} onChange={handleStatusChange}>
+          <label className="eyebrow">Status</label>
+          <select className={`${SELECT_CLASS} min-w-[140px]`} value={status} onChange={handleStatusChange}>
             {STATUS_OPTIONS.map((s) => (
               <option key={s} value={s}>
                 {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -88,8 +107,8 @@ export default function Markets() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium uppercase tracking-[0.05em] text-[var(--text-muted)]">Sort by</label>
-          <select className="min-w-[140px] cursor-pointer rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--border-focus)] focus:outline-none" value={sort} onChange={handleSortChange}>
+          <label className="eyebrow">Sort by</label>
+          <select className={`${SELECT_CLASS} min-w-[140px]`} value={sort} onChange={handleSortChange}>
             {SORT_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
@@ -99,6 +118,7 @@ export default function Markets() {
         </div>
       </div>
 
+      {/* ── Board grid ── */}
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -107,25 +127,20 @@ export default function Markets() {
         </div>
       ) : isError ? (
         <div className="flex flex-col items-center justify-center gap-2 px-4 py-12 text-center">
-          <p className="text-secondary">Failed to load markets</p>
-          <p className="text-muted text-sm">{error?.message}</p>
+          <p className="text-[var(--text-secondary)]">Failed to load the board</p>
+          <p className="text-sm text-[var(--text-muted)]">{error?.message}</p>
           <button className="btn-primary" onClick={() => refetch()} style={{ marginTop: 'var(--space-4)' }}>
             Retry
           </button>
         </div>
       ) : markets.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 px-4 py-12 text-center">
-          <div className="text-5xl opacity-50">📊</div>
-          <BlurText
-            text="No markets found"
-            delay={100}
-            animateBy="words"
-            direction="top"
-            className="font-heading text-lg text-[var(--text-secondary)]"
-          />
-          <p className="text-muted text-sm">
+          <div className="font-heading text-4xl font-bold uppercase tracking-[0.1em] text-[var(--text-muted)]">
+            Empty board
+          </div>
+          <p className="text-sm text-[var(--text-muted)]">
             {status === 'open'
-              ? 'No open markets right now. Check back soon or try a different category.'
+              ? 'No open markets right now. Check back at 08:00 UTC or try a different category.'
               : `No ${status} markets match your filters.`}
           </p>
         </div>
@@ -144,7 +159,7 @@ export default function Markets() {
                 onClick={() => setPage((p) => p + 1)}
                 disabled={isFetching}
               >
-                {isFetching ? 'Loading...' : 'Load More'}
+                {isFetching ? 'Loading…' : 'Load More'}
               </button>
             </div>
           )}

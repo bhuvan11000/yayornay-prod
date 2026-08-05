@@ -27,10 +27,14 @@ export function Input({
 }) {
   return (
     <div className="flex w-full flex-col gap-1.5">
-      {label && <Label className="text-sm font-medium text-[var(--text-secondary)]">{label}</Label>}
+      {label && (
+        <Label className="font-heading text-xs font-semibold uppercase tracking-[0.1em] text-[var(--text-secondary)]">
+          {label}
+        </Label>
+      )}
       <ShadcnInput
         type={type}
-        className={`h-10 rounded-lg border bg-[var(--bg-input)] px-4 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus-visible:ring-[var(--border-focus)] ${
+        className={`h-10 rounded-[var(--radius-sm)] border bg-[var(--bg-input)] px-3.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus-visible:ring-[var(--border-focus)] ${
           error
             ? 'border-[var(--color-no)] focus-visible:ring-[rgba(239,68,68,0.15)]'
             : 'border-[var(--border-subtle)]'

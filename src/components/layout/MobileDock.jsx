@@ -24,7 +24,7 @@ export function MobileDock() {
         <Icon
           size={24}
           strokeWidth={2}
-          className={`transition-colors duration-150 ${isActive ? 'text-[var(--accent-blue)]' : 'text-[var(--text-muted)]'}`}
+          className={`transition-colors duration-150 ${isActive ? 'text-[var(--accent-amber)]' : 'text-[var(--text-muted)]'}`}
         />
       ),
     };

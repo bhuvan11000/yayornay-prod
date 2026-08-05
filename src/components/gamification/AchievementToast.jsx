@@ -48,14 +48,14 @@ export function AchievementToast({ achievement, onDismiss }) {
         >
           <StarBorder
             as="div"
-            color="#22c55e"
+            color="#f5a524"
             speed="5s"
             thickness={2}
-            className="rounded-[var(--radius-lg)]"
-            contentClassName="flex items-start gap-3 rounded-[calc(var(--radius-lg)-2px)] bg-[var(--bg-elevated)] p-4 shadow-lg"
+            className="rounded-[var(--radius-sm)]"
+            contentClassName="flex items-start gap-3 rounded-[3px] bg-[var(--bg-elevated)] p-4 shadow-lg"
           >
             <div className="flex min-w-[300px] items-start gap-3">
-              <div className="achievement-icon-pop flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[rgba(34,197,94,0.15)] text-[var(--color-yes)]">
+              <div className="achievement-icon-pop flex h-10 w-10 shrink-0 items-center justify-center rounded-[3px] bg-[var(--accent-amber-muted)] text-[var(--accent-amber)]">
                 <IconComponent size={24} />
               </div>
               <div className="flex min-w-0 flex-1 flex-col">

@@ -6,7 +6,7 @@ import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import ClickSpark from '../components/reactbits/ClickSpark/ClickSpark';
-import Aurora from '../components/reactbits/Aurora/Aurora';
+import LightRays from '../components/reactbits/LightRays/LightRays';
 import BlurText from '../components/reactbits/BlurText/BlurText';
 import SpotlightCard from '../components/reactbits/SpotlightCard/SpotlightCard';
 
@@ -89,17 +89,29 @@ export default function Auth() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--bg-primary)] p-4">
-      {/* Aurora background */}
-      <div className="pointer-events-none fixed inset-0 z-0 opacity-45">
-        <Aurora colorStops={['#4f7df5', '#a855f7', '#22c55e']} amplitude={1} blend={0.6} speed={0.8} />
+      {/* Floodlights */}
+      <div className="pointer-events-none fixed inset-0 z-0 opacity-40">
+        <LightRays
+          raysOrigin="top-center"
+          raysColor={[0.95, 0.65, 0.15]}
+          raysSpeed={0.6}
+          followMouse={false}
+          saturation={0.55}
+          lightSpread={1.4}
+          rayLength={1.6}
+          className="opacity-40"
+        />
       </div>
-      <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--bg-primary)_85%)]" />
+      <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_25%,var(--bg-primary)_90%)]" />
 
       <SpotlightCard
-        spotlightColor="rgba(79, 125, 245, 0.18)"
+        spotlightColor="rgba(245, 165, 36, 0.09)"
         className="relative z-10 w-full max-w-md"
       >
-        <div className="flex flex-col gap-6 bg-[var(--bg-secondary)]/90 p-8">
+        <div className="relative flex flex-col gap-6 border border-[var(--border-subtle)] bg-[var(--bg-secondary)]/95 p-8">
+          {/* Scoreboard frame line */}
+          <div className="absolute left-0 right-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent_5%,var(--accent-amber)_50%,transparent_95%)]" />
+
           {/* Brand */}
           <div className="flex flex-col items-center gap-2 text-center">
             <BlurText
@@ -107,22 +119,22 @@ export default function Auth() {
               delay={120}
               animateBy="words"
               direction="top"
-              className="font-heading text-2xl font-bold tracking-tight text-[var(--text-primary)]"
+              className="font-heading text-2xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]"
             />
-            <p className="text-sm text-[var(--text-secondary)]">
+            <p className="font-mono text-xs uppercase tracking-[0.14em] text-[var(--text-secondary)]">
               Predict the future. Climb the ranks.
             </p>
           </div>
 
           {/* Tab Switcher */}
           <div
-            className="grid grid-cols-2 gap-0.5 rounded-lg bg-[var(--bg-tertiary)] p-0.5"
+            className="grid grid-cols-2 gap-0.5 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-0.5"
             role="tablist"
           >
             <button
-              className={`flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-3 text-sm font-medium transition-colors font-body cursor-pointer ${
+              className={`flex items-center justify-center gap-2 rounded-[3px] px-4 py-3 font-heading text-sm font-bold uppercase tracking-[0.08em] transition-colors cursor-pointer ${
                 tab === 'login'
-                  ? 'bg-[var(--bg-secondary)] text-[var(--text-primary)] shadow-[var(--shadow-sm)]'
+                  ? 'bg-[var(--accent-amber)] text-[#0B0E0C]'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
               onClick={() => { setTab('login'); setError(''); }}
@@ -133,9 +145,9 @@ export default function Auth() {
               Login
             </button>
             <button
-              className={`flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-3 text-sm font-medium transition-colors font-body cursor-pointer ${
+              className={`flex items-center justify-center gap-2 rounded-[3px] px-4 py-3 font-heading text-sm font-bold uppercase tracking-[0.08em] transition-colors cursor-pointer ${
                 tab === 'signup'
-                  ? 'bg-[var(--bg-secondary)] text-[var(--text-primary)] shadow-[var(--shadow-sm)]'
+                  ? 'bg-[var(--accent-amber)] text-[#0B0E0C]'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
               onClick={() => { setTab('signup'); setError(''); }}
@@ -169,13 +181,13 @@ export default function Auth() {
             />
 
             {error && (
-              <div className="rounded-lg border border-[var(--color-no-border)] bg-[var(--color-no-muted)] px-4 py-3 text-center text-sm leading-snug text-[var(--color-no)]">
+              <div className="rounded-[var(--radius-sm)] border border-[var(--color-no-border)] bg-[var(--color-no-muted)] px-4 py-3 text-center font-mono text-sm leading-snug text-[var(--color-no)]">
                 {error}
               </div>
             )}
 
             <ClickSpark
-              sparkColor="#4f7df5"
+              sparkColor="#F5A524"
               className="relative w-full"
             >
               <Button
@@ -191,8 +203,8 @@ export default function Auth() {
           </form>
 
           {!configured && (
-            <div className="rounded-lg border border-[rgba(245,158,11,0.2)] bg-[var(--color-warning-muted)] p-3 text-center">
-              <p className="text-xs text-warning">
+            <div className="rounded-[var(--radius-sm)] border border-[rgba(245,165,36,0.25)] bg-[var(--color-warning-muted)] p-3 text-center">
+              <p className="font-mono text-xs text-warning">
                 Supabase not configured. Create a <code>.env</code> file with your project keys.
               </p>
             </div>

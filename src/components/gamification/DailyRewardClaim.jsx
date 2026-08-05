@@ -15,16 +15,16 @@ const ICON_WRAPPER_CLASSES = {
 };
 
 const ICON_WRAPPER_BASE =
-  'flex size-12 shrink-0 items-center justify-center rounded-full bg-[var(--bg-tertiary)]';
+  'flex size-12 shrink-0 items-center justify-center rounded-[3px] border border-[var(--border-subtle)] bg-[var(--bg-tertiary)]';
 
 const RANK_BADGE_CLASS =
-  'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.05em] text-white';
+  'inline-flex items-center rounded-[3px] px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.05em] text-white';
 
 const SUNDAY_BADGE_CLASS =
-  'inline-flex items-center gap-1 rounded-full border border-[rgba(245,158,11,0.3)] bg-[rgba(245,158,11,0.2)] px-2 py-0.5 text-xs font-semibold text-[var(--color-warning)]';
+  'inline-flex items-center gap-1 rounded-[3px] border border-[rgba(245,165,36,0.35)] bg-[rgba(245,165,36,0.15)] px-2 py-0.5 text-xs font-semibold text-[var(--color-warning)]';
 
 const CLAIM_BUTTON_CLASS =
-  'daily-reward-claim-button inline-flex cursor-pointer items-center justify-center gap-2 self-start rounded-[var(--radius-md)] border-none bg-[var(--color-yes)] px-6 py-3 font-body text-sm font-semibold text-white transition-[background,transform] duration-150 ease hover:bg-[#16a34a] hover:-translate-y-px active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60';
+  'daily-reward-claim-button inline-flex cursor-pointer items-center justify-center gap-2 self-start rounded-[var(--radius-sm)] border-none bg-[var(--accent-amber)] px-6 py-3 font-heading text-sm font-bold uppercase tracking-[0.08em] text-[#0B0E0C] transition-[background,transform] duration-150 ease hover:bg-[var(--accent-amber-hover)] hover:-translate-y-px active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60';
 
 export function DailyRewardClaim({ onClaim, claiming }) {
   const rewardStatus = useAuthStore((s) => s.rewardStatus);
@@ -39,7 +39,7 @@ export function DailyRewardClaim({ onClaim, claiming }) {
 
   if (!is_active) {
     return (
-      <div className="daily-reward-locked relative flex items-center gap-5 overflow-hidden rounded-[var(--radius-xl)] border px-6 py-5">
+      <div className="daily-reward-locked relative flex items-center gap-5 overflow-hidden rounded-[var(--radius-sm)] border px-6 py-5">
         <div className={`${ICON_WRAPPER_BASE} ${ICON_WRAPPER_CLASSES.locked}`}>
           <Lock size={24} />
         </div>
@@ -55,7 +55,7 @@ export function DailyRewardClaim({ onClaim, claiming }) {
 
   if (alreadyClaimed || (!can_claim && is_active)) {
     return (
-      <div className="relative flex items-center gap-5 overflow-hidden rounded-[var(--radius-xl)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-6 py-5">
+      <div className="relative flex items-center gap-5 overflow-hidden rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-6 py-5">
         <div className={`${ICON_WRAPPER_BASE} ${ICON_WRAPPER_CLASSES.claimed}`}>
           <CheckCircle2 size={24} />
         </div>
@@ -92,7 +92,7 @@ export function DailyRewardClaim({ onClaim, claiming }) {
   }
 
   return (
-    <div className="daily-reward-claimable relative flex items-center gap-5 overflow-hidden rounded-[var(--radius-xl)] border px-6 py-5">
+    <div className="daily-reward-claimable relative flex items-center gap-5 overflow-hidden rounded-[var(--radius-sm)] border px-6 py-5">
       <div className="daily-reward-glow pointer-events-none absolute top-[-50%] left-[-50%] size-[200%]" />
       <div className={`${ICON_WRAPPER_BASE} ${ICON_WRAPPER_CLASSES.claimable}`}>
         <Gift size={24} />
@@ -115,12 +115,12 @@ export function DailyRewardClaim({ onClaim, claiming }) {
           <span className="text-[var(--text-muted)]">•</span>
           <span className="font-mono text-lg font-bold text-[var(--rank-visionary)]">+{xp} XP</span>
         </div>
-        <ClickSpark sparkColor="#fbbf24" className="relative inline-flex">
+        <ClickSpark sparkColor="#f5a524" className="relative inline-flex">
           <StarBorder
             as="button"
-            color="#22c55e"
+            color="#f5a524"
             speed="5s"
-            className="rounded-[var(--radius-md)]"
+            className="rounded-[var(--radius-sm)]"
             contentClassName={CLAIM_BUTTON_CLASS}
             onClick={onClaim}
             disabled={claiming}

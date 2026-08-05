@@ -1,11 +1,11 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { Coins } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { usePredict } from '../../hooks/usePredict';
 import { calculateShares, getPrice } from '../../lib/amm';
-import { formatCoins } from '../../lib/format';
+import { formatCoins, formatPrice } from '../../lib/format';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
-import StarBorder from '../reactbits/StarBorder/StarBorder';
+import { Button } from '../ui/Button';
 
 const CONFIDENCE_OPTIONS = [
   { value: 1, label: '1x' },
@@ -72,101 +72,120 @@ export function PredictionForm({ market, onSuccess }) {
 
   if (isExpired) {
     return (
-      <div className="card flex flex-col gap-[var(--space-3)] rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-[var(--space-5)]">
-        <h3 className="font-heading text-lg font-semibold">Market Closed</h3>
-        <p className="text-muted text-sm">This market is no longer accepting predictions.</p>
+      <div className="flex flex-col gap-3 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-5">
+        <h3 className="font-heading text-lg font-semibold uppercase tracking-[0.04em]">Market Closed</h3>
+        <p className="text-sm text-[var(--text-muted)]">This market is no longer accepting predictions.</p>
       </div>
     );
   }
 
-  return (
-    <form className="flex flex-col gap-[var(--space-3)] rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-[var(--space-5)]" onSubmit={handleSubmit}>
-      <h3 className="font-heading text-lg font-semibold">Place Prediction</h3>
+  const positionButton = (pos) => {
+    const yes = pos === 'yes';
+    const selected = position === pos;
+    const color = yes ? 'var(--color-yes)' : 'var(--color-no)';
+    const border = yes ? 'var(--color-yes-border)' : 'var(--color-no-border)';
+    const muted = yes ? 'var(--color-yes-muted)' : 'var(--color-no-muted)';
+    const price = yes ? market.yes_price : market.no_price;
 
-      <label className="text-xs font-medium uppercase tracking-[0.05em] text-[var(--text-muted)]">Your Position</label>
-      <div className="flex gap-[var(--space-2)]">
-        <ClickSpark sparkColor="#22c55e" className="relative flex-1">
-          <button
-            type="button"
-            className={`flex w-full flex-1 cursor-pointer items-center justify-center gap-[var(--space-2)] rounded-[var(--radius-md)] px-[var(--space-4)] py-[var(--space-3)] font-heading text-base font-bold transition-all duration-[var(--transition-fast)] hover:bg-[rgba(34,197,94,0.25)] ${
-              position === 'yes'
-                ? 'border border-[var(--color-yes)] bg-[var(--color-yes)] text-white'
-                : 'border border-[var(--color-yes-border)] bg-[var(--color-yes-muted)] text-[var(--color-yes)]'
-            }`}
-            onClick={() => setPosition('yes')}
-          >
-            YES {market.yes_price != null && `${Math.round(market.yes_price * 100)}c`}
-          </button>
-        </ClickSpark>
-        <ClickSpark sparkColor="#ef4444" className="relative flex-1">
-          <button
-            type="button"
-            className={`flex w-full flex-1 cursor-pointer items-center justify-center gap-[var(--space-2)] rounded-[var(--radius-md)] px-[var(--space-4)] py-[var(--space-3)] font-heading text-base font-bold transition-all duration-[var(--transition-fast)] hover:bg-[rgba(239,68,68,0.25)] ${
-              position === 'no'
-                ? 'border border-[var(--color-no)] bg-[var(--color-no)] text-white'
-                : 'border border-[var(--color-no-border)] bg-[var(--color-no-muted)] text-[var(--color-no)]'
-            }`}
-            onClick={() => setPosition('no')}
-          >
-            NO {market.no_price != null && `${Math.round(market.no_price * 100)}c`}
-          </button>
-        </ClickSpark>
-      </div>
-
-      <label className="text-xs font-medium uppercase tracking-[0.05em] text-[var(--text-muted)]">Amount (coins)</label>
-      <div className="flex items-center gap-[var(--space-2)] rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-input)] px-[var(--space-3)] focus-within:border-[var(--border-focus)] focus-within:shadow-[0_0_0_3px_rgba(79,125,245,0.15)]">
-        <span className="text-sm leading-none">🪙</span>
-        <input
-          className="flex-1 bg-transparent py-[var(--space-3)] font-mono text-base text-[var(--text-primary)] outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-          type="number"
-          min={10}
-          max={10000}
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="10 – 10,000"
-        />
-      </div>
-      {numAmount > 0 && numAmount < 10 && (
-        <p className="text-xs text-[var(--color-no)]">Minimum: 10 coins</p>
-      )}
-
-      <label className="text-xs font-medium uppercase tracking-[0.05em] text-[var(--text-muted)]">Confidence</label>
-      <ToggleGroup
-        type="single"
-        value={String(confidence)}
-        onValueChange={(v) => v && setConfidence(Number(v))}
-        className="w-full"
+    return (
+      <button
+        type="button"
+        className={`flex w-full cursor-pointer flex-col items-center gap-0.5 rounded-[3px] border px-4 py-2.5 font-heading font-bold uppercase tracking-[0.1em] transition-all duration-150 ${
+          selected
+            ? 'border-transparent text-white shadow-[var(--shadow-sm)]'
+            : ''
+        }`}
+        style={{
+          background: selected ? color : muted,
+          borderColor: selected ? color : border,
+          color: selected ? '#fff' : color,
+        }}
+        onClick={() => setPosition(pos)}
+        aria-pressed={selected}
       >
-        {CONFIDENCE_OPTIONS.map((opt) => (
-          <ToggleGroupItem
-            key={opt.value}
-            value={String(opt.value)}
-            variant="outline"
-            className="flex-1 bg-[var(--bg-input)] text-[var(--text-secondary)] data-[state=on]:bg-[var(--accent-blue)] data-[state=on]:text-white"
-          >
-            {opt.label}
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
-      <p className="text-right font-mono text-xs text-[var(--text-muted)]">Max spend: {formatCoins(totalCost)} coins</p>
+        <span className="text-base leading-none">{yes ? 'Yes' : 'No'}</span>
+        <span className="font-mono text-sm font-bold tabular-nums" style={{ color: selected ? '#fff' : color }}>
+          {formatPrice(price)}
+        </span>
+      </button>
+    );
+  };
+
+  return (
+    <form className="flex flex-col gap-4 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-5" onSubmit={handleSubmit}>
+      <div className="flex items-center justify-between">
+        <h3 className="font-heading text-lg font-bold uppercase tracking-[0.06em]">Bet Slip</h3>
+        <span className="eyebrow">Buy shares</span>
+      </div>
+
+      <div>
+        <span className="eyebrow mb-1.5 block">Your position</span>
+        <div className="flex gap-2">
+          {positionButton('yes')}
+          {positionButton('no')}
+        </div>
+      </div>
+
+      <div>
+        <span className="eyebrow mb-1.5 block">Amount (coins)</span>
+        <div className="flex items-center gap-2 rounded-[3px] border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 transition-[border-color,box-shadow] duration-150 focus-within:border-[var(--border-focus)] focus-within:shadow-[0_0_0_3px_rgba(245,165,36,0.13)]">
+          <Coins size={15} className="shrink-0 text-[var(--color-warning)]" />
+          <input
+            className="flex-1 bg-transparent py-2.5 font-mono text-base text-[var(--text-primary)] outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            type="number"
+            min={10}
+            max={10000}
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="10 – 10,000"
+          />
+        </div>
+        {numAmount > 0 && numAmount < 10 && (
+          <p className="mt-1 text-xs text-[var(--color-no)]">Minimum: 10 coins</p>
+        )}
+      </div>
+
+      <div>
+        <span className="eyebrow mb-1.5 block">Confidence</span>
+        <ToggleGroup
+          type="single"
+          value={String(confidence)}
+          onValueChange={(v) => v && setConfidence(Number(v))}
+          className="w-full"
+        >
+          {CONFIDENCE_OPTIONS.map((opt) => (
+            <ToggleGroupItem
+              key={opt.value}
+              value={String(opt.value)}
+              variant="outline"
+              className="flex-1 rounded-[3px] bg-[var(--bg-input)] font-heading text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-secondary)] data-[state=on]:bg-[var(--accent-amber)] data-[state=on]:text-[var(--primary-foreground)]"
+            >
+              {opt.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+        <p className="mt-1 text-right font-mono text-[11px] text-[var(--text-muted)]">Max spend: {formatCoins(totalCost)} coins</p>
+      </div>
 
       {position && numAmount >= 10 && (
-        <div className="flex flex-col gap-[var(--space-2)] rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] p-[var(--space-3)]">
+        <div className="flex flex-col gap-2 border-t border-[var(--border-subtle)] pt-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-[var(--text-muted)]">You receive</span>
+            <span className="eyebrow">You receive</span>
             <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">
               ~{Math.round(projectedShares)} shares
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-xs text-[var(--text-muted)]">Total cost</span>
+            <span className="eyebrow">Total cost</span>
             <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">
               {formatCoins(totalCost)} coins
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-xs text-[var(--text-muted)]">Entry price</span>
-            <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">~{Math.round(currentPrice * 100)}c</span>
+            <span className="eyebrow">Entry price</span>
+            <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">
+              ~{formatPrice(currentPrice)}
+            </span>
           </div>
         </div>
       )}
@@ -181,26 +200,20 @@ export function PredictionForm({ market, onSuccess }) {
         <p className="text-xs text-[var(--color-no)]">{mutationError.message}</p>
       )}
 
-      <ClickSpark
-        sparkColor="#4f7df5"
-        className="relative w-full"
+      <Button
+        type="submit"
+        variant="primary"
+        size="lg"
+        loading={isPending}
+        disabled={!isValid || isPending}
+        className="w-full"
       >
-        <StarBorder
-          as="button"
-          type="submit"
-          color="#4f7df5"
-          speed="6s"
-          className="w-full rounded-[var(--radius-md)]"
-          contentClassName={`w-full justify-center mt-[var(--space-1)] ${isValid && !isPending ? 'btn-primary' : ''}`}
-          disabled={!isValid || isPending}
-        >
-          {isPending
-            ? 'Placing...'
-            : position
-              ? `Predict ${position.toUpperCase()}`
-              : 'Select a Position'}
-        </StarBorder>
-      </ClickSpark>
+        {isPending
+          ? 'Placing…'
+          : position
+            ? `Buy ${position.toUpperCase()} ${formatPrice(currentPrice)}`
+            : 'Select a Position'}
+      </Button>
     </form>
   );
 }

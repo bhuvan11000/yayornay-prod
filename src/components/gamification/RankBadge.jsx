@@ -22,7 +22,7 @@ export function RankBadge({ rank, size = 'md', showLabel = true }) {
       title={`${label}${threshold ? ` — ${threshold.minCoins.toLocaleString()} coins required` : ''}`}
     >
       <span
-        className={`rounded-full flex-shrink-0 ${isOmniscient ? 'omniscient-dot' : ''}`}
+        className={`rounded-[3px] flex-shrink-0 ${isOmniscient ? 'omniscient-dot' : ''}`}
         style={{
           width: dotSize,
           height: dotSize,
@@ -34,8 +34,8 @@ export function RankBadge({ rank, size = 'md', showLabel = true }) {
           <ShinyText
             text={label}
             speed={3}
-            color="#f59e0b"
-            shineColor="#a855f7"
+            color="#f5a524"
+            shineColor="#e9f0ea"
             className={labelClass}
           />
         ) : (

@@ -24,8 +24,8 @@ export function AchievementCard({ achievement }) {
 
   if (!unlocked) {
     return (
-      <div className="relative flex h-full min-h-[220px] flex-col items-center gap-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)]/40 p-5 text-center opacity-50 backdrop-blur-[2px]">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--bg-tertiary)]/60">
+      <div className="relative flex h-full min-h-[220px] flex-col items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)]/40 p-5 text-center opacity-50 backdrop-blur-[2px]">
+        <div className="flex h-14 w-14 items-center justify-center rounded-[3px] bg-[var(--bg-tertiary)]/60">
           <Lock size={22} className="text-[var(--text-muted)]" />
         </div>
         <h3 className="text-sm font-semibold text-[var(--text-secondary)]">{title}</h3>
@@ -33,9 +33,9 @@ export function AchievementCard({ achievement }) {
 
         {progress && (
           <div className="mt-auto flex w-full items-center gap-2">
-            <div className="h-1 flex-1 overflow-hidden rounded-full bg-[var(--bg-tertiary)]">
+            <div className="h-1 flex-1 overflow-hidden rounded-[2px] bg-[var(--bg-tertiary)]">
               <div
-                className="h-full rounded-full bg-[var(--text-muted)] transition-[width] duration-500"
+                className="h-full rounded-[2px] bg-[var(--text-muted)] transition-[width] duration-500"
                 style={{ width: `${Math.min(progress.percentage, 100)}%` }}
               />
             </div>
@@ -54,12 +54,12 @@ export function AchievementCard({ achievement }) {
       gap={8}
       speed={30}
       colors="#22c55e,#86efac,#16a34a"
-      className="min-h-[220px] rounded-2xl border border-[rgba(34,197,94,0.3)] bg-[var(--bg-secondary)] shadow-[0_0_12px_rgba(34,197,94,0.1)]"
+      className="min-h-[220px] rounded-[var(--radius-sm)] border border-[rgba(34,197,94,0.3)] bg-[var(--bg-secondary)] shadow-[0_0_12px_rgba(34,197,94,0.1)]"
     >
       <div className="relative z-[1] flex h-full min-h-[220px] w-full flex-col items-center gap-2 p-5 text-center">
-        <div className="relative mb-1 flex h-14 w-14 items-center justify-center rounded-full bg-[rgba(34,197,94,0.15)]">
+        <div className="relative mb-1 flex h-14 w-14 items-center justify-center rounded-[3px] bg-[rgba(34,197,94,0.15)]">
           <IconComponent size={28} className="text-[var(--color-yes)]" />
-          <div className="absolute -bottom-1 -right-1 rounded-full bg-[var(--bg-primary)] leading-none">
+          <div className="absolute -bottom-1 -right-1 rounded-[2px] bg-[var(--bg-primary)] leading-none">
             <CheckCircle size={18} className="text-[var(--color-yes)]" />
           </div>
         </div>

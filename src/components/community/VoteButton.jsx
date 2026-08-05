@@ -5,7 +5,7 @@ import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 import CountUp from '../reactbits/CountUp/CountUp';
 
 const btnBase =
-  'flex items-center gap-1 rounded-[var(--radius-md)] border border-transparent px-3 py-2 font-mono text-sm font-semibold transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-40';
+  'flex items-center gap-1 rounded-[var(--radius-sm)] border border-transparent px-3 py-2 font-mono text-sm font-semibold transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-40';
 
 const upBtn =
   'bg-[rgba(34,197,94,0.1)] text-[var(--color-yes)] border-[rgba(34,197,94,0.2)] enabled:hover:bg-[rgba(34,197,94,0.2)] enabled:hover:border-[var(--color-yes)]';

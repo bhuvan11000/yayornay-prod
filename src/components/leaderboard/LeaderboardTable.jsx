@@ -20,7 +20,7 @@ const PAGE_SIZE = 50;
 export function LeaderboardTable({ players, metric, currentUserId, page, totalPages, onPageChange }) {
   if (!players || players.length === 0) {
     return (
-      <div className="flex items-center justify-center rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-12">
+      <div className="flex items-center justify-center rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-12">
         <p className="text-muted text-sm">No ranked players yet. Be the first!</p>
       </div>
     );
@@ -32,15 +32,23 @@ export function LeaderboardTable({ players, metric, currentUserId, page, totalPa
       <Table className="border-[var(--border-subtle)] text-[var(--text-primary)]">
         <TableHeader>
           <TableRow className="border-[var(--border-subtle)] hover:bg-transparent">
-            <TableHead className="text-[var(--text-muted)]">#</TableHead>
-            <TableHead className="text-[var(--text-muted)]">Player</TableHead>
-            <TableHead className="text-[var(--text-muted)]">Rank</TableHead>
+            <TableHead className="text-[var(--text-muted)]">
+              <span className="eyebrow">#</span>
+            </TableHead>
+            <TableHead className="text-[var(--text-muted)]">
+              <span className="eyebrow">Player</span>
+            </TableHead>
+            <TableHead className="text-[var(--text-muted)]">
+              <span className="eyebrow">Rank</span>
+            </TableHead>
             {COLUMN_HEADERS[metric].map((h) => (
               <TableHead key={h} className="text-right text-[var(--text-muted)]">
-                {h}
+                <span className="eyebrow">{h}</span>
               </TableHead>
             ))}
-            <TableHead className="text-right text-[var(--text-muted)]">Lv.</TableHead>
+            <TableHead className="text-right text-[var(--text-muted)]">
+              <span className="eyebrow">Lv.</span>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -59,7 +67,7 @@ export function LeaderboardTable({ players, metric, currentUserId, page, totalPa
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 pt-4">
           <button
-            className="cursor-pointer rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] transition-[color,border-color] duration-150 enabled:hover:border-[var(--accent-blue)] enabled:hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40 max-sm:px-3 max-sm:text-xs"
+            className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] transition-[color,border-color] duration-150 enabled:hover:border-[var(--accent-amber)] enabled:hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40 max-sm:px-3 max-sm:text-xs"
             disabled={page <= 1}
             onClick={() => onPageChange(page - 1)}
           >
@@ -78,7 +86,11 @@ export function LeaderboardTable({ players, metric, currentUserId, page, totalPa
                 return (
                   <button
                     key={p}
-                    className={`h-8 w-8 cursor-pointer rounded-[var(--radius-md)] border border-transparent bg-transparent text-sm font-medium text-[var(--text-secondary)] transition-[color,border-color,background-color] duration-150 hover:border-[var(--border-subtle)] hover:text-[var(--text-primary)] ${p === page ? 'border-[var(--accent-blue)] bg-[var(--accent-blue-muted)] font-semibold text-[var(--accent-blue)]' : ''}`}
+                    className={`h-8 w-8 cursor-pointer rounded-[var(--radius-sm)] border text-sm font-mono font-semibold transition-[color,border-color,background-color] duration-150 ${
+                      p === page
+                        ? 'border-[var(--accent-amber)] bg-[var(--accent-amber)] text-[#0B0E0C]'
+                        : 'border-transparent bg-transparent text-[var(--text-secondary)] hover:border-[var(--border-subtle)] hover:text-[var(--text-primary)]'
+                    }`}
                     onClick={() => onPageChange(p)}
                   >
                     {p}
@@ -89,7 +101,7 @@ export function LeaderboardTable({ players, metric, currentUserId, page, totalPa
           </div>
 
           <button
-            className="cursor-pointer rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] transition-[color,border-color] duration-150 enabled:hover:border-[var(--accent-blue)] enabled:hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40 max-sm:px-3 max-sm:text-xs"
+            className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] transition-[color,border-color] duration-150 enabled:hover:border-[var(--accent-amber)] enabled:hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40 max-sm:px-3 max-sm:text-xs"
             disabled={page >= totalPages}
             onClick={() => onPageChange(page + 1)}
           >

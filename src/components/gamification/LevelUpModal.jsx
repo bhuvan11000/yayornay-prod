@@ -40,7 +40,7 @@ export function LevelUpModal() {
               particleCount={30}
               particleSpread={12}
               speed={0.4}
-              particleColors={['#f59e0b', '#ef4444', '#a855f7', '#4f7df5', '#22c55e']}
+              particleColors={['#f5a524', '#ef4444', '#22c55e', '#e9f0ea']}
               alphaParticles
               particleBaseSize={60}
               sizeRandomness={1}
@@ -49,7 +49,7 @@ export function LevelUpModal() {
           </div>
 
           <motion.div
-            className="levelup-card relative flex max-h-[90vh] w-[90%] max-w-[420px] flex-col items-center gap-6 overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-10 text-center"
+            className="levelup-card relative flex max-h-[90vh] w-[90%] max-w-[420px] flex-col items-center gap-6 overflow-hidden rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-10 text-center"
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.5 }}
@@ -96,7 +96,7 @@ export function LevelUpModal() {
               </div>
             )}
 
-            <ClickSpark sparkColor="#fbbf24" className="relative inline-flex">
+            <ClickSpark sparkColor="#f5a524" className="relative inline-flex">
               <Button variant="primary" onClick={handleDismiss} className="px-8">
                 Continue
               </Button>

@@ -2,9 +2,9 @@ import { Skeleton as ShadcnSkeleton } from './skeleton';
 
 const variantClasses = {
   text: 'h-4 w-24',
-  circle: 'h-10 w-10 rounded-full',
+  circle: 'h-10 w-10 rounded-[3px]',
   rect: 'h-16 w-full',
-  card: 'h-40 w-full rounded-xl',
+  card: 'h-40 w-full rounded-[var(--radius-sm)]',
 };
 
 /**
@@ -37,7 +37,7 @@ export function PageSkeleton() {
     <div className="flex min-h-screen w-full flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <ShadcnSkeleton className="h-6 w-40 bg-[var(--bg-tertiary)]" />
-        <ShadcnSkeleton className="h-8 w-8 rounded-full bg-[var(--bg-tertiary)]" />
+        <ShadcnSkeleton className="h-8 w-8 rounded-[3px] bg-[var(--bg-tertiary)]" />
       </div>
       <div className="grid gap-4">
         <Skeleton variant="card" />

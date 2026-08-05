@@ -3,9 +3,24 @@ import { getRank } from '../../lib/ranks';
 import { formatCoins, formatPercent } from '../../lib/format';
 
 const MEDAL_STYLES = {
-  1: { bg: 'linear-gradient(135deg, #f59e0b, #d97706)', label: '#1', color: '#f59e0b', ring: 'rgba(245, 158, 11, 0.3)' },
-  2: { bg: 'linear-gradient(135deg, #9ca3af, #6b7280)', label: '#2', color: '#9ca3af', ring: 'rgba(156, 163, 175, 0.3)' },
-  3: { bg: 'linear-gradient(135deg, #d97706, #92400e)', label: '#3', color: '#d97706', ring: 'rgba(217, 119, 6, 0.3)' },
+  1: {
+    bg: 'var(--accent-amber)',
+    color: '#0B0E0C',
+    ring: 'rgba(245, 165, 36, 0.45)',
+    glow: '0 0 28px rgba(245, 165, 36, 0.25)',
+  },
+  2: {
+    bg: '#9CA3AF',
+    color: '#0B0E0C',
+    ring: 'rgba(156, 163, 175, 0.35)',
+    glow: '0 0 18px rgba(156, 163, 175, 0.15)',
+  },
+  3: {
+    bg: '#C2703E',
+    color: '#0B0E0C',
+    ring: 'rgba(194, 112, 62, 0.4)',
+    glow: '0 0 18px rgba(194, 112, 62, 0.18)',
+  },
 };
 
 /** Display order: 2nd on left, 1st (tallest) in center, 3rd on right */
@@ -31,7 +46,7 @@ export function Podium({ players, metric }) {
   if (top3.length === 0) return null;
 
   return (
-    <div className="mb-6 flex items-end justify-center gap-4 sm:gap-6">
+    <div className="mb-6 flex items-end justify-center gap-3 sm:gap-5">
       {PODIUM_ORDER.map((rank) => {
         const player = top3[rank - 1];
         if (!player) return null;
@@ -43,49 +58,47 @@ export function Podium({ players, metric }) {
         return (
           <div
             key={rank}
-            className="flex flex-col items-center gap-2 cursor-pointer transition-transform duration-200 hover:scale-[1.03]"
+            className="flex cursor-pointer flex-col items-center gap-2 transition-transform duration-200 hover:scale-[1.03]"
             onClick={() => navigate(`/profile/${player.username}`)}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/profile/${player.username}`); }}
           >
-            {/* Card */}
             <div
-              className={`flex flex-col items-center justify-end gap-2 rounded-xl border bg-[var(--bg-secondary)] p-4 text-center ${isFirst ? 'w-[160px] pb-5 sm:w-[180px]' : isThird ? 'w-[120px] sm:w-[130px]' : 'w-[130px] sm:w-[140px]'}`}
+              className={`flex flex-col items-center justify-end gap-2 rounded-[var(--radius-sm)] border bg-[var(--bg-secondary)] p-4 text-center ${
+                isFirst ? 'w-[150px] pb-5 sm:w-[170px]' : isThird ? 'w-[115px] sm:w-[125px]' : 'w-[125px] sm:w-[135px]'
+              }`}
               style={{
                 borderColor: medal.ring,
-                boxShadow: `0 0 20px ${medal.ring}, inset 0 1px 0 ${medal.ring}`,
+                boxShadow: `${medal.glow}, inset 0 2px 0 ${medal.ring}`,
                 paddingTop: isFirst ? '2rem' : isThird ? '1rem' : '1.25rem',
               }}
             >
-              {/* Avatar circle */}
               <div
-                className={`flex items-center justify-center rounded-full font-heading font-black text-white shadow-lg ${isFirst ? 'h-16 w-16 text-xl' : isThird ? 'h-10 w-10 text-sm' : 'h-12 w-12 text-base'}`}
-                style={{ background: medal.bg }}
+                className={`flex items-center justify-center rounded-[3px] font-heading font-black ${isFirst ? 'h-16 w-16 text-xl' : isThird ? 'h-10 w-10 text-sm' : 'h-12 w-12 text-base'}`}
+                style={{ background: medal.bg, color: medal.color, boxShadow: `inset 0 -2px 0 rgba(0,0,0,0.25)` }}
               >
                 {(player.username || '?').charAt(0).toUpperCase()}
               </div>
 
-              {/* Info */}
               <div className="w-full min-w-0">
                 <p className="truncate font-heading text-sm font-semibold text-[var(--text-primary)]">
                   {player.username}
                 </p>
-                <p className="text-[10px] font-medium uppercase tracking-wider text-[var(--text-muted)]">
+                <p className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
                   {playerRank}
                 </p>
-                <p className="mt-1 font-mono text-sm font-bold" style={{ color: medal.color }}>
+                <p className="mt-1 font-mono text-sm font-bold" style={{ color: medal.ring }}>
                   {getMetricValue(player, metric)}
                 </p>
               </div>
             </div>
 
-            {/* Rank badge */}
             <div
-              className={`flex items-center justify-center rounded-lg font-heading font-bold text-white ${isFirst ? 'h-8 w-8 text-lg' : 'h-7 w-7 text-base'}`}
-              style={{ background: medal.bg }}
+              className={`flex items-center justify-center rounded-[3px] font-heading font-bold ${isFirst ? 'h-8 w-8 text-lg' : 'h-7 w-7 text-base'}`}
+              style={{ background: medal.bg, color: medal.color, boxShadow: `inset 0 -2px 0 rgba(0,0,0,0.25)` }}
             >
-              {medal.label}
+              {rank}
             </div>
           </div>
         );

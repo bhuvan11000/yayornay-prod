@@ -83,7 +83,7 @@ export default function Leaderboard() {
     <div className="mx-auto flex w-full max-w-[900px] flex-col gap-6 p-4 md:p-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-heading">Global Leaderboard</h1>
+          <h1 className="font-heading text-2xl font-bold uppercase tracking-[0.04em]">Global Leaderboard</h1>
           <p className="mt-1 text-sm text-[var(--text-muted)]">
             Season <span id="season-number">1</span> — Compete to reach the top
           </p>
@@ -92,10 +92,10 @@ export default function Leaderboard() {
 
       {/* Current user rank summary */}
       {user && userRank && (
-        <div className="flex flex-wrap items-center gap-4 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-5 py-4 md:flex-nowrap">
+        <div className="flex flex-wrap items-center gap-4 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-5 py-4 md:flex-nowrap">
           <div className="flex items-baseline gap-2">
-            <span className="text-sm text-[var(--text-muted)]">Your Rank</span>
-            <span className="font-heading text-2xl font-bold text-[var(--accent-blue)]">#{userRank}</span>
+            <span className="eyebrow">Your Rank</span>
+            <span className="font-heading text-2xl font-bold text-[var(--accent-amber)]">#{userRank}</span>
           </div>
           <div className="flex flex-col gap-[2px]">
             <span className="text-xs text-[var(--text-secondary)]">
@@ -111,7 +111,10 @@ export default function Leaderboard() {
             </span>
           </div>
           {!userOnCurrentPage && totalPages > 1 && (
-            <button className="flex w-full cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-[var(--radius-md)] border border-[rgba(79,125,245,0.3)] bg-[var(--accent-blue-muted)] px-3 py-2 text-xs font-medium text-[var(--accent-blue)] transition-colors duration-150 hover:border-[var(--accent-blue)] hover:bg-[rgba(79,125,245,0.25)] md:ml-auto md:w-auto" onClick={handleJumpToMyRank}>
+            <button
+              className="flex w-full cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-[var(--radius-sm)] border border-[var(--accent-amber)] bg-[var(--accent-amber-muted)] px-3 py-2 text-xs font-semibold text-[var(--accent-amber)] transition-colors duration-150 hover:bg-[rgba(245,165,36,0.2)] md:ml-auto md:w-auto"
+              onClick={handleJumpToMyRank}
+            >
               <ArrowUp size={14} />
               Jump to my rank
             </button>
@@ -123,7 +126,7 @@ export default function Leaderboard() {
       <div className="flex flex-col items-stretch gap-4 md:flex-row md:flex-wrap md:items-center md:justify-between">
         <Tabs tabs={TABS} activeTab={activeTab} onChange={handleTabChange} />
         <select
-          className="cursor-pointer rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-2 text-sm text-[var(--text-primary)] transition-colors duration-150 hover:border-[var(--text-muted)] focus:border-[var(--border-focus)] focus:outline-none"
+          className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-2 text-sm text-[var(--text-primary)] transition-colors duration-150 hover:border-[var(--text-muted)] focus:border-[var(--border-focus)] focus:outline-none"
           value={timeframe}
           onChange={handleTimeframeChange}
         >

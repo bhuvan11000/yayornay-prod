@@ -47,12 +47,12 @@ export default function Achievements() {
           </p>
         </div>
         <div className="flex w-full gap-3 md:w-auto">
-          <div className="flex flex-1 items-center justify-center gap-2 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-2 md:flex-none">
+          <div className="flex flex-1 items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-2 md:flex-none">
             <Award size={16} className="text-[var(--rank-visionary)]" />
             <span className="font-mono text-sm font-bold text-[var(--text-primary)]">{formatXP(totalXp)}</span>
             <span className="text-xs text-[var(--text-muted)]">Total XP</span>
           </div>
-          <div className="flex flex-1 items-center justify-center gap-2 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-2 md:flex-none">
+          <div className="flex flex-1 items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-2 md:flex-none">
             <Award size={16} className="text-[var(--color-warning)]" />
             <span className="font-mono text-sm font-bold text-[var(--text-primary)]">{formatCoins(totalCoins)}</span>
             <span className="text-xs text-[var(--text-muted)]">Total Coins</span>

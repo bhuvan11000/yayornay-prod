@@ -40,7 +40,7 @@ export function StreakCounter({ streak = 0, longest, size = 'md' }) {
     >
       <div className="relative flex items-center justify-center leading-none">
         <Flame size={size === 'sm' ? 14 : size === 'lg' ? 22 : 18} className={tierClass} />
-        {tier === 'inferno' && <div className="streak-flame-glow absolute size-[200%] rounded-full" />}
+        {tier === 'inferno' && <div className="streak-flame-glow absolute size-[200%] rounded-[2px]" />}
       </div>
       <span className={`font-heading font-bold ${SIZE_NUMBER_CLASSES[size]} ${tierClass}`}>
         {streak}

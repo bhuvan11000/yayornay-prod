@@ -38,7 +38,7 @@ export default function Profile() {
   if (isLoading) {
     return (
       <div className="mx-auto flex w-full max-w-[900px] flex-col gap-6 p-4 md:p-6">
-        <div className="flex flex-col gap-4 rounded-[var(--radius-xl)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-8">
+        <div className="flex flex-col gap-4 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-8">
           <div className="flex items-center gap-4">
             <Skeleton variant="circle" width="72px" height="72px" />
             <div className="flex flex-col gap-2">
@@ -65,7 +65,7 @@ export default function Profile() {
           <User size={48} className="opacity-50 text-[var(--text-muted)]" />
           <h1 className="text-2xl font-heading">Player Not Found</h1>
           <p className="text-muted">No player with the username "{username}" exists.</p>
-          <Link to="/" className="mt-2 rounded-[var(--radius-md)] bg-[var(--accent-blue)] px-5 py-3 text-sm font-semibold text-white">Go Home</Link>
+          <Link to="/" className="btn-primary mt-2">Go Home</Link>
         </div>
       </div>
     );
@@ -80,9 +80,9 @@ export default function Profile() {
     : 0;
   return (
     <div className="mx-auto flex w-full max-w-[900px] flex-col gap-6 p-4 md:p-6">
-      <div className="flex flex-col gap-6 rounded-[var(--radius-xl)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-8">
+      <div className="flex flex-col gap-6 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-8">
         <div className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
-          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full font-heading text-2xl font-bold uppercase text-white select-none" style={{ background: rankColor }}>
+          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-[3px] font-heading text-2xl font-bold uppercase text-white select-none" style={{ background: rankColor }}>
             {avatarLetter}
           </div>
           <div className="flex flex-col items-center gap-1 md:items-start">
@@ -108,7 +108,7 @@ export default function Profile() {
                 {badges.map((badge) => (
                   <TiltedCard
                     key={badge.id}
-                    imageSrc="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f59e0b' stop-opacity='0.5'/%3E%3Cstop offset='1' stop-color='%23a855f7' stop-opacity='0.2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='14' fill='url(%23g)'/%3E%3C/svg%3E"
+                    imageSrc="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f59e0b' stop-opacity='0.5'/%3E%3Cstop offset='1' stop-color='%23f5a524' stop-opacity='0.2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='14' fill='url(%23g)'/%3E%3C/svg%3E"
                     altText={`Season ${badge.season_number} — ${badge.badge_type}`}
                     containerHeight="44px"
                     containerWidth="44px"
@@ -132,7 +132,7 @@ export default function Profile() {
         </div>
 
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          <div className="flex flex-col items-center gap-1 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] px-2 py-4 text-center">
+          <div className="flex flex-col items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] px-2 py-4 text-center">
             <Coins size={18} className="text-[var(--color-warning)]" />
             {coinsAnimate ? (
               <CountUp to={profile.coins || 0} from={0} duration={0.8} separator="," className="font-mono text-xl font-bold text-[var(--text-primary)]" />
@@ -141,7 +141,7 @@ export default function Profile() {
             )}
             <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Coins</span>
           </div>
-          <div className="flex flex-col items-center gap-1 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] px-2 py-4 text-center">
+          <div className="flex flex-col items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] px-2 py-4 text-center">
             <Target size={18} className="text-[var(--color-info)]" />
             {accuracyAnimate ? (
               <CountUp to={Math.round(accuracy * 100)} from={0} duration={0.8} className="font-mono text-xl font-bold text-[var(--text-primary)]" />
@@ -150,7 +150,7 @@ export default function Profile() {
             )}
             <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Accuracy %</span>
           </div>
-          <div className="flex flex-col items-center gap-1 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] px-2 py-4 text-center">
+          <div className="flex flex-col items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] px-2 py-4 text-center">
             <BarChart3 size={18} className="text-[var(--rank-forecaster)]" />
             {predictionsAnimate ? (
               <CountUp to={profile.total_predictions || 0} from={0} duration={0.8} className="font-mono text-xl font-bold text-[var(--text-primary)]" />
@@ -159,7 +159,7 @@ export default function Profile() {
             )}
             <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Total Predictions</span>
           </div>
-          <div className="flex flex-col items-center gap-1 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] px-2 py-4 text-center">
+          <div className="flex flex-col items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] px-2 py-4 text-center">
             <TrendingUp size={18} className={profile.net_profit >= 0 ? 'text-[var(--color-yes)]' : 'text-[var(--color-no)]'} />
             <span className={`font-mono text-xl font-bold ${profile.net_profit >= 0 ? 'text-[var(--color-yes)]' : 'text-[var(--color-no)]'}`}>
               {(profile.net_profit >= 0 ? '+' : '')}{formatCoins(profile.net_profit || 0)}
@@ -187,7 +187,7 @@ export default function Profile() {
                   <Link
                     key={p.id}
                     to={`/markets/${p.market_id}`}
-                    className="flex flex-col items-start justify-between gap-2 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 no-underline transition-colors duration-150 hover:border-[var(--accent-blue)] md:flex-row md:items-center md:gap-0"
+                    className="flex flex-col items-start justify-between gap-2 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 no-underline transition-colors duration-150 hover:border-[var(--accent-amber)] md:flex-row md:items-center md:gap-0"
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-col gap-1">

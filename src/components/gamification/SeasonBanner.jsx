@@ -20,7 +20,7 @@ const COUNTDOWN_CLASSES = {
 };
 
 const FILL_CLASSES = {
-  normal: 'bg-[var(--accent-blue)]',
+  normal: 'bg-[var(--accent-amber)]',
   warning: 'bg-[var(--color-warning)]',
   critical: 'bg-[var(--color-no)]',
 };
@@ -70,27 +70,27 @@ export function SeasonBanner() {
     <AnimatePresence>
       {showNewSeason ? (
         <motion.div
-          className="season-banner-new flex items-center justify-center gap-3 rounded-[var(--radius-md)] border border-[var(--accent-blue)] px-4 py-4 text-sm font-semibold"
+          className="season-banner-new flex items-center justify-center gap-3 rounded-[var(--radius-sm)] border border-[var(--accent-amber)] px-4 py-4 text-sm font-semibold"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.4 }}
           key="new-season"
         >
-          <TrendingUp size={18} className="text-[var(--accent-blue)]" />
+          <TrendingUp size={18} className="text-[var(--accent-amber)]" />
           <span className="text-[var(--text-primary)]">
             Season {season.season_number} has begun!
           </span>
         </motion.div>
       ) : (
         <motion.div
-          className={`flex items-center justify-between gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-sm max-md:flex-col max-md:items-start max-md:gap-2 ${BANNER_CLASSES[urgency]}`}
+          className={`flex items-center justify-between gap-3 rounded-[var(--radius-sm)] border px-4 py-3 text-sm max-md:flex-col max-md:items-start max-md:gap-2 ${BANNER_CLASSES[urgency]}`}
           initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
           key="season-banner"
         >
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <Calendar size={14} className="shrink-0 text-[var(--accent-blue)]" />
+            <Calendar size={14} className="shrink-0 text-[var(--accent-amber)]" />
             <ShinyText
               text={`Season ${season.season_number}`}
               speed={3}
@@ -104,7 +104,7 @@ export function SeasonBanner() {
                 : 'Final day!'}
             </span>
             {remainingDays <= 7 && (
-              <span className="whitespace-nowrap rounded-full bg-[rgba(239,68,68,0.15)] px-2 py-[1px] text-[10px] font-semibold uppercase tracking-[0.05em] text-[var(--color-no)]">
+              <span className="whitespace-nowrap rounded-[3px] bg-[rgba(239,68,68,0.15)] px-2 py-[1px] font-heading text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--color-no)]">
                 Ending Soon
               </span>
             )}
@@ -115,15 +115,15 @@ export function SeasonBanner() {
                 <Trophy size={12} className="shrink-0 text-[var(--color-warning)]" />
                 {topPlayers.map((p, i) => (
                   <span key={p.id} className="flex items-center gap-0.5">
-                    {i === 0 && <span className="inline-block size-1.5 rounded-full bg-[var(--color-warning)]" />}
+                    {i === 0 && <span className="inline-block size-1.5 rounded-[2px] bg-[var(--color-warning)]" />}
                     {p.username}
                   </span>
                 ))}
               </div>
             )}
-            <div className="h-1 w-20 max-md:w-[60px] overflow-hidden rounded-full bg-[var(--bg-tertiary)]">
+            <div className="h-1 w-20 max-md:w-[60px] overflow-hidden rounded-[2px] bg-[var(--bg-tertiary)]">
               <div
-                className={`h-full rounded-full transition-[width] duration-500 ease ${FILL_CLASSES[urgency]}`}
+                className={`h-full rounded-[2px] transition-[width] duration-500 ease ${FILL_CLASSES[urgency]}`}
                 style={{ width: `${pct}%` }}
               />
             </div>
