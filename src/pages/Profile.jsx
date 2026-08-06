@@ -9,9 +9,8 @@ import { AchievementCard } from '../components/gamification/AchievementCard';
 import TiltedCard from '../components/reactbits/TiltedCard/TiltedCard';
 import { Tabs } from '../components/ui/Tabs';
 import { Skeleton } from '../components/ui/Skeleton';
-import CountUp from '../components/reactbits/CountUp/CountUp';
+import Counter from '../components/reactbits/Counter/Counter';
 import { formatCoins, formatDate, formatPercent } from '../lib/format';
-import { useShouldAnimate } from '../lib/countUpSession';
 import { getRankColor } from '../lib/ranks';
 
 const TABS = [
@@ -26,14 +25,10 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState('predictions');
 
   const profile = data?.user;
-  const profileCoins = profile?.coins ?? 0;
   const profilePredictions = profile?.total_predictions ?? 0;
   const profileAccuracy = Math.round(
     (profilePredictions > 0 ? ((profile?.correct_predictions ?? 0) / profilePredictions) * 100 : 0)
   );
-  const coinsAnimate = useShouldAnimate('profile-coins', profileCoins);
-  const accuracyAnimate = useShouldAnimate('profile-accuracy', profileAccuracy);
-  const predictionsAnimate = useShouldAnimate('profile-predictions', profilePredictions);
 
   if (isLoading) {
     return (
@@ -134,29 +129,17 @@ export default function Profile() {
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <div className="flex flex-col items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] px-2 py-4 text-center">
             <Coins size={18} className="text-[var(--color-warning)]" />
-            {coinsAnimate ? (
-              <CountUp to={profile.coins || 0} from={0} duration={0.8} separator="," className="font-mono text-xl font-bold text-[var(--text-primary)]" />
-            ) : (
-              <span className="font-mono text-xl font-bold text-[var(--text-primary)]">{formatCoins(profile.coins || 0)}</span>
-            )}
+            <Counter value={profile.coins || 0} fontSize={22} gap={2} textColor="var(--text-primary)" fontWeight={700} gradientHeight={8} gradientFrom="#1a211c" counterStyle={{ fontFamily: 'JetBrains Mono, monospace' }} />
             <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Coins</span>
           </div>
           <div className="flex flex-col items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] px-2 py-4 text-center">
             <Target size={18} className="text-[var(--color-info)]" />
-            {accuracyAnimate ? (
-              <CountUp to={Math.round(accuracy * 100)} from={0} duration={0.8} className="font-mono text-xl font-bold text-[var(--text-primary)]" />
-            ) : (
-              <span className="font-mono text-xl font-bold text-[var(--text-primary)]">{Math.round(accuracy * 100)}</span>
-            )}
+            <Counter value={Math.round(accuracy * 100)} fontSize={22} gap={2} textColor="var(--text-primary)" fontWeight={700} gradientHeight={8} gradientFrom="#1a211c" counterStyle={{ fontFamily: 'JetBrains Mono, monospace' }} />
             <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Accuracy %</span>
           </div>
           <div className="flex flex-col items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] px-2 py-4 text-center">
             <BarChart3 size={18} className="text-[var(--rank-forecaster)]" />
-            {predictionsAnimate ? (
-              <CountUp to={profile.total_predictions || 0} from={0} duration={0.8} className="font-mono text-xl font-bold text-[var(--text-primary)]" />
-            ) : (
-              <span className="font-mono text-xl font-bold text-[var(--text-primary)]">{profile.total_predictions || 0}</span>
-            )}
+            <Counter value={profile.total_predictions || 0} fontSize={22} gap={2} textColor="var(--text-primary)" fontWeight={700} gradientHeight={8} gradientFrom="#1a211c" counterStyle={{ fontFamily: 'JetBrains Mono, monospace' }} />
             <span className="text-xs uppercase tracking-[0.05em] text-[var(--text-muted)]">Total Predictions</span>
           </div>
           <div className="flex flex-col items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] px-2 py-4 text-center">

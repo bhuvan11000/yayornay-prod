@@ -5,9 +5,8 @@ import { useLeaderboard } from '../hooks/useLeaderboard';
 import { LeaderboardTable } from '../components/leaderboard/LeaderboardTable';
 import { Tabs } from '../components/ui/Tabs';
 import { Skeleton } from '../components/ui/Skeleton';
-import CountUp from '../components/reactbits/CountUp/CountUp';
-import { formatCoins, formatDate } from '../lib/format';
-import { useShouldAnimate } from '../lib/countUpSession';
+import Counter from '../components/reactbits/Counter/Counter';
+import { formatDate } from '../lib/format';
 import { getRankLabel } from '../lib/ranks';
 
 const TABS = [
@@ -32,7 +31,6 @@ export default function Leaderboard() {
   const [page, setPage] = useState(1);
   const listRef = useRef(null);
   const scrollToUserRef = useRef(false);
-  const coinsAnimate = useShouldAnimate('leaderboard-coins', user?.coins ?? 0);
 
   const { data, isLoading, isError } = useLeaderboard({
     metric: activeTab,
@@ -102,11 +100,7 @@ export default function Leaderboard() {
               {getRankLabel(user.rank || 'Unranked')}
             </span>
             <span className="text-xs text-[var(--text-secondary)]">
-              {coinsAnimate ? (
-                <CountUp to={user.coins || 0} from={0} duration={0.8} separator="," />
-              ) : (
-                formatCoins(user.coins || 0)
-              )}{' '}
+              <Counter value={user.coins || 0} fontSize={13} gap={2} textColor="var(--text-primary)" fontWeight={600} gradientHeight={6} gradientFrom="#121713" counterStyle={{ fontFamily: 'JetBrains Mono, monospace', paddingLeft: 0, paddingRight: 0 }} />{' '}
               coins
             </span>
           </div>

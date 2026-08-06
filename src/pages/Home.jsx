@@ -1,6 +1,8 @@
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router';
-import { Coins, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Autoplay from 'embla-carousel-autoplay';
 import { useAuthStore } from '../stores/authStore';
 import { useMarkets } from '../hooks/useMarkets';
 import { useQuests } from '../hooks/useQuests';
@@ -12,9 +14,15 @@ import { StreakCounter } from '../components/gamification/StreakCounter';
 import { SeasonBanner } from '../components/gamification/SeasonBanner';
 import { RankBadge } from '../components/gamification/RankBadge';
 import { XPBar } from '../components/gamification/XPBar';
-import CountUp from '../components/reactbits/CountUp/CountUp';
-import { formatCoins } from '../lib/format';
-import { useShouldAnimate } from '../lib/countUpSession';
+import Beams from '../components/reactbits/Beams/Beams';
+import Counter from '../components/reactbits/Counter/Counter';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from '../components/ui/carousel';
 
 const cellReveal = (i) => ({
   initial: { opacity: 0, y: 10 },
@@ -47,8 +55,25 @@ function SectionHeader({ eyebrow, title, to }) {
   );
 }
 
+function TodayCardContent({ market }) {
+  return null;
+}
+
 export default function Home() {
   const user = useAuthStore((s) => s.user);
+  const [reduceMotion] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+  const autoplay = useMemo(
+    () =>
+      Autoplay({
+        delay: 4500,
+        stopOnInteraction: true,
+        stopOnMouseEnter: true,
+        playOnInit: !reduceMotion,
+      }),
+    [reduceMotion]
+  );
   const { data: marketsData, isLoading: marketsLoading, isError: marketsError } = useMarkets({
     status: 'open',
     sort: 'volume',
@@ -57,7 +82,6 @@ export default function Home() {
   });
   const { data: questsData } = useQuests();
   const { mutate: claimReward, isPending: claiming } = useClaimReward();
-  const coinsAnimate = useShouldAnimate('home-coins', user?.coins ?? 0);
 
   const trendingMarkets = marketsData?.markets || [];
   const dailyQuests = questsData?.daily?.filter(q => !q.completed) || [];
@@ -65,12 +89,29 @@ export default function Home() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
-      {/* ── Welcome ── */}
-      <div>
-        <p className="eyebrow">Season ticket</p>
-        <h1 className="mt-1 font-heading text-[28px] font-bold uppercase leading-[1.05] tracking-[0.04em] text-[var(--text-primary)] md:text-[34px]">
-          Welcome, <span className="text-[var(--accent-amber)]">{user?.username || 'Player'}</span>
-        </h1>
+      {/* ── Jumbotron: floodlights + season ticket ── */}
+      <div className="relative overflow-hidden rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-black">
+        <div className="absolute inset-0 opacity-70">
+          <Beams beamNumber={10} lightColor="#f5a524" speed={1.6} noiseIntensity={1.2} scale={0.18} />
+        </div>
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.75)_100%)]" />
+        <div className="relative flex min-h-[240px] flex-col justify-center gap-3 px-6 py-8 md:min-h-[280px] md:px-10">
+          <div className="flex items-center gap-2">
+            <span className="size-1.5 animate-pulse bg-[var(--accent-amber)]" />
+            <p className="eyebrow">Season ticket</p>
+          </div>
+          <h1 className="font-heading text-[32px] font-bold uppercase leading-[1.02] tracking-[0.04em] text-[var(--text-primary)] md:text-[44px]">
+            Welcome, <span className="text-[var(--accent-amber)]">{user?.username || 'Player'}</span>
+          </h1>
+          <p className="max-w-[420px] font-mono text-xs uppercase tracking-[0.14em] text-[var(--text-secondary)]">
+            Read the board. Price the outcome. Beat the arena.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Link to="/markets" className="btn-primary">Browse the Board</Link>
+            <Link to="/leaderboard" className="btn-ghost">Standings</Link>
+          </div>
+        </div>
+        <div className="absolute left-0 right-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_10%,var(--accent-amber)_50%,transparent_90%)]" />
       </div>
 
       <SeasonBanner />
@@ -80,10 +121,17 @@ export default function Home() {
         {[
           {
             label: 'Coins',
-            content: coinsAnimate ? (
-              <CountUp to={user?.coins || 0} from={0} duration={0.8} separator="," className="font-mono text-xl font-bold tabular-nums text-[var(--color-warning)]" />
-            ) : (
-              <span className="font-mono text-xl font-bold tabular-nums text-[var(--color-warning)]">{formatCoins(user?.coins || 0)}</span>
+            content: (
+              <Counter
+                value={user?.coins || 0}
+                fontSize={22}
+                gap={3}
+                textColor="var(--color-warning)"
+                fontWeight={700}
+                gradientHeight={10}
+                gradientFrom="#121713"
+                counterStyle={{ fontFamily: 'JetBrains Mono, monospace' }}
+              />
             ),
           },
           {
@@ -105,7 +153,7 @@ export default function Home() {
             className="flex flex-col items-start gap-1 border-[var(--border-subtle)] px-4 py-3.5 max-md:odd:border-r max-md:[&:nth-child(-n+2)]:border-b md:border-r md:last:border-r-0"
           >
             <span className="eyebrow">{cell.label}</span>
-            <div className="min-h-7">{cell.content}</div>
+            <div className="flex min-h-7 items-center">{cell.content}</div>
           </motion.div>
         ))}
       </div>
@@ -131,12 +179,18 @@ export default function Home() {
         ) : trendingMarkets.length === 0 ? (
           <p className="text-sm text-[var(--text-muted)]">Board is quiet right now — new markets drop at 08:00 UTC.</p>
         ) : (
-          <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
-            {trendingMarkets.map((market) => (
-              <div key={market.id} className="w-[320px] shrink-0 snap-start">
-                <MarketCard market={market} />
-              </div>
-            ))}
+          <div className="rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)]/50 p-4">
+            <Carousel opts={{ align: 'start', loop: true }} plugins={[autoplay]} className="w-full">
+              <CarouselContent className="-ml-3">
+                {trendingMarkets.slice(0, 4).map((market) => (
+                  <CarouselItem key={market.id} className="basis-full pl-3 md:basis-1/2 lg:basis-1/3">
+                    <MarketCard market={market} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="-left-3 size-8 rounded-[3px] border-[var(--border-subtle)] bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:border-[var(--accent-amber)] hover:text-[var(--accent-amber)] max-md:hidden" />
+              <CarouselNext className="-right-3 size-8 rounded-[3px] border-[var(--border-subtle)] bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:border-[var(--accent-amber)] hover:text-[var(--accent-amber)] max-md:hidden" />
+            </Carousel>
           </div>
         )}
       </section>

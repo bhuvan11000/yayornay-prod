@@ -12,9 +12,8 @@ import {
 import { useAuthStore } from '../../stores/authStore';
 import { formatCoins } from '../../lib/format';
 import { getRankColor, getRankLabel } from '../../lib/ranks';
-import { useShouldAnimate } from '../../lib/countUpSession';
 import { RankBadge } from '../gamification/RankBadge';
-import CountUp from '../reactbits/CountUp/CountUp';
+import Counter from '../reactbits/Counter/Counter';
 
 /**
  * Header — the arena scoreboard bar.
@@ -51,7 +50,6 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const coinsAnimate = useShouldAnimate('header-coins', user?.coins ?? 0);
 
   // Close avatar dropdown on click outside
   useEffect(() => {
@@ -120,20 +118,17 @@ export function Header() {
             title={formatCoins(coins)}
           >
             <Coins size={15} className="shrink-0 text-[var(--color-warning)]" />
-            {coinsAnimate ? (
-              <CountUp
-                key={coins}
-                to={coins}
-                from={0}
-                duration={0.8}
-                separator=","
-                className="font-mono text-sm font-semibold text-[var(--text-primary)]"
-              />
-            ) : (
-              <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">
-                {formatCoins(coins)}
-              </span>
-            )}
+            <Counter
+              key={coins}
+              value={coins}
+              fontSize={14}
+              gap={2}
+              textColor="var(--text-primary)"
+              fontWeight={600}
+              gradientHeight={6}
+              gradientFrom="#29332c"
+              counterStyle={{ fontFamily: 'JetBrains Mono, monospace', paddingLeft: 0, paddingRight: 0 }}
+            />
           </div>
 
           {/* Rank Badge */}
