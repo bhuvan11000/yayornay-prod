@@ -34,6 +34,8 @@ export function DailyRewardClaim({ onClaim, claiming }) {
   const { can_claim, is_active, rank, coins, xp, is_sunday, last_claim } = rewardStatus;
   const rankColor = getRankColor(rank);
   const rankLabel = getRankLabel(rank);
+  const isUnranked = rankColor === '#ffffff';
+  const rankBadgeStyle = { background: rankColor, color: isUnranked ? '#0B0E0C' : undefined };
   const todayStr = new Date().toISOString().split('T')[0];
   const alreadyClaimed = Boolean(last_claim) && last_claim === todayStr;
 
@@ -70,7 +72,7 @@ export function DailyRewardClaim({ onClaim, claiming }) {
             )}
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <span className={RANK_BADGE_CLASS} style={{ background: rankColor }}>
+            <span className={RANK_BADGE_CLASS} style={rankBadgeStyle}>
               {rankLabel}
             </span>
             <span className="font-mono text-lg font-bold text-[var(--color-warning)]">
@@ -108,7 +110,7 @@ export function DailyRewardClaim({ onClaim, claiming }) {
           )}
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <span className={RANK_BADGE_CLASS} style={{ background: rankColor }}>
+          <span className={RANK_BADGE_CLASS} style={rankBadgeStyle}>
             {rankLabel}
           </span>
           <span className="font-mono text-lg font-bold text-[var(--color-warning)]">+{formatCoins(coins)}</span>
