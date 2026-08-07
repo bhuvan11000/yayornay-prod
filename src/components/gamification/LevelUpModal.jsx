@@ -7,7 +7,6 @@ import { Button } from '../ui/Button';
 import Particles from '../reactbits/Particles/Particles';
 import DecryptedText from '../reactbits/DecryptedText/DecryptedText';
 import CountUp from '../reactbits/CountUp/CountUp';
-import SplitText from '../reactbits/SplitText/SplitText';
 import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 
 export function LevelUpModal() {
@@ -84,13 +83,7 @@ export function LevelUpModal() {
                 {newUnlocks.map((feature, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm text-[var(--text-primary)]">
                     <CheckCircle size={16} className="shrink-0 text-[var(--color-yes)]" />
-                    <SplitText
-                      text={feature}
-                      delay={25}
-                      duration={0.5}
-                      splitType="chars"
-                      className="text-left"
-                    />
+                    <span className="text-left">{feature}</span>
                   </div>
                 ))}
               </div>

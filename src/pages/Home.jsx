@@ -19,7 +19,6 @@ import Beams from '../components/reactbits/Beams/Beams';
 import Counter from '../components/reactbits/Counter/Counter';
 import DecryptedText from '../components/reactbits/DecryptedText/DecryptedText';
 import RotatingText from '../components/reactbits/RotatingText/RotatingText';
-import SplitText from '../components/reactbits/SplitText/SplitText';
 import {
   Carousel,
   CarouselContent,
@@ -41,16 +40,9 @@ function SectionHeader({ eyebrow, title, to }) {
         <span className="mb-[3px] inline-block size-1.5 bg-[var(--accent-amber)]" />
         <div>
           <p className="eyebrow">{eyebrow}</p>
-          <SplitText
-            text={title}
-            tag="h2"
-            splitType="chars"
-            duration={0.9}
-            delay={60}
-            from={{ opacity: 0, y: 40, rotateX: 45, transformPerspective: 600 }}
-            rootMargin="-60px"
-            className="font-heading text-xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]"
-          />
+          <h2 className="font-heading text-xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]">
+            {title}
+          </h2>
         </div>
       </div>
       {to && (
