@@ -18,8 +18,8 @@ const SplitText = ({
   threshold = 0.1,
   rootMargin = '-100px',
   tag = 'p',
-  textAlign = 'center',
-  onLetterAnimationComplete
+  textAlign = 'left',
+  onLetterAnimationComplete,
 }) => {
   const ref = useRef(null);
   const animationCompletedRef = useRef(false);
@@ -66,8 +66,7 @@ const SplitText = ({
       const start = `top ${startPct}%${sign}`;
       let targets = [];
       const assignTargets = (self) => {
-        if (splitType.includes('chars') && self.chars?.length)
-          targets = self.chars;
+        if (splitType.includes('chars') && self.chars?.length) targets = self.chars;
         if (!targets.length && splitType.includes('words') && self.words.length) targets = self.words;
         if (!targets.length && splitType.includes('lines') && self.lines.length) targets = self.lines;
         if (!targets.length) targets = self.chars || self.words || self.lines;
@@ -95,17 +94,17 @@ const SplitText = ({
                 start,
                 once: true,
                 fastScrollEnd: true,
-                anticipatePin: 0.4
+                anticipatePin: 0.4,
               },
               onComplete: () => {
                 animationCompletedRef.current = true;
                 onCompleteRef.current?.();
               },
               willChange: 'transform, opacity',
-              force3D: true
+              force3D: true,
             }
           );
-        }
+        },
       });
       el._rbsplitInstance = splitInstance;
       return () => {
@@ -129,9 +128,9 @@ const SplitText = ({
         JSON.stringify(to),
         threshold,
         rootMargin,
-        fontsLoaded
+        fontsLoaded,
       ],
-      scope: ref
+      scope: ref,
     }
   );
 
@@ -139,10 +138,10 @@ const SplitText = ({
     const style = {
       textAlign,
       wordWrap: 'break-word',
-      willChange: 'transform, opacity'
+      willChange: 'transform, opacity',
     };
-    const classes = `split-parent overflow-hidden inline-block whitespace-normal ${className}`;
-    const Tag = tag || 'p';
+    const classes = `split-parent inline-block overflow-hidden whitespace-normal ${className}`;
+    const Tag = tag;
 
     return (
       <Tag ref={ref} style={style} className={classes}>

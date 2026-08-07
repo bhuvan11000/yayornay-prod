@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router';
 import { getRank } from '../../lib/ranks';
 import { formatCoins, formatPercent } from '../../lib/format';
 import BounceCards from '../reactbits/BounceCards/BounceCards';
+import Particles from '../reactbits/Particles/Particles';
 
 const MEDAL_STYLES = {
   1: {
@@ -102,7 +103,20 @@ export function Podium({ players, metric }) {
   });
 
   return (
-    <div className="mb-4 flex origin-center justify-center max-md:scale-[0.62] md:scale-100">
+    <div className="relative mb-4 flex origin-center justify-center max-md:scale-[0.62] md:scale-100">
+      <div className="pointer-events-none absolute -inset-8 opacity-60">
+        <Particles
+          particleCount={140}
+          particleSpread={16}
+          speed={0.3}
+          particleColors={['#f5a524', '#22c55e', '#e9f0ea']}
+          alphaParticles
+          particleBaseSize={70}
+          sizeRandomness={1}
+          cameraDistance={22}
+          disableRotation
+        />
+      </div>
       <BounceCards
         cards={cards}
         containerWidth={560}

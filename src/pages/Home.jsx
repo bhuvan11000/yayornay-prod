@@ -17,6 +17,9 @@ import { RankBadge } from '../components/gamification/RankBadge';
 import { XPBar } from '../components/gamification/XPBar';
 import Beams from '../components/reactbits/Beams/Beams';
 import Counter from '../components/reactbits/Counter/Counter';
+import DecryptedText from '../components/reactbits/DecryptedText/DecryptedText';
+import RotatingText from '../components/reactbits/RotatingText/RotatingText';
+import SplitText from '../components/reactbits/SplitText/SplitText';
 import {
   Carousel,
   CarouselContent,
@@ -38,9 +41,16 @@ function SectionHeader({ eyebrow, title, to }) {
         <span className="mb-[3px] inline-block size-1.5 bg-[var(--accent-amber)]" />
         <div>
           <p className="eyebrow">{eyebrow}</p>
-          <h2 className="font-heading text-xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]">
-            {title}
-          </h2>
+          <SplitText
+            text={title}
+            tag="h2"
+            splitType="chars"
+            duration={0.5}
+            delay={30}
+            from={{ opacity: 0, y: 14 }}
+            rootMargin="-60px"
+            className="font-heading text-xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]"
+          />
         </div>
       </div>
       {to && (
@@ -105,10 +115,30 @@ export default function Home() {
             <p className="eyebrow">Season ticket</p>
           </div>
           <h1 className="font-heading text-[32px] font-bold uppercase leading-[1.02] tracking-[0.04em] text-[var(--text-primary)] md:text-[44px]">
-            Welcome, <span className="text-[var(--accent-amber)]">{user?.username || 'Player'}</span>
+            Welcome,{' '}
+            <span className="text-[var(--accent-amber)]">
+            {reduceMotion ? (
+              user?.username || 'Player'
+            ) : (
+              <DecryptedText
+                text={user?.username || 'Player'}
+                animateOn="view"
+                speed={35}
+                maxIterations={8}
+                sequential
+                revealDirection="start"
+                characters="ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*0123456789"
+              />
+            )}
+            </span>
           </h1>
-          <p className="max-w-[420px] font-mono text-xs uppercase tracking-[0.14em] text-[var(--text-secondary)]">
-            Read the board. Price the outcome. Beat the arena.
+          <p className="max-w-[420px] font-mono text-xs uppercase tracking-[0.14em]">
+            <RotatingText
+              texts={['Read the board.', 'Price the outcome.', 'Beat the arena.']}
+              rotationInterval={2800}
+              auto={!reduceMotion}
+              mainClassName="text-[var(--accent-amber)]"
+            />
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             <Link to="/markets" className="btn-primary">Browse the Board</Link>

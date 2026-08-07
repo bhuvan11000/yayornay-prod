@@ -6,6 +6,7 @@ import { LeaderboardTable } from '../components/leaderboard/LeaderboardTable';
 import { Tabs } from '../components/ui/Tabs';
 import { Skeleton } from '../components/ui/Skeleton';
 import Counter from '../components/reactbits/Counter/Counter';
+import GradientText from '../components/reactbits/GradientText/GradientText';
 import { formatDate } from '../lib/format';
 import { getRankLabel } from '../lib/ranks';
 
@@ -81,7 +82,13 @@ export default function Leaderboard() {
     <div className="mx-auto flex w-full max-w-[900px] flex-col gap-6 p-4 md:p-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="font-heading text-2xl font-bold uppercase tracking-[0.04em]">Global Leaderboard</h1>
+          <GradientText
+            colors={['#f5a524', '#22c55e', '#e9f0ea']}
+            animationSpeed={6}
+            className="font-heading text-2xl font-bold uppercase tracking-[0.04em]"
+          >
+            Global Leaderboard
+          </GradientText>
           <p className="mt-1 text-sm text-[var(--text-muted)]">
             Season <span id="season-number">1</span> — Compete to reach the top
           </p>

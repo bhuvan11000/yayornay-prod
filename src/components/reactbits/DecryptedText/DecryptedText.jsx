@@ -239,7 +239,7 @@ export default function DecryptedText({
     fillAllIndices,
     removeRandomIndices,
     characters,
-    useOriginalCharsOnly
+    useOriginalCharsOnly,
   ]);
 
   const handleClick = () => {
@@ -295,7 +295,7 @@ export default function DecryptedText({
     const observerOptions = {
       root: null,
       rootMargin: '0px',
-      threshold: 0.1
+      threshold: 0.1,
     };
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
@@ -324,11 +324,11 @@ export default function DecryptedText({
     animateOn === 'hover' || animateOn === 'inViewHover'
       ? {
           onMouseEnter: triggerHoverDecrypt,
-          onMouseLeave: resetToPlainText
+          onMouseLeave: resetToPlainText,
         }
       : animateOn === 'click'
         ? {
-            onClick: handleClick
+            onClick: handleClick,
           }
         : {};
 
