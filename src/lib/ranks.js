@@ -4,7 +4,7 @@
  */
 
 export const RANK_THRESHOLDS = [
-  { name: 'Unranked', minCoins: 0, color: '#5c6370', label: 'Unranked' },
+  { name: 'Unranked', minCoins: 0, color: '#ffffff', label: 'Unranked' },
   { name: 'Analyst', minCoins: 2500, color: '#22c55e', label: 'Analyst' },
   { name: 'Strategist', minCoins: 5000, color: '#3b82f6', label: 'Strategist' },
   { name: 'Forecaster', minCoins: 10000, color: '#a855f7', label: 'Forecaster' },
@@ -44,7 +44,7 @@ export function getRank(coins) {
  */
 export function getRankColor(rank) {
   const threshold = RANK_THRESHOLDS.find(t => t.name === rank);
-  return threshold?.color || '#5c6370';
+  return threshold?.color || '#ffffff';
 }
 
 /**
@@ -67,7 +67,7 @@ export function getRankInfo(coins) {
   const threshold = RANK_THRESHOLDS.find(t => t.name === rank);
   return {
     name: rank,
-    color: threshold?.color || '#5c6370',
+    color: threshold?.color || '#ffffff',
     label: threshold?.label || 'Unranked',
     minCoins: threshold?.minCoins || 0,
   };

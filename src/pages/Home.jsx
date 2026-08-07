@@ -95,7 +95,7 @@ export default function Home() {
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
       {/* ── Jumbotron: floodlights + season ticket ── */}
       <div className="relative overflow-hidden rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-black">
-        <div className="absolute inset-0 opacity-70">
+        <div className="absolute inset-0 opacity-100">
           <Beams beamNumber={10} lightColor={beamColor} speed={1.6} noiseIntensity={1.2} scale={0.18} />
         </div>
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.75)_100%)]" />

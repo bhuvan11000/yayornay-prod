@@ -33,7 +33,7 @@ export const useAuthStore = create((set, get) => ({
    */
   getRankColor: () => {
     const user = get().user;
-    return user?.rank ? getRankColor(user.rank) : '#5c6370';
+    return user?.rank ? getRankColor(user.rank) : '#ffffff';
   },
 
   /**
