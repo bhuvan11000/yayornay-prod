@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
  * Seed fake OPEN markets so the app doesn't look empty.
- * - 12 open markets across all 5 categories, closing 12h–6 days from now
+ * - Batch A: 12 open markets (b0000000-…) across all 5 categories
+ * - Batch B: 10 more (c0000000-…) added later for testing
  * - Realistic AMM state, volumes, participant counts
  * - Price history per market so detail charts render
  * - A few predictions from the 5 known test users
  *
- * Idempotent: fixed UUIDs (b0000000-…), deletes + re-inserts.
+ * Idempotent: fixed UUIDs, deletes + re-inserts.
  */
 import { readFileSync } from 'node:fs';
 import { createClient } from '@supabase/supabase-js';
@@ -32,6 +33,7 @@ const users = {
 };
 
 const M = (n) => `b0000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
+const M2 = (n) => `c0000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 
 // ── 12 open markets ──
 const markets = [
@@ -82,6 +84,49 @@ const markets = [
     closes_in: 8, yes_price: 0.72, q_yes: 4800, q_no: 1900, volume: 10200, participants: 41, source: 'admin' },
 ];
 
+// ── Batch B: 10 more open markets (added later) ──
+const marketsB = [
+  // Sports
+  { id: M2(1), title: 'Will Real Madrid win the Champions League this season?', category: 'sports',
+    resolution_criteria: 'YES if Real Madrid wins the UEFA Champions League final this season. NO otherwise.',
+    closes_in: 95, yes_price: 0.61, q_yes: 3900, q_no: 2500, volume: 8600, participants: 92, source: 'ai' },
+  { id: M2(2), title: 'Will Novak Djokovic win the US Open this year?', category: 'sports',
+    resolution_criteria: 'YES if Djokovic wins the US Open men\'s singles title this year. NO otherwise.',
+    closes_in: 170, yes_price: 0.38, q_yes: 2400, q_no: 3900, volume: 6700, participants: 58, source: 'community' },
+
+  // Tech
+  { id: M2(3), title: 'Will Nvidia\'s market cap exceed $5 trillion this year?', category: 'tech',
+    resolution_criteria: 'YES if Nvidia\'s market cap closes above $5T on any day this year. NO otherwise.',
+    closes_in: 60, yes_price: 0.47, q_yes: 3100, q_no: 3500, volume: 9100, participants: 104, source: 'ai' },
+  { id: M2(4), title: 'Will Google launch a new Pixel flagship this quarter?', category: 'tech',
+    resolution_criteria: 'YES if Google announces a new Pixel flagship phone this quarter. NO otherwise.',
+    closes_in: 140, yes_price: 0.55, q_yes: 2900, q_no: 2400, volume: 5900, participants: 47, source: 'community' },
+
+  // Pop culture
+  { id: M2(5), title: 'Will Stranger Things season 5 premiere this year?', category: 'popculture',
+    resolution_criteria: 'YES if Stranger Things season 5 premieres on Netflix this year. NO otherwise.',
+    closes_in: 115, yes_price: 0.66, q_yes: 4400, q_no: 2300, volume: 8200, participants: 96, source: 'ai' },
+  { id: M2(6), title: 'Will the next Avengers movie gross over $1.5B worldwide?', category: 'popculture',
+    resolution_criteria: 'YES if the next Avengers film passes $1.5B global box office. NO otherwise.',
+    closes_in: 155, yes_price: 0.43, q_yes: 2700, q_no: 3600, volume: 7100, participants: 71, source: 'ai' },
+
+  // Politics
+  { id: M2(7), title: 'Will India\'s GDP growth exceed 7% this fiscal year?', category: 'politics',
+    resolution_criteria: 'YES if India\'s official GDP growth for FY2026-27 is above 7%. NO otherwise.',
+    closes_in: 85, yes_price: 0.51, q_yes: 3200, q_no: 3100, volume: 7800, participants: 66, source: 'ai' },
+
+  // Memes
+  { id: M2(8), title: 'Will a cat video hit 1 billion views this year?', category: 'memes',
+    resolution_criteria: 'YES if any single cat video reaches 1B views on any platform this year. NO otherwise.',
+    closes_in: 200, yes_price: 0.29, q_yes: 1600, q_no: 3900, volume: 5400, participants: 49, source: 'community' },
+  { id: M2(9), title: 'Will "brainrot" be crowned Word of the Year 2026?', category: 'memes',
+    resolution_criteria: 'YES if a major dictionary (Oxford, Merriam-Webster, Collins) picks brainrot as Word of the Year 2026. NO otherwise.',
+    closes_in: 175, yes_price: 0.57, q_yes: 3500, q_no: 2600, volume: 6300, participants: 55, source: 'community' },
+  { id: M2(10), title: 'Will Predict Arena hit 1,000 total predictions this month?', category: 'memes',
+    resolution_criteria: 'YES if cumulative predictions across all players reach 1000 by month end. NO otherwise.',
+    closes_in: 10, yes_price: 0.34, q_yes: 2100, q_no: 4100, volume: 7400, participants: 33, source: 'admin' },
+];
+
 // ── Predictions from test users (pending, so resolution pays out) ──
 const preds = [
   { market: M(1), user: users.u1, pos: 'yes', shares: 140, entry: 0.54, spent: 130, conf: 3 },
@@ -96,6 +141,17 @@ const preds = [
   { market: M(8), user: users.u4, pos: 'no', shares: 100, entry: 0.52, spent: 90, conf: 1 },
   { market: M(2), user: users.u1, pos: 'no', shares: 200, entry: 0.70, spent: 190, conf: 3 },
   { market: M(6), user: users.u3, pos: 'yes', shares: 85, entry: 0.49, spent: 75, conf: 2 },
+  // Batch B
+  { market: M2(1), user: users.u1, pos: 'yes', shares: 180, entry: 0.58, spent: 200, conf: 3 },
+  { market: M2(1), user: users.u4, pos: 'no', shares: 110, entry: 0.42, spent: 80, conf: 2 },
+  { market: M2(3), user: users.u2, pos: 'yes', shares: 210, entry: 0.44, spent: 190, conf: 3 },
+  { market: M2(3), user: users.u5, pos: 'no', shares: 160, entry: 0.56, spent: 150, conf: 3 },
+  { market: M2(5), user: users.u3, pos: 'yes', shares: 240, entry: 0.62, spent: 260, conf: 5 },
+  { market: M2(5), user: users.u1, pos: 'no', shares: 90, entry: 0.38, spent: 60, conf: 1 },
+  { market: M2(7), user: users.u5, pos: 'yes', shares: 130, entry: 0.48, spent: 120, conf: 2 },
+  { market: M2(9), user: users.u4, pos: 'yes', shares: 170, entry: 0.54, spent: 160, conf: 3 },
+  { market: M2(10), user: users.u2, pos: 'no', shares: 300, entry: 0.68, spent: 340, conf: 5 },
+  { market: M2(10), user: users.u3, pos: 'no', shares: 220, entry: 0.65, spent: 230, conf: 3 },
 ];
 
 // Build price history: random walk from opens_at (~5 days ago) → current price
@@ -126,10 +182,13 @@ const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const round2 = (v) => Math.round(v * 100) / 100;
 
 async function run() {
-  console.log('Seeding fake open markets...\n');
+  const batchBOnly = process.argv.includes('--batch-b');
+  console.log(batchBOnly ? 'Seeding batch B only...\n' : 'Seeding fake open markets...\n');
 
-  // Clean previous seed (fixed b0000000 ids)
-  const allIds = markets.map((m) => m.id);
+  const allMarkets = batchBOnly ? marketsB : [...markets, ...marketsB];
+
+  // Clean previous seed (fixed b/c ids)
+  const allIds = allMarkets.map((m) => m.id);
   await supabase.from('market_disputes').delete().in('market_id', allIds);
   await supabase.from('market_price_history').delete().in('market_id', allIds);
   await supabase.from('predictions').delete().in('market_id', allIds);
@@ -137,7 +196,7 @@ async function run() {
   console.log('Cleaned previous seed (if any).\n');
 
   // 1. Markets
-  for (const m of markets) {
+  for (const m of allMarkets) {
     const { error } = await supabase.from('markets').insert({
       id: m.id,
       title: m.title,
@@ -156,7 +215,7 @@ async function run() {
   }
 
   // 2. Price history
-  const histories = markets.flatMap(buildHistory);
+  const histories = allMarkets.flatMap(buildHistory);
   const { error: hErr } = await supabase.from('market_price_history').insert(histories);
   if (hErr) throw new Error(`Price history insert failed: ${hErr.message}`);
   console.log(`\n✅ ${histories.length} price-history points seeded`);
