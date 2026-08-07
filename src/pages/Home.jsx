@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Autoplay from 'embla-carousel-autoplay';
 import { useAuthStore } from '../stores/authStore';
+import { getRankColor } from '../lib/ranks';
 import { useMarkets } from '../hooks/useMarkets';
 import { useQuests } from '../hooks/useQuests';
 import { useClaimReward } from '../hooks/useClaimReward';
@@ -87,12 +88,15 @@ export default function Home() {
   const dailyQuests = questsData?.daily?.filter(q => !q.completed) || [];
   const weeklyQuests = questsData?.weekly?.filter(q => !q.completed) || [];
 
+  const rankColor = user ? getRankColor(user.rank) : null;
+  const beamColor = rankColor && !rankColor.startsWith('linear-gradient') ? rankColor : '#f5a524';
+
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
       {/* ── Jumbotron: floodlights + season ticket ── */}
       <div className="relative overflow-hidden rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-black">
         <div className="absolute inset-0 opacity-70">
-          <Beams beamNumber={10} lightColor="#f5a524" speed={1.6} noiseIntensity={1.2} scale={0.18} />
+          <Beams beamNumber={10} lightColor={beamColor} speed={1.6} noiseIntensity={1.2} scale={0.18} />
         </div>
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.75)_100%)]" />
         <div className="relative flex min-h-[240px] flex-col justify-center gap-3 px-6 py-8 md:min-h-[280px] md:px-10">
