@@ -45,9 +45,9 @@ function SectionHeader({ eyebrow, title, to }) {
             text={title}
             tag="h2"
             splitType="chars"
-            duration={0.5}
-            delay={30}
-            from={{ opacity: 0, y: 14 }}
+            duration={0.9}
+            delay={60}
+            from={{ opacity: 0, y: 40, rotateX: 45, transformPerspective: 600 }}
             rootMargin="-60px"
             className="font-heading text-xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]"
           />
@@ -123,7 +123,7 @@ export default function Home() {
               <DecryptedText
                 text={user?.username || 'Player'}
                 animateOn="view"
-                speed={35}
+                speed={80}
                 maxIterations={8}
                 sequential
                 revealDirection="start"

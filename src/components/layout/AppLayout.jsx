@@ -5,7 +5,6 @@ import { Ticker } from './Ticker';
 import { MobileDock } from './MobileDock';
 import { ToastContainer } from './ToastContainer';
 import { AchievementToastContainer } from './AchievementToastContainer';
-import Noise from '../reactbits/Noise/Noise';
 
 const LevelUpModal = lazy(() =>
   import('../gamification/LevelUpModal').then((m) => ({ default: m.LevelUpModal }))
@@ -27,7 +26,6 @@ export function AppLayout() {
       <Suspense fallback={null}>
         <LevelUpModal />
       </Suspense>
-      <Noise patternAlpha={12} />
     </div>
   );
 }
