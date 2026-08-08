@@ -1,7 +1,7 @@
 import { getRankColor, getRankLabel, RANK_THRESHOLDS } from '../../lib/ranks';
 import ShinyText from '../reactbits/ShinyText/ShinyText';
 
-export function RankBadge({ rank, size = 'md', showLabel = true }) {
+export function RankBadge({ rank, size = 'md', showLabel = true, className = '' }) {
   const color = getRankColor(rank);
   const label = getRankLabel(rank);
   const threshold = RANK_THRESHOLDS.find(r => r.name === rank);
@@ -18,7 +18,7 @@ export function RankBadge({ rank, size = 'md', showLabel = true }) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1 whitespace-nowrap ${isOmniscient ? 'omniscient-badge' : ''}`}
+      className={`inline-flex items-center gap-1 whitespace-nowrap ${isOmniscient ? 'omniscient-badge' : ''} ${className}`}
       title={`${label}${threshold ? ` — ${threshold.minCoins.toLocaleString()} coins required` : ''}`}
     >
       <span
