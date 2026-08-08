@@ -7,7 +7,6 @@ import { Button } from '../ui/Button';
 import Particles from '../reactbits/Particles/Particles';
 import DecryptedText from '../reactbits/DecryptedText/DecryptedText';
 import CountUp from '../reactbits/CountUp/CountUp';
-import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 
 export function LevelUpModal() {
   const { showLevelUpModal, levelUpData, hideLevelUpModal } = useUIStore();
@@ -89,11 +88,9 @@ export function LevelUpModal() {
               </div>
             )}
 
-            <ClickSpark sparkColor="#f5a524" className="relative inline-flex">
-              <Button variant="primary" onClick={handleDismiss} className="px-8">
-                Continue
-              </Button>
-            </ClickSpark>
+            <Button variant="primary" onClick={handleDismiss} className="px-8">
+              Continue
+            </Button>
           </motion.div>
         </motion.div>
       )}

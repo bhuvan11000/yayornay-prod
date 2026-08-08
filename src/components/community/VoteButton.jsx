@@ -1,7 +1,6 @@
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
 import { useVote } from '../../hooks/useVote';
 import { useAuthStore } from '../../stores/authStore';
-import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 import CountUp from '../reactbits/CountUp/CountUp';
 
 const btnBase =
@@ -42,28 +41,24 @@ export function VoteButton({ proposal, userVote }) {
 
   return (
     <div className="flex gap-2">
-      <ClickSpark sparkColor="#22c55e" className="relative inline-flex">
-        <button
-          className={`${btnBase} ${upBtn} ${userVote === 'up' ? upActive : ''}`}
-          onClick={() => handleVote('up')}
-          disabled={isDisabled}
-          title={getTitle()}
-        >
-          <ThumbsUp size={16} />
-          <CountUp key={proposal.upvotes || 0} to={proposal.upvotes || 0} from={0} duration={0.6} />
-        </button>
-      </ClickSpark>
-      <ClickSpark sparkColor="#ef4444" className="relative inline-flex">
-        <button
-          className={`${btnBase} ${downBtn} ${userVote === 'down' ? downActive : ''}`}
-          onClick={() => handleVote('down')}
-          disabled={isDisabled}
-          title={getTitle()}
-        >
-          <ThumbsDown size={16} />
-          <CountUp key={proposal.downvotes || 0} to={proposal.downvotes || 0} from={0} duration={0.6} />
-        </button>
-      </ClickSpark>
+      <button
+        className={`${btnBase} ${upBtn} ${userVote === 'up' ? upActive : ''}`}
+        onClick={() => handleVote('up')}
+        disabled={isDisabled}
+        title={getTitle()}
+      >
+        <ThumbsUp size={16} />
+        <CountUp key={proposal.upvotes || 0} to={proposal.upvotes || 0} from={0} duration={0.6} />
+      </button>
+      <button
+        className={`${btnBase} ${downBtn} ${userVote === 'down' ? downActive : ''}`}
+        onClick={() => handleVote('down')}
+        disabled={isDisabled}
+        title={getTitle()}
+      >
+        <ThumbsDown size={16} />
+        <CountUp key={proposal.downvotes || 0} to={proposal.downvotes || 0} from={0} duration={0.6} />
+      </button>
     </div>
   );
 }

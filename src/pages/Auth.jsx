@@ -5,11 +5,8 @@ import { supabase, isSupabaseConfigured } from '../config/supabase';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import ClickSpark from '../components/reactbits/ClickSpark/ClickSpark';
-import LightRays from '../components/reactbits/LightRays/LightRays';
 import Squares from '../components/reactbits/Squares/Squares';
 import TargetCursor from '../components/reactbits/TargetCursor/TargetCursor';
-import BlurText from '../components/reactbits/BlurText/BlurText';
 import SpotlightCard from '../components/reactbits/SpotlightCard/SpotlightCard';
 
 /**
@@ -101,19 +98,7 @@ export default function Auth() {
           hoverFillColor="rgba(245, 165, 36, 0.16)"
         />
       </div>
-      {/* Floodlights */}
-      <div className="pointer-events-none fixed inset-0 z-0 opacity-40">
-        <LightRays
-          raysOrigin="top-center"
-          raysColor={[0.95, 0.65, 0.15]}
-          raysSpeed={0.6}
-          followMouse={false}
-          saturation={0.55}
-          lightSpread={1.4}
-          rayLength={1.6}
-          className="opacity-40"
-        />
-      </div>
+      {/* Floodlights removed */}
       <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_25%,var(--bg-primary)_90%)]" />
 
       <SpotlightCard
@@ -126,13 +111,9 @@ export default function Auth() {
 
           {/* Brand */}
           <div className="flex flex-col items-center gap-2 text-center">
-            <BlurText
-              text="Predict Arena"
-              delay={120}
-              animateBy="words"
-              direction="top"
-              className="font-heading text-2xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]"
-            />
+            <h1 className="font-heading text-2xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]">
+              Predict Arena
+            </h1>
             <p className="font-mono text-xs uppercase tracking-[0.14em] text-[var(--text-secondary)]">
               Predict the future. Climb the ranks.
             </p>
@@ -198,20 +179,15 @@ export default function Auth() {
               </div>
             )}
 
-            <ClickSpark
-              sparkColor="#F5A524"
-              className="relative w-full"
+            <Button
+              variant="primary"
+              size="lg"
+              loading={loading}
+              disabled={!configured}
+              className="w-full"
             >
-              <Button
-                variant="primary"
-                size="lg"
-                loading={loading}
-                disabled={!configured}
-                className="w-full"
-              >
-                {tab === 'login' ? 'Sign In' : 'Sign Up'}
-              </Button>
-            </ClickSpark>
+              {tab === 'login' ? 'Sign In' : 'Sign Up'}
+            </Button>
           </form>
 
           {!configured && (

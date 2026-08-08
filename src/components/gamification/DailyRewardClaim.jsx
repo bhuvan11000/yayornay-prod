@@ -3,7 +3,6 @@ import { Gift, Lock, Sun, CheckCircle2 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { getRankColor, getRankLabel } from '../../lib/ranks';
 import { formatCoins } from '../../lib/format';
-import ClickSpark from '../reactbits/ClickSpark/ClickSpark';
 import StarBorder from '../reactbits/StarBorder/StarBorder';
 import ShinyText from '../reactbits/ShinyText/ShinyText';
 import CountUp from '../reactbits/CountUp/CountUp';
@@ -117,19 +116,17 @@ export function DailyRewardClaim({ onClaim, claiming }) {
           <span className="text-[var(--text-muted)]">•</span>
           <span className="font-mono text-lg font-bold text-[var(--rank-visionary)]">+{xp} XP</span>
         </div>
-        <ClickSpark sparkColor="#f5a524" className="relative inline-flex">
-          <StarBorder
-            as="button"
-            color="#f5a524"
-            speed="5s"
-            className="rounded-[var(--radius-sm)]"
-            contentClassName={CLAIM_BUTTON_CLASS}
-            onClick={onClaim}
-            disabled={claiming}
-          >
-            {claiming ? 'Claiming...' : 'Claim Daily Reward'}
-          </StarBorder>
-        </ClickSpark>
+        <StarBorder
+          as="button"
+          color="#f5a524"
+          speed="5s"
+          className="rounded-[var(--radius-sm)]"
+          contentClassName={CLAIM_BUTTON_CLASS}
+          onClick={onClaim}
+          disabled={claiming}
+        >
+          {claiming ? 'Claiming...' : 'Claim Daily Reward'}
+        </StarBorder>
       </div>
       <div className="pointer-events-none absolute top-0 right-0 h-full w-[120px] overflow-hidden">
         {Array.from({ length: 6 }).map((_, i) => (
