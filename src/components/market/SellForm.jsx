@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useSell } from '../../hooks/useSell';
 import { calculateSellRevenue } from '../../lib/amm';
 import { formatCoins } from '../../lib/format';
+import ElasticSlider from '../reactbits/ElasticSlider/ElasticSlider';
 
 export function SellForm({ prediction, market }) {
   const { mutate, isPending } = useSell();
@@ -67,19 +68,34 @@ export function SellForm({ prediction, market }) {
         </button>
       ) : (
         <form className="flex w-full flex-col gap-2" onSubmit={handleSell}>
-          <div className="flex items-center gap-2">
-            <input
-              className="max-w-[120px] flex-1 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2 font-mono text-sm text-[var(--text-primary)] outline-none focus:border-[var(--border-focus)] focus:shadow-[0_0_0_3px_rgba(245,165,36,0.13)]"
-              type="number"
-              min={1}
-              max={prediction.shares}
-              step={0.1}
-              value={sharesToSell}
-              onChange={(e) => setSharesToSell(e.target.value)}
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-between">
+              <span className="font-heading text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--text-secondary)]">
+                Shares to sell
+              </span>
+              <span className="font-mono text-xs font-semibold text-[var(--accent-amber)]">
+                {numShares.toFixed(1)} / {prediction.shares.toFixed(1)}
+              </span>
+            </div>
+            <ElasticSlider
+              className="w-full"
+              defaultValue={prediction.shares}
+              startingValue={0}
+              maxValue={prediction.shares}
+              isStepped
+              stepSize={0.5}
+              onChange={(v) => setSharesToSell(String(v))}
+              leftIcon={
+                <span className="cursor-pointer font-heading text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]" onClick={() => setSharesToSell('0')}>
+                  Min
+                </span>
+              }
+              rightIcon={
+                <span className="cursor-pointer font-heading text-xs font-semibold uppercase tracking-[0.08em] text-[var(--accent-amber)] hover:text-[var(--accent-amber-hover)]" onClick={() => setSharesToSell(prediction.shares.toString())}>
+                  Max
+                </span>
+              }
             />
-            <span className="cursor-pointer rounded-[var(--radius-sm)] px-2 py-1 font-heading text-xs font-semibold uppercase tracking-[0.08em] text-[var(--accent-amber)] hover:bg-[var(--accent-amber-muted)]" onClick={() => setSharesToSell(prediction.shares.toString())}>
-              Max
-            </span>
           </div>
           {numShares > 0 && (
             <p className="font-mono text-xs font-semibold text-[var(--color-yes)]">

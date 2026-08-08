@@ -7,6 +7,8 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import ClickSpark from '../components/reactbits/ClickSpark/ClickSpark';
 import LightRays from '../components/reactbits/LightRays/LightRays';
+import Squares from '../components/reactbits/Squares/Squares';
+import TargetCursor from '../components/reactbits/TargetCursor/TargetCursor';
 import BlurText from '../components/reactbits/BlurText/BlurText';
 import SpotlightCard from '../components/reactbits/SpotlightCard/SpotlightCard';
 
@@ -89,6 +91,16 @@ export default function Auth() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--bg-primary)] p-4">
+      {/* Scoreboard grid */}
+      <div className="pointer-events-none fixed inset-0 z-0 opacity-95">
+        <Squares
+          direction="right"
+          speed={1.2}
+          squareSize={44}
+          borderColor="rgba(233, 240, 234, 0.14)"
+          hoverFillColor="rgba(245, 165, 36, 0.16)"
+        />
+      </div>
       {/* Floodlights */}
       <div className="pointer-events-none fixed inset-0 z-0 opacity-40">
         <LightRays
@@ -211,6 +223,12 @@ export default function Auth() {
           )}
         </div>
       </SpotlightCard>
+      <TargetCursor
+        targetSelector=".card, button, a, [role='button'], input, select, textarea"
+        cursorColor="#f5a524"
+        cursorColorOnTarget="#22c55e"
+        spinDuration={2.4}
+      />
     </div>
   );
 }
