@@ -6,6 +6,7 @@ import { MobileDock } from './MobileDock';
 import { ToastContainer } from './ToastContainer';
 import { AchievementToastContainer } from './AchievementToastContainer';
 import TargetCursor from '../reactbits/TargetCursor/TargetCursor';
+import Noise from '../reactbits/Noise/Noise';
 
 const LevelUpModal = lazy(() =>
   import('../gamification/LevelUpModal').then((m) => ({ default: m.LevelUpModal }))
@@ -18,7 +19,7 @@ export function AppLayout() {
         <Ticker />
         <Header />
       </div>
-      <main className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-5 md:px-6 md:py-6 max-md:pb-28">
+      <main className="relative z-10 mx-auto w-full max-w-[1200px] flex-1 px-4 py-5 md:px-6 md:py-6 max-md:pb-28">
         <Outlet />
       </main>
       <MobileDock />
@@ -27,6 +28,7 @@ export function AppLayout() {
       <Suspense fallback={null}>
         <LevelUpModal />
       </Suspense>
+      <Noise patternAlpha={30} opacity={0.9} />
       <TargetCursor
         targetSelector=".card, button, a, [role='button'], input, select, textarea"
         cursorColor="#f5a524"
