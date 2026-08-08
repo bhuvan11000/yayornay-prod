@@ -68,6 +68,7 @@ export default function Profile() {
 
   const { predictions, achievements, badges } = data;
   const rankColor = getRankColor(profile.rank);
+  const isUnranked = rankColor === '#ffffff';
   const isOwn = currentUser?.username === username;
   const avatarLetter = (profile.username || '?').charAt(0).toUpperCase();
   const accuracy = profile.total_predictions > 0
@@ -77,7 +78,7 @@ export default function Profile() {
     <div className="mx-auto flex w-full max-w-[900px] flex-col gap-6 p-4 md:p-6">
       <div className="flex flex-col gap-6 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-8">
         <div className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
-          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-[3px] font-heading text-2xl font-bold uppercase text-white select-none" style={{ background: rankColor }}>
+          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-[3px] font-heading text-2xl font-bold uppercase select-none" style={{ background: rankColor, color: isUnranked ? '#0B0E0C' : undefined }}>
             {avatarLetter}
           </div>
           <div className="flex flex-col items-center gap-1 md:items-start">

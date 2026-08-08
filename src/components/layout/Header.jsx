@@ -79,6 +79,7 @@ export function Header() {
   const coins = user.coins ?? 0;
   const rank = user.rank || 'Unranked';
   const rankColor = getRankColor();
+  const isUnranked = rankColor === '#ffffff';
   const avatarLetter = (user.username || 'U').charAt(0).toUpperCase();
 
   return (
@@ -143,8 +144,8 @@ export function Header() {
               aria-haspopup="true"
             >
               <div
-                className="flex size-8 items-center justify-center rounded-[3px] font-heading text-sm font-bold text-white uppercase select-none"
-                style={{ background: rankColor }}
+                className="flex size-8 items-center justify-center rounded-[3px] font-heading text-sm font-bold uppercase select-none"
+                style={{ background: rankColor, color: isUnranked ? '#0B0E0C' : undefined }}
               >
                 {avatarLetter}
               </div>
