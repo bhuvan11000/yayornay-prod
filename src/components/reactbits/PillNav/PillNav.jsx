@@ -137,7 +137,7 @@ export default function PillNav({
 
   const handleLogoEnter = () => {
     const el = logoSpinRef.current;
-    if (!el) return;
+    if (!el || el.offsetWidth > el.offsetHeight * 1.5) return;
     logoTweenRef.current?.kill();
     gsap.set(el, { rotate: 0 });
     logoTweenRef.current = gsap.to(el, { rotate: 360, duration: 0.2, ease, overwrite: 'auto' });
@@ -221,9 +221,9 @@ export default function PillNav({
             onMouseEnter={handleLogoEnter}
             ref={logoRef}
             className="inline-flex items-center justify-center overflow-hidden rounded-[var(--radius-sm)]"
-            style={{ width: 'var(--nav-h)', height: 'var(--nav-h)', background: 'var(--base, #000)' }}
+            style={{ height: 'var(--nav-h)', background: 'var(--base, #000)', paddingInline: 12 }}
           >
-            <span ref={logoSpinRef} className="block size-full" style={{ willChange: 'transform' }}>
+            <span ref={logoSpinRef} className="block" style={{ willChange: 'transform' }}>
               {logo}
             </span>
           </Link>
@@ -234,9 +234,9 @@ export default function PillNav({
             onMouseEnter={handleLogoEnter}
             ref={logoRef}
             className="inline-flex items-center justify-center overflow-hidden rounded-[var(--radius-sm)]"
-            style={{ width: 'var(--nav-h)', height: 'var(--nav-h)', background: 'var(--base, #000)' }}
+            style={{ height: 'var(--nav-h)', background: 'var(--base, #000)', paddingInline: 12 }}
           >
-            <span ref={logoSpinRef} className="block size-full" style={{ willChange: 'transform' }}>
+            <span ref={logoSpinRef} className="block" style={{ willChange: 'transform' }}>
               {logo}
             </span>
           </a>

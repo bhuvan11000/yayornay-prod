@@ -26,8 +26,13 @@ const DROPDOWN_ITEM_BASE =
   'flex w-full cursor-pointer items-center gap-2 border-none bg-transparent px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]';
 
 const LOGO = (
-  <span className="flex size-full items-center justify-center bg-[var(--accent-amber)] font-mono text-[13px] font-bold text-[#16100a] shadow-[var(--shadow-sm)]">
-    PA
+  <span className="flex items-center gap-2.5">
+    <span className="flex size-7 items-center justify-center rounded-[3px] bg-[var(--accent-amber)] font-mono text-[11px] font-bold text-[#16100a] shadow-[var(--shadow-sm)]">
+      PA
+    </span>
+    <span className="font-heading text-lg font-bold uppercase leading-none tracking-[0.08em] text-[var(--text-primary)]">
+      Predict <span className="text-[var(--accent-amber)]">Arena</span>
+    </span>
   </span>
 );
 
