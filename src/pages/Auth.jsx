@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { LogIn, UserPlus } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { LogIn, UserPlus, Mail, Lock, ChevronRight, Eye, EyeOff } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase, isSupabaseConfigured } from '../config/supabase';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import Squares from '../components/reactbits/Squares/Squares';
+import Beams from '../components/reactbits/Beams/Beams';
 import TargetCursor from '../components/reactbits/TargetCursor/TargetCursor';
-import SpotlightCard from '../components/reactbits/SpotlightCard/SpotlightCard';
 
 /**
  * Auth — Login / Sign Up page.
@@ -17,6 +17,20 @@ import SpotlightCard from '../components/reactbits/SpotlightCard/SpotlightCard';
  *
  * Redirects to / on successful authentication.
  */
+
+const RULES = [
+  { step: '01', title: 'Browse markets', desc: 'Placeholder — explain how users find and browse prediction markets.' },
+  { step: '02', title: 'Place your prediction', desc: 'Placeholder — explain how users stake coins on YES or NO outcomes.' },
+  { step: '03', title: 'Earn rewards', desc: 'Placeholder — explain how correct predictions earn coins, XP, and rank.' },
+  { step: '04', title: 'Climb the ranks', desc: 'Placeholder — explain the ranking system and seasonal leaderboards.' },
+];
+
+const formVariants = {
+  hidden: { opacity: 0, x: 12 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+  exit: { opacity: 0, x: -12, transition: { duration: 0.2, ease: 'easeIn' } },
+};
+
 export default function Auth() {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
@@ -25,6 +39,7 @@ export default function Auth() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // If already logged in, redirect home
   if (user) {
@@ -87,118 +102,258 @@ export default function Auth() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--bg-primary)] p-4">
-      {/* Scoreboard grid */}
-      <div className="pointer-events-none fixed inset-0 z-0 opacity-95">
-        <Squares
-          direction="right"
-          speed={1.2}
-          squareSize={44}
-          borderColor="rgba(233, 240, 234, 0.14)"
-          hoverFillColor="rgba(245, 165, 36, 0.16)"
-        />
-      </div>
-      {/* Floodlights removed */}
-      <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_25%,var(--bg-primary)_90%)]" />
+    <div className="relative flex min-h-screen bg-[var(--bg-primary)]">
+      {/* ── Left Panel: Brand Hero ── */}
+      <div className="relative hidden flex-col justify-between overflow-hidden border-r border-[var(--border-subtle)] bg-black lg:flex lg:w-[52%]">
+        {/* Beams background — same as Home jumbotron */}
+        <div className="absolute inset-0 opacity-100">
+          <Beams beamNumber={8} lightColor="#f5a524" speed={1.4} noiseIntensity={1.2} scale={0.18} />
+        </div>
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.8)_100%)]" />
 
-      <SpotlightCard
-        spotlightColor="rgba(245, 165, 36, 0.09)"
-        className="relative z-10 w-full max-w-md"
-      >
-        <div className="relative flex flex-col gap-6 border border-[var(--border-subtle)] bg-[var(--bg-secondary)]/95 p-8">
-          {/* Scoreboard frame line */}
-          <div className="absolute left-0 right-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent_5%,var(--accent-amber)_50%,transparent_95%)]" />
+        {/* Top amber accent line */}
+        <div className="absolute left-0 right-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_10%,var(--accent-amber)_50%,transparent_90%)]" />
 
+        {/* Hero content */}
+        <div className="relative z-10 flex flex-1 flex-col justify-center px-10 py-12 xl:px-16">
           {/* Brand */}
-          <div className="flex flex-col items-center gap-2 text-center">
-            <h1 className="font-heading text-2xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="flex size-10 items-center justify-center bg-[var(--accent-amber)] font-heading text-lg font-bold text-[#0B0E0C]">
+              PA
+            </div>
+            <span className="font-heading text-lg font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]">
               Predict Arena
-            </h1>
-            <p className="font-mono text-xs uppercase tracking-[0.14em] text-[var(--text-secondary)]">
-              Predict the future. Climb the ranks.
-            </p>
+            </span>
           </div>
 
-          {/* Tab Switcher */}
-          <div
-            className="grid grid-cols-2 gap-0.5 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-0.5"
-            role="tablist"
-          >
-            <button
-              className={`flex items-center justify-center gap-2 rounded-[3px] px-4 py-3 font-heading text-sm font-bold uppercase tracking-[0.08em] transition-colors cursor-pointer ${
-                tab === 'login'
-                  ? 'bg-[var(--accent-amber)] text-[#0B0E0C]'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
-              onClick={() => { setTab('login'); setError(''); }}
-              role="tab"
-              aria-selected={tab === 'login'}
-            >
-              <LogIn size={16} />
-              Login
-            </button>
-            <button
-              className={`flex items-center justify-center gap-2 rounded-[3px] px-4 py-3 font-heading text-sm font-bold uppercase tracking-[0.08em] transition-colors cursor-pointer ${
-                tab === 'signup'
-                  ? 'bg-[var(--accent-amber)] text-[#0B0E0C]'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
-              onClick={() => { setTab('signup'); setError(''); }}
-              role="tab"
-              aria-selected={tab === 'signup'}
-            >
-              <UserPlus size={16} />
-              Sign Up
-            </button>
+          {/* How It Works */}
+          <div className="flex items-center gap-2.5 mb-6">
+            <span className="mb-[2px] inline-block size-1.5 bg-[var(--accent-amber)]" />
+            <div>
+              <p className="eyebrow">The rules</p>
+              <h1 className="font-heading text-xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]">
+                How It Works
+              </h1>
+            </div>
           </div>
 
-          {/* Email Form */}
-          <form
-            className="flex flex-col gap-4"
-            onSubmit={tab === 'login' ? handleEmailLogin : handleEmailSignUp}
-          >
-            <Input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              helperText={tab === 'signup' ? 'At least 6 characters' : undefined}
-            />
+          <div className="flex flex-col gap-[1px] overflow-hidden rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--border-subtle)]">
+            {RULES.map((rule, i) => (
+              <motion.div
+                key={rule.step}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * i + 0.2, duration: 0.3 }}
+                className="flex gap-4 bg-[var(--bg-secondary)]/90 px-5 py-4"
+              >
+                <span className="font-mono text-xs font-semibold text-[var(--accent-amber)] pt-0.5">{rule.step}</span>
+                <div className="min-w-0">
+                  <p className="font-heading text-sm font-bold uppercase tracking-[0.04em] text-[var(--text-primary)]">
+                    {rule.title}
+                  </p>
+                  <p className="mt-1 text-[13px] leading-relaxed text-[var(--text-muted)]">
+                    {rule.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
 
-            {error && (
-              <div className="rounded-[var(--radius-sm)] border border-[var(--color-no-border)] bg-[var(--color-no-muted)] px-4 py-3 text-center font-mono text-sm leading-snug text-[var(--color-no)]">
-                {error}
+      {/* ── Right Panel: Auth Form ── */}
+      <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-12 md:px-12">
+        {/* Subtle dot grid background (matches body pattern) */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(rgba(233, 240, 234, 0.03) 1px, transparent 1px)',
+            backgroundSize: '26px 26px',
+          }}
+        />
+
+        {/* Mobile brand header (visible on < lg) */}
+        <div className="relative z-10 mb-8 flex flex-col items-center gap-3 lg:hidden">
+          <div className="flex items-center gap-2.5">
+            <div className="flex size-9 items-center justify-center bg-[var(--accent-amber)] font-heading text-base font-bold text-[#0B0E0C]">
+              PA
+            </div>
+            <span className="font-heading text-lg font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]">
+              Predict Arena
+            </span>
+          </div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+            Predict the future. Climb the ranks.
+          </p>
+        </div>
+
+        {/* Form card */}
+        <div className="relative z-10 w-full max-w-[400px]">
+          {/* Section header with eyebrow — same pattern as Home */}
+          <div className="mb-6 flex items-center gap-2.5">
+            <span className="mb-[2px] inline-block size-1.5 bg-[var(--accent-amber)]" />
+            <div>
+              <p className="eyebrow">Enter the arena</p>
+              <h2 className="font-heading text-xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]">
+                {tab === 'login' ? 'Welcome Back' : 'Create Account'}
+              </h2>
+            </div>
+          </div>
+
+          {/* Form — wrapped in card-style container */}
+          <div className="relative overflow-hidden rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6">
+            {/* Top accent line */}
+            <div className="absolute inset-x-0 top-0 h-[2px] bg-[linear-gradient(90deg,transparent_20%,var(--accent-amber)_50%,transparent_80%)]" />
+
+            <AnimatePresence mode="wait">
+              <motion.form
+                key={tab}
+                variants={formVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="flex flex-col gap-4"
+                onSubmit={tab === 'login' ? handleEmailLogin : handleEmailSignUp}
+              >
+                <div className="flex flex-col gap-1.5">
+                  <label className="font-heading text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                    <Mail size={12} className="mr-1.5 inline-block -translate-y-px" />
+                    Email Address
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="player@arena.gg"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="font-heading text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                    <Lock size={12} className="mr-1.5 inline-block -translate-y-px" />
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder={tab === 'signup' ? 'Min. 6 characters' : '••••••••'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
+                      onClick={() => setShowPassword(!showPassword)}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+
+                {tab === 'login' && (
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      className="font-mono text-[11px] text-[var(--text-muted)] transition-colors hover:text-[var(--accent-amber)]"
+                      onClick={async () => {
+                        if (!configured) return;
+                        if (!email) { setError('Enter your email first.'); return; }
+                        setLoading(true);
+                        const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email);
+                        setLoading(false);
+                        if (resetErr) setError(resetErr.message);
+                        else setError('');
+                        if (!resetErr) alert('Check your email for the reset link!');
+                      }}
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+                )}
+
+                <AnimatePresence>
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="rounded-[var(--radius-sm)] border border-[var(--color-no-border)] bg-[var(--color-no-muted)] px-4 py-2.5 text-center font-mono text-xs leading-snug text-[var(--color-no)]">
+                        {error}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <Button
+                  variant="primary"
+                  size="lg"
+                  loading={loading}
+                  disabled={!configured}
+                  className="mt-1 w-full"
+                >
+                  {tab === 'login' ? (
+                    <>
+                      Enter the Arena
+                      <ChevronRight size={16} className="ml-1" />
+                    </>
+                  ) : (
+                    <>
+                      Join the Arena
+                      <ChevronRight size={16} className="ml-1" />
+                    </>
+                  )}
+                </Button>
+              </motion.form>
+            </AnimatePresence>
+
+            {!configured && (
+              <div className="mt-4 rounded-[var(--radius-sm)] border border-[rgba(245,165,36,0.25)] bg-[var(--color-warning-muted)] p-3 text-center">
+                <p className="font-mono text-xs text-warning">
+                  Supabase not configured. Create a <code>.env</code> file with your project keys.
+                </p>
               </div>
             )}
+          </div>
 
-            <Button
-              variant="primary"
-              size="lg"
-              loading={loading}
-              disabled={!configured}
-              className="w-full"
-            >
-              {tab === 'login' ? 'Sign In' : 'Sign Up'}
-            </Button>
-          </form>
+          {/* Divider */}
+          <div className="my-5 flex items-center gap-3">
+            <div className="h-px flex-1 bg-[var(--border-subtle)]" />
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              {tab === 'login' ? 'New to the arena?' : 'Already a player?'}
+            </span>
+            <div className="h-px flex-1 bg-[var(--border-subtle)]" />
+          </div>
 
-          {!configured && (
-            <div className="rounded-[var(--radius-sm)] border border-[rgba(245,165,36,0.25)] bg-[var(--color-warning-muted)] p-3 text-center">
-              <p className="font-mono text-xs text-warning">
-                Supabase not configured. Create a <code>.env</code> file with your project keys.
-              </p>
-            </div>
-          )}
+          {/* Toggle prompt */}
+          <button
+            onClick={() => { setTab(tab === 'login' ? 'signup' : 'login'); setError(''); }}
+            className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3 font-heading text-sm font-semibold uppercase tracking-[0.06em] text-[var(--text-secondary)] transition-all duration-150 hover:border-[var(--text-muted)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]"
+          >
+            {tab === 'login' ? (
+              <>
+                <UserPlus size={15} />
+                Create an Account
+              </>
+            ) : (
+              <>
+                <LogIn size={15} />
+                Sign In Instead
+              </>
+            )}
+          </button>
+
+          {/* Footer text (mobile only) */}
+          <p className="mt-6 text-center font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--text-muted)] lg:hidden">
+            Free to play · No real money · Just reputation
+          </p>
         </div>
-      </SpotlightCard>
+      </div>
+
       <TargetCursor
         targetSelector=".card, button, a, [role='button'], input, select, textarea"
         cursorColor="#f5a524"
