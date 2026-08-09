@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { Gift, Lock, Sun, CheckCircle2 } from 'lucide-react';
+import { Gift, Lock, Sun, CheckCircle2, Loader2 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { getRankColor, getRankLabel } from '../../lib/ranks';
 import { formatCoins } from '../../lib/format';
@@ -22,8 +21,19 @@ const RANK_BADGE_CLASS =
 const SUNDAY_BADGE_CLASS =
   'inline-flex items-center gap-1 rounded-[3px] border border-[rgba(245,165,36,0.35)] bg-[rgba(245,165,36,0.15)] px-2 py-0.5 text-xs font-semibold text-[var(--color-warning)]';
 
+// Applied to the real <button> rendered by StarBorder (flex item of the card column).
+// Sizing + disabled state must live here — the button is what receives `disabled`.
 const CLAIM_BUTTON_CLASS =
-  'daily-reward-claim-button inline-flex cursor-pointer items-center justify-center gap-2 self-start rounded-[var(--radius-sm)] border-none bg-[var(--accent-amber)] px-6 py-3 font-heading text-sm font-bold uppercase tracking-[0.08em] text-[#0B0E0C] transition-[background,transform] duration-150 ease hover:bg-[var(--accent-amber-hover)] hover:-translate-y-px active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60';
+  'daily-reward-claim-button self-start rounded-[var(--radius-sm)] disabled:cursor-wait disabled:opacity-60';
+
+// Visual pill classes, applied to StarBorder's inner content div.
+// Hover/active transforms are gated off while claiming so a disabled
+// button doesn't keep reacting to the cursor.
+const CLAIM_CONTENT_BASE =
+  'inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] border-none bg-[var(--accent-amber)] px-6 py-3 font-heading text-sm font-bold uppercase tracking-[0.08em] text-[#0B0E0C]';
+
+const CLAIM_CONTENT_INTERACTIVE =
+  'cursor-pointer transition-[background,transform] duration-150 ease hover:bg-[var(--accent-amber-hover)] hover:-translate-y-px active:translate-y-0';
 
 export function DailyRewardClaim({ onClaim, claiming }) {
   const rewardStatus = useAuthStore((s) => s.rewardStatus);
@@ -118,14 +128,23 @@ export function DailyRewardClaim({ onClaim, claiming }) {
         </div>
         <StarBorder
           as="button"
+          type="button"
           color="#f5a524"
           speed="5s"
-          className="rounded-[var(--radius-sm)]"
-          contentClassName={CLAIM_BUTTON_CLASS}
+          className={`${CLAIM_BUTTON_CLASS}${claiming ? ' daily-reward-claiming' : ''}`}
+          contentClassName={`${CLAIM_CONTENT_BASE} ${claiming ? '' : CLAIM_CONTENT_INTERACTIVE}`}
           onClick={onClaim}
           disabled={claiming}
+          aria-busy={claiming}
         >
-          {claiming ? 'Claiming...' : 'Claim Daily Reward'}
+          {claiming ? (
+            <>
+              <Loader2 size={16} className="animate-spin" />
+              Claiming...
+            </>
+          ) : (
+            'Claim Daily Reward'
+          )}
         </StarBorder>
       </div>
       <div className="pointer-events-none absolute top-0 right-0 h-full w-[120px] overflow-hidden">

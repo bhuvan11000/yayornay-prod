@@ -14,7 +14,7 @@ const StarBorder = ({
 
   return (
     <Component
-      className={`relative inline-block overflow-hidden rounded-[20px] ${className}`}
+      className={`relative inline-block overflow-hidden ${className}`}
       {...rest}
       style={{
         padding: `${thickness}px 0`,
