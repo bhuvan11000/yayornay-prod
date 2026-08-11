@@ -30,8 +30,10 @@ const LOGO = (
     <span className="flex size-7 items-center justify-center rounded-[3px] bg-[var(--accent-amber)] font-mono text-[11px] font-bold text-[#16100a] shadow-[var(--shadow-sm)]">
       Y/N
     </span>
-    <span className="font-heading text-lg font-bold leading-none tracking-[0.08em] text-[var(--text-primary)]">
-      Yay or <span className="text-[var(--accent-amber)]">Nay</span>
+    <span className="font-heading text-lg font-bold leading-none tracking-[0.08em]">
+      <span className="text-[var(--color-yes)]">Yay</span>
+      <span className="mx-1 text-[var(--accent-amber)]">or</span>
+      <span className="text-[var(--color-no)]">Nay</span>
     </span>
   </span>
 );

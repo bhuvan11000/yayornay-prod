@@ -121,8 +121,10 @@ export default function Auth() {
             <div className="flex size-10 items-center justify-center bg-[var(--accent-amber)] font-heading text-lg font-bold text-[#0B0E0C]">
               Y/N
             </div>
-            <span className="font-heading text-lg font-bold tracking-[0.06em] text-[var(--text-primary)]">
-              Yay or <span className="text-[var(--accent-amber)]">Nay</span>
+            <span className="font-heading text-lg font-bold tracking-[0.06em]">
+              <span className="text-[var(--color-yes)]">Yay</span>
+              <span className="mx-1 text-[var(--accent-amber)]">or</span>
+              <span className="text-[var(--color-no)]">Nay</span>
             </span>
           </div>
 
@@ -178,8 +180,10 @@ export default function Auth() {
             <div className="flex size-9 items-center justify-center bg-[var(--accent-amber)] font-heading text-base font-bold text-[#0B0E0C]">
               Y/N
             </div>
-            <span className="font-heading text-lg font-bold tracking-[0.06em] text-[var(--text-primary)]">
-              Yay or <span className="text-[var(--accent-amber)]">Nay</span>
+            <span className="font-heading text-lg font-bold tracking-[0.06em]">
+              <span className="text-[var(--color-yes)]">Yay</span>
+              <span className="mx-1 text-[var(--accent-amber)]">or</span>
+              <span className="text-[var(--color-no)]">Nay</span>
             </span>
           </div>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
