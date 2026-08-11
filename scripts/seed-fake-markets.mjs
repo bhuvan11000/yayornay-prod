@@ -122,7 +122,7 @@ const marketsB = [
   { id: M2(9), title: 'Will "brainrot" be crowned Word of the Year 2026?', category: 'memes',
     resolution_criteria: 'YES if a major dictionary (Oxford, Merriam-Webster, Collins) picks brainrot as Word of the Year 2026. NO otherwise.',
     closes_in: 175, yes_price: 0.57, q_yes: 3500, q_no: 2600, volume: 6300, participants: 55, source: 'community' },
-  { id: M2(10), title: 'Will Predict Arena hit 1,000 total predictions this month?', category: 'memes',
+  { id: M2(10), title: 'Will Yay or Nay hit 1,000 total predictions this month?', category: 'memes',
     resolution_criteria: 'YES if cumulative predictions across all players reach 1000 by month end. NO otherwise.',
     closes_in: 10, yes_price: 0.34, q_yes: 2100, q_no: 4100, volume: 7400, participants: 33, source: 'admin' },
 ];

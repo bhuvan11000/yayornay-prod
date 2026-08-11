@@ -119,10 +119,10 @@ export default function Auth() {
           {/* Brand */}
           <div className="flex items-center gap-3 mb-8">
             <div className="flex size-10 items-center justify-center bg-[var(--accent-amber)] font-heading text-lg font-bold text-[#0B0E0C]">
-              PA
+              Y/N
             </div>
-            <span className="font-heading text-lg font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]">
-              Predict Arena
+            <span className="font-heading text-lg font-bold tracking-[0.06em] text-[var(--text-primary)]">
+              Yay or <span className="text-[var(--accent-amber)]">Nay</span>
             </span>
           </div>
 
@@ -176,10 +176,10 @@ export default function Auth() {
         <div className="relative z-10 mb-8 flex flex-col items-center gap-3 lg:hidden">
           <div className="flex items-center gap-2.5">
             <div className="flex size-9 items-center justify-center bg-[var(--accent-amber)] font-heading text-base font-bold text-[#0B0E0C]">
-              PA
+              Y/N
             </div>
-            <span className="font-heading text-lg font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]">
-              Predict Arena
+            <span className="font-heading text-lg font-bold tracking-[0.06em] text-[var(--text-primary)]">
+              Yay or <span className="text-[var(--accent-amber)]">Nay</span>
             </span>
           </div>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
@@ -193,7 +193,7 @@ export default function Auth() {
           <div className="mb-6 flex items-center gap-2.5">
             <span className="mb-[2px] inline-block size-1.5 bg-[var(--accent-amber)]" />
             <div>
-              <p className="eyebrow">Enter the arena</p>
+              <p className="eyebrow">Make your move</p>
               <h2 className="font-heading text-xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)]">
                 {tab === 'login' ? 'Welcome Back' : 'Create Account'}
               </h2>
@@ -222,7 +222,7 @@ export default function Auth() {
                   </label>
                   <Input
                     type="email"
-                    placeholder="player@arena.gg"
+                    placeholder="player@yayornay.gg"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -298,12 +298,12 @@ export default function Auth() {
                 >
                   {tab === 'login' ? (
                     <>
-                      Enter the Arena
+                      Play Now
                       <ChevronRight size={16} className="ml-1" />
                     </>
                   ) : (
                     <>
-                      Join the Arena
+                      Join Now
                       <ChevronRight size={16} className="ml-1" />
                     </>
                   )}
@@ -324,7 +324,7 @@ export default function Auth() {
           <div className="my-5 flex items-center gap-3">
             <div className="h-px flex-1 bg-[var(--border-subtle)]" />
             <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
-              {tab === 'login' ? 'New to the arena?' : 'Already a player?'}
+              {tab === 'login' ? 'New to Yay or Nay?' : 'Already a player?'}
             </span>
             <div className="h-px flex-1 bg-[var(--border-subtle)]" />
           </div>

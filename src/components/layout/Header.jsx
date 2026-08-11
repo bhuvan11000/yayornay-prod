@@ -28,10 +28,10 @@ const DROPDOWN_ITEM_BASE =
 const LOGO = (
   <span className="flex items-center gap-2.5">
     <span className="flex size-7 items-center justify-center rounded-[3px] bg-[var(--accent-amber)] font-mono text-[11px] font-bold text-[#16100a] shadow-[var(--shadow-sm)]">
-      PA
+      Y/N
     </span>
-    <span className="font-heading text-lg font-bold uppercase leading-none tracking-[0.08em] text-[var(--text-primary)]">
-      Predict <span className="text-[var(--accent-amber)]">Arena</span>
+    <span className="font-heading text-lg font-bold leading-none tracking-[0.08em] text-[var(--text-primary)]">
+      Yay or <span className="text-[var(--accent-amber)]">Nay</span>
     </span>
   </span>
 );
@@ -75,7 +75,7 @@ export function Header() {
         {/* ── Left: Pill Nav (logo + nav) ── */}
         <PillNav
           logo={LOGO}
-          logoAlt="Predict Arena"
+          logoAlt="Yay or Nay"
           logoHref="/"
           items={NAV_ITEMS}
           activeHref={pathname}

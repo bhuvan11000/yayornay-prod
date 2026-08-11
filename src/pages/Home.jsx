@@ -126,7 +126,7 @@ export default function Home() {
           </h1>
           <p className="max-w-[420px] font-mono text-xs uppercase tracking-[0.14em]">
             <RotatingText
-              texts={['Read the board.', 'Price the outcome.', 'Beat the arena.']}
+              texts={['Read the board.', 'Price the outcome.', 'Beat the odds.']}
               rotationInterval={2800}
               auto={!reduceMotion}
               mainClassName="text-[var(--accent-amber)]"

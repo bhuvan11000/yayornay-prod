@@ -143,7 +143,7 @@ function buildPrompt(today, existingTitles) {
     ? existingTitles.map(t => `- "${t}"`).join('\n')
     : '- (none — no active markets to avoid)';
 
-  return `You are a prediction market generator for a game called Predict Arena.
+  return `You are a prediction market generator for a game called Yay or Nay.
 
 Today's date: ${today}
 
