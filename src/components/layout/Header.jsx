@@ -27,9 +27,11 @@ const DROPDOWN_ITEM_BASE =
 
 const LOGO = (
   <span className="flex items-center gap-2.5">
-    <span className="flex size-7 items-center justify-center rounded-[3px] bg-[var(--accent-amber)] font-mono text-[11px] font-bold text-[#16100a] shadow-[var(--shadow-sm)]">
-      Y/N
-    </span>
+    <img
+      src="/icon-192.png"
+      alt="Yay or Nay"
+      className="size-7 rounded-[3px] shadow-[var(--shadow-sm)]"
+    />
     <span className="font-heading text-lg font-bold leading-none tracking-[0.08em]">
       <span className="text-[var(--color-yes)]">Yay</span>
       <span className="mx-1 text-[var(--accent-amber)]">or</span>

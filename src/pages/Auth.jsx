@@ -119,9 +119,11 @@ export default function Auth() {
         <div className="relative z-10 flex flex-1 flex-col justify-center px-10 py-12 xl:px-16">
           {/* Brand */}
           <div className="flex items-center gap-3 mb-8">
-            <div className="flex size-10 items-center justify-center bg-[var(--accent-amber)] font-heading text-lg font-bold text-[#0B0E0C]">
-              Y/N
-            </div>
+            <img
+              src="/icon-192.png"
+              alt="Yay or Nay"
+              className="size-10 rounded-[3px]"
+            />
             <span className="font-heading text-lg font-bold tracking-[0.06em]">
               <span className="text-[var(--color-yes)]">Yay</span>
               <span className="mx-1 text-[var(--accent-amber)]">or</span>
@@ -178,9 +180,11 @@ export default function Auth() {
         {/* Mobile brand header (visible on < lg) */}
         <div className="relative z-10 mb-8 flex flex-col items-center gap-3 lg:hidden">
           <div className="flex items-center gap-2.5">
-            <div className="flex size-9 items-center justify-center bg-[var(--accent-amber)] font-heading text-base font-bold text-[#0B0E0C]">
-              Y/N
-            </div>
+            <img
+              src="/icon-192.png"
+              alt="Yay or Nay"
+              className="size-9 rounded-[3px]"
+            />
             <span className="font-heading text-lg font-bold tracking-[0.06em]">
               <span className="text-[var(--color-yes)]">Yay</span>
               <span className="mx-1 text-[var(--accent-amber)]">or</span>
