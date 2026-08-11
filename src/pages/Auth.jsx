@@ -19,10 +19,11 @@ import TargetCursor from '../components/reactbits/TargetCursor/TargetCursor';
  */
 
 const RULES = [
-  { step: '01', title: 'Browse markets', desc: 'Placeholder — explain how users find and browse prediction markets.' },
-  { step: '02', title: 'Place your prediction', desc: 'Placeholder — explain how users stake coins on YES or NO outcomes.' },
-  { step: '03', title: 'Earn rewards', desc: 'Placeholder — explain how correct predictions earn coins, XP, and rank.' },
-  { step: '04', title: 'Climb the ranks', desc: 'Placeholder — explain the ranking system and seasonal leaderboards.' },
+  { step: '01', title: 'Browse markets', desc: 'Fresh questions drop every day: sports, tech, pop culture, politics, memes. Read the criteria, check the odds, find your angle.' },
+  { step: '02', title: 'Place your prediction', desc: 'Put coins on the side you believe in. The crowd\'s money moves the odds in real time, so every call shifts the market.' },
+  { step: '03', title: 'Earn rewards', desc: 'Call it right and you win coins + XP, plus streak and quest bonuses. Wrong? You only lose what you risked.' },
+  { step: '04', title: 'Climb the ranks', desc: 'Rise from Unranked to Analyst, Strategist, Forecaster, Visionary, Prophet and Omniscient. Every season, the race starts over.' },
+  { step: '05', title: 'Community markets', desc: 'Got a hot question of your own? Propose it, stake coins, and win the crowd. Top proposals go live as real markets.' },
 ];
 
 const formVariants = {
