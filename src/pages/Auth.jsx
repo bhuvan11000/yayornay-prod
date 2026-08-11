@@ -124,7 +124,7 @@ export default function Auth() {
               alt="Yay or Nay"
               className="size-10 rounded-[3px]"
             />
-            <span className="font-heading text-lg font-bold tracking-[0.06em]">
+            <span className="font-heading text-xl font-bold tracking-[0.06em]">
               <span className="text-[var(--color-yes)]">Yay</span>
               <span className="mx-1 text-[var(--accent-amber)]">or</span>
               <span className="text-[var(--color-no)]">Nay</span>
@@ -185,7 +185,7 @@ export default function Auth() {
               alt="Yay or Nay"
               className="size-9 rounded-[3px]"
             />
-            <span className="font-heading text-lg font-bold tracking-[0.06em]">
+            <span className="font-heading text-xl font-bold tracking-[0.06em]">
               <span className="text-[var(--color-yes)]">Yay</span>
               <span className="mx-1 text-[var(--accent-amber)]">or</span>
               <span className="text-[var(--color-no)]">Nay</span>
