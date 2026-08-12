@@ -4,6 +4,7 @@ import { usePredict } from '../../hooks/usePredict';
 import { useSell } from '../../hooks/useSell';
 import { calculateShares, getPrice, calculateSellRevenue } from '../../lib/amm';
 import { formatCoins, formatPrice } from '../../lib/format';
+import ElasticSlider from '../reactbits/ElasticSlider/ElasticSlider';
 
 const QUICK_ADD = [10, 50, 200];
 
@@ -253,6 +254,9 @@ function SellTab({ market, predictions, onSuccess }) {
     setSharesToSell(fraction === 1 ? prediction.shares : parseFloat((prediction.shares * fraction).toFixed(2)));
   };
 
+  // Key to force ElasticSlider to re-sync when prediction changes
+  const sliderKey = prediction?.id ?? 'no-prediction';
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!isValid) return;
@@ -346,17 +350,33 @@ function SellTab({ market, predictions, onSuccess }) {
               </div>
             </div>
 
-            {/* Fraction quick-sell buttons */}
-            <div className="bet-quick-row">
-              {[0.25, 0.5, 0.75].map((frac) => (
-                <button key={frac} type="button" className="bet-quick-btn" onClick={() => handleSellFraction(frac)}>
-                  {frac * 100}%
-                </button>
-              ))}
-              <button type="button" className="bet-quick-btn bet-quick-max" onClick={() => handleSellFraction(1)}>
-                Max
-              </button>
-            </div>
+            {/* Elastic slider — same component as Your Positions */}
+            <ElasticSlider
+              key={sliderKey}
+              className="w-full mt-1"
+              defaultValue={typeof sharesToSell === 'number' ? sharesToSell : 0}
+              startingValue={0}
+              maxValue={prediction.shares}
+              isStepped
+              stepSize={0.01}
+              onChange={(v) => setSharesToSell(v === 0 ? 0 : v)}
+              leftIcon={
+                <span
+                  className="cursor-pointer font-heading text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+                  onClick={() => setSharesToSell(0)}
+                >
+                  Min
+                </span>
+              }
+              rightIcon={
+                <span
+                  className="cursor-pointer font-heading text-xs font-semibold uppercase tracking-[0.08em] text-[var(--accent-amber)] hover:text-[var(--accent-amber-hover)]"
+                  onClick={() => setSharesToSell(prediction.shares)}
+                >
+                  Max
+                </span>
+              }
+            />
 
             {numShares > prediction.shares && (
               <p className="bet-error-msg">You only hold {prediction.shares.toFixed(2)} shares</p>
