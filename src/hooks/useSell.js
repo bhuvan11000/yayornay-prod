@@ -8,6 +8,7 @@ export function useSell() {
   const updateUser = useAuthStore((s) => s.updateUser);
   const user = useAuthStore((s) => s.user);
   const addToast = useUIStore((s) => s.addToast);
+  const triggerRankUpModal = useUIStore((s) => s.triggerRankUpModal);
 
   return useMutation({
     mutationFn: (data) => api.post('/sell', data),
@@ -20,6 +21,11 @@ export function useSell() {
     onSuccess: (response) => {
       if (response.user_coins !== undefined) {
         updateUser({ coins: response.user_coins });
+      }
+
+      if (response.rankUp?.rankedUp) {
+        updateUser({ rank: response.rankUp.newRank });
+        triggerRankUpModal(response.rankUp);
       }
 
       queryClient.invalidateQueries({ queryKey: ['markets'] });

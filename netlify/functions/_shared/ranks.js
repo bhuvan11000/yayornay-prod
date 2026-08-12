@@ -79,3 +79,18 @@ export async function checkRankChange(userId, newCoinBalance, oldRank) {
 
   return { rankChanged: false };
 }
+
+/**
+ * Build rank-up info for a promotion. Pure helper (no DB writes).
+ *
+ * @param {string} oldRank - Rank before the change
+ * @param {string} newRank - Rank after the change
+ * @returns {object|null} Rank-up info, or null when not a promotion
+ */
+export function buildRankUp(oldRank, newRank) {
+  if (!newRank || newRank === oldRank) return null;
+  if (RANK_ORDER[newRank] > RANK_ORDER[oldRank]) {
+    return { rankedUp: true, oldRank, newRank };
+  }
+  return null;
+}

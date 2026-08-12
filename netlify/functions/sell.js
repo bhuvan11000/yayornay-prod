@@ -1,6 +1,7 @@
 import { verifyAuth } from './_shared/auth.js';
 import { corsHeaders } from './_shared/cors.js';
 import { supabaseAdmin } from './_shared/supabase.js';
+import { getRank, buildRankUp } from './_shared/ranks.js';
 
 export default async (req, context) => {
   if (req.method === 'OPTIONS') {
@@ -26,6 +27,15 @@ export default async (req, context) => {
       });
     }
 
+    // Fetch the rank before the RPC — sell_shares updates the rank column
+    // from the new coin balance, so we need the pre-sale value for rank-up
+    // detection.
+    const { data: profile } = await supabaseAdmin
+      .from('users')
+      .select('rank')
+      .eq('id', user.id)
+      .single();
+
     const { data, error } = await supabaseAdmin.rpc('sell_shares', {
       p_user_id: user.id,
       p_prediction_id: prediction_id,
@@ -34,7 +44,15 @@ export default async (req, context) => {
 
     if (error) throw error;
 
-    return new Response(JSON.stringify(data), {
+    let rankUp = null;
+    try {
+      const newRank = data?.user_coins !== undefined ? getRank(data.user_coins) : null;
+      rankUp = buildRankUp(profile?.rank, newRank);
+    } catch (err) {
+      console.error('Rank-up check failed (non-blocking):', err.message);
+    }
+
+    return new Response(JSON.stringify({ ...data, rankUp }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

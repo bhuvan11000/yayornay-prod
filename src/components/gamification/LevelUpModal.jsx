@@ -2,7 +2,6 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle } from 'lucide-react';
 import { useUIStore } from '../../stores/uiStore';
-import { getUnlockedFeatures } from '../../lib/levels';
 import { Button } from '../ui/Button';
 import Particles from '../reactbits/Particles/Particles';
 import DecryptedText from '../reactbits/DecryptedText/DecryptedText';
@@ -11,20 +10,13 @@ import CountUp from '../reactbits/CountUp/CountUp';
 export function LevelUpModal() {
   const { showLevelUpModal, levelUpData, hideLevelUpModal } = useUIStore();
 
-  if (!showLevelUpModal || !levelUpData) return null;
-
-  const { oldLevel, newLevel, unlocks } = levelUpData;
-  const newUnlocks = getUnlockedFeatures(newLevel).filter(
-    f => !getUnlockedFeatures(oldLevel).includes(f)
-  );
-
   const handleDismiss = () => {
     hideLevelUpModal();
   };
 
   return createPortal(
     <AnimatePresence>
-      {showLevelUpModal && (
+      {showLevelUpModal && levelUpData && (
         <motion.div
           className="fixed inset-0 z-[var(--z-modal-backdrop)] flex items-center justify-center overflow-hidden bg-black/70 backdrop-blur-sm"
           initial={{ opacity: 0 }}
@@ -64,22 +56,22 @@ export function LevelUpModal() {
             />
 
             <div className="relative z-10 flex items-center gap-4">
-              <span className="levelup-old">Lv.{oldLevel}</span>
+              <span className="levelup-old">Lv.{levelUpData.oldLevel}</span>
               <span className="levelup-arrow">&rarr;</span>
               <CountUp
-                to={newLevel}
-                from={oldLevel}
+                to={levelUpData.newLevel}
+                from={levelUpData.oldLevel}
                 duration={1.2}
                 className="levelup-new"
               />
             </div>
 
-            {newUnlocks.length > 0 && (
+            {levelUpData.unlocks?.length > 0 && (
               <div className="relative z-10 flex w-full flex-col gap-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.05em] text-[var(--text-muted)]">
                   New Unlocks
                 </p>
-                {newUnlocks.map((feature, i) => (
+                {levelUpData.unlocks.map((feature, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm text-[var(--text-primary)]">
                     <CheckCircle size={16} className="shrink-0 text-[var(--color-yes)]" />
                     <span className="text-left">{feature}</span>

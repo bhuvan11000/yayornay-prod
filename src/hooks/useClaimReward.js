@@ -10,11 +10,14 @@ export function useClaimReward() {
   const addToast = useUIStore((s) => s.addToast);
   const addAchievement = useUIStore((s) => s.addAchievement);
   const triggerLevelUpModal = useUIStore((s) => s.triggerLevelUpModal);
-  const user = useAuthStore((s) => s.user);
+  const triggerRankUpModal = useUIStore((s) => s.triggerRankUpModal);
 
-  // Defensive: only show the modal when the new level is above the current one.
+  // Only show the modal when the server confirms a genuine level-up
+  // (oldLevel/newLevel come from the DB, avoiding stale store state).
   const shouldTriggerLevelUp = (levelUp) =>
-    levelUp?.leveledUp && levelUp.newLevel > (user?.level || 0);
+    levelUp?.leveledUp && levelUp.newLevel > levelUp.oldLevel;
+
+  const shouldTriggerRankUp = (rankUp) => rankUp?.rankedUp;
 
   return useMutation({
     mutationFn: () => api.post('/claim-reward', {}),
@@ -71,6 +74,10 @@ export function useClaimReward() {
           newLevel: response.levelUp.newLevel,
           unlocks: response.levelUp.unlocks,
         });
+      }
+
+      if (shouldTriggerRankUp(response.rankUp)) {
+        triggerRankUpModal(response.rankUp);
       }
     },
 

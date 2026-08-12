@@ -94,7 +94,7 @@ export async function checkLevelUp(userId, currentXP, currentLevel) {
       .filter(([lvl]) => parseInt(lvl) > currentLevel && parseInt(lvl) <= newLevel)
       .map(([_, desc]) => desc);
 
-    const xpToNext = xpForLevel(newLevel + 1);
+    const xpToNext = xpForLevel(newLevel + 1) - (currentXP - cumulativeXP(newLevel));
 
     return {
       leveledUp: true,

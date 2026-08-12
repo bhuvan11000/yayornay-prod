@@ -11,6 +11,10 @@ const LevelUpModal = lazy(() =>
   import('../gamification/LevelUpModal').then((m) => ({ default: m.LevelUpModal }))
 );
 
+const RankUpModal = lazy(() =>
+  import('../gamification/RankUpModal').then((m) => ({ default: m.RankUpModal }))
+);
+
 export function AppLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-[var(--bg-primary)]">
@@ -26,6 +30,7 @@ export function AppLayout() {
       <AchievementToastContainer />
       <Suspense fallback={null}>
         <LevelUpModal />
+        <RankUpModal />
       </Suspense>
       <TargetCursor
         targetSelector=".card, button, a, [role='button'], input, select, textarea"

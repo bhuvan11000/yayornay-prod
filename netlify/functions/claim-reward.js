@@ -4,6 +4,7 @@ import { supabaseAdmin } from './_shared/supabase.js';
 import { checkAchievements } from './_shared/achievements.js';
 import { updateQuestProgress } from './_shared/quests.js';
 import { checkLevelUp, calculateLevel } from './_shared/levels.js';
+import { buildRankUp } from './_shared/ranks.js';
 
 export default async (req, context) => {
   if (req.method === 'OPTIONS') {
@@ -19,6 +20,14 @@ export default async (req, context) => {
   }
 
   try {
+    // Fetch rank + level BEFORE the RPC — claim_daily_reward updates the rank
+    // column, so we need the pre-claim values for rank-up detection.
+    const { data: currentUser } = await supabaseAdmin
+      .from('users')
+      .select('level, rank')
+      .eq('id', authUser.id)
+      .single();
+
     const { data, error } = await supabaseAdmin.rpc('claim_daily_reward', {
       p_user_id: authUser.id,
     });
@@ -28,6 +37,7 @@ export default async (req, context) => {
     let achievements = [];
     let completedQuests = [];
     let levelUp = null;
+    let rankUp = null;
 
     try {
       achievements = await checkAchievements(authUser.id, 'login', {});
@@ -42,14 +52,15 @@ export default async (req, context) => {
     }
 
     try {
-      const { data: currentUser } = await supabaseAdmin
-        .from('users')
-        .select('level')
-        .eq('id', authUser.id)
-        .single();
       levelUp = await checkLevelUp(authUser.id, data.user_xp, currentUser?.level || 1);
     } catch (err) {
       console.error('Level-up check failed (non-blocking):', err.message);
+    }
+
+    try {
+      rankUp = buildRankUp(currentUser?.rank, data.new_rank);
+    } catch (err) {
+      console.error('Rank-up check failed (non-blocking):', err.message);
     }
 
     return new Response(JSON.stringify({
@@ -58,6 +69,7 @@ export default async (req, context) => {
       achievements,
       completedQuests,
       levelUp,
+      rankUp,
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

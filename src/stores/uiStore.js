@@ -6,6 +6,8 @@ export const useUIStore = create((set, get) => ({
   toasts: [],
   showLevelUpModal: false,
   levelUpData: null,
+  showRankUpModal: false,
+  rankUpData: null,
   modalStack: [],
   pendingAchievements: [],
 
@@ -34,6 +36,14 @@ export const useUIStore = create((set, get) => ({
 
   hideLevelUpModal: () => {
     set({ showLevelUpModal: false, levelUpData: null });
+  },
+
+  triggerRankUpModal: (rankUpData) => {
+    set({ showRankUpModal: true, rankUpData });
+  },
+
+  hideRankUpModal: () => {
+    set({ showRankUpModal: false, rankUpData: null });
   },
 
   pushModal: (modalId, props = {}) => {

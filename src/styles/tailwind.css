@@ -633,6 +633,73 @@
     50% { filter: brightness(1.5); }
   }
 
+  /* Rank-up gradient title — the gold banner */
+  .rankup-title {
+    font-family: var(--font-heading);
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #f5a524, #fbbf24, #fff3c4, #fbbf24, #f5a524);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: titleDance 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(245, 165, 36, 0.35));
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Rank-up card border pulse (gold) */
+  .rankup-card {
+    animation: cardBorderPulse 2.5s ease-in-out infinite;
+  }
+
+  /* Rank-up trophy tag */
+  .rankup-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent-amber);
+    border: 1px solid rgba(245, 165, 36, 0.35);
+    border-radius: 999px;
+    padding: 4px 12px;
+    background: rgba(245, 165, 36, 0.08);
+  }
+
+  /* Rank-up old/new rank styles */
+  .rankup-old {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: line-through;
+    opacity: 0.6;
+    text-transform: uppercase;
+  }
+
+  .rankup-arrow {
+    font-size: var(--text-2xl);
+    color: var(--accent-amber);
+    animation: arrowBounce 0.6s ease infinite alternate;
+  }
+
+  .rankup-new {
+    font-family: var(--font-heading);
+    font-size: 42px;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(245, 165, 36, 0.3);
+    animation: newLevelZoom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, newLevelPulse 2s ease-in-out 0.5s infinite;
+    transform-origin: center;
+  }
+
   /* Achievement icon pop-in */
   .achievement-icon-pop {
     animation: achievement-icon-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
