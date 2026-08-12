@@ -252,7 +252,9 @@ BEGIN
   IF p_shares_to_sell <= 0 THEN
     RAISE EXCEPTION 'Shares to sell must be positive';
   END IF;
-  IF p_shares_to_sell > v_prediction.shares THEN
+  -- Use a small epsilon (0.001) to tolerate REAL floating-point drift between
+  -- what the DB stores and what the client sends (e.g. 702.6500015 vs 702.65).
+  IF p_shares_to_sell > v_prediction.shares + 0.001 THEN
     RAISE EXCEPTION 'Not enough shares to sell';
   END IF;
 

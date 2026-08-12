@@ -1,20 +1,13 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Coins } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { usePredict } from '../../hooks/usePredict';
-import { calculateShares, getPrice } from '../../lib/amm';
+import { useSell } from '../../hooks/useSell';
+import { calculateShares, getPrice, calculateSellRevenue } from '../../lib/amm';
 import { formatCoins, formatPrice } from '../../lib/format';
-import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import { Button } from '../ui/Button';
 
-const CONFIDENCE_OPTIONS = [
-  { value: 1, label: '1x' },
-  { value: 2, label: '2x' },
-  { value: 3, label: '3x' },
-  { value: 5, label: '5x' },
-];
+const QUICK_ADD = [10, 50, 200];
 
-function useDebounced(value, delay = 200) {
+function useDebounced(value, delay = 150) {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
     const t = setTimeout(() => setDebounced(value), delay);
@@ -23,197 +16,449 @@ function useDebounced(value, delay = 200) {
   return debounced;
 }
 
-export function PredictionForm({ market, onSuccess }) {
+/* ─── Buy Tab ─────────────────────────────────────────────────── */
+function BuyTab({ market, onSuccess, pendingPredictions = [] }) {
   const user = useAuthStore((s) => s.user);
   const { mutate, isPending, error: mutationError } = usePredict();
 
   const [position, setPosition] = useState(null);
-  const [amount, setAmount] = useState('');
-  const [confidence, setConfidence] = useState(1);
+  const [amount, setAmount] = useState(0);
+  const confidence = 1;
 
-  const debouncedAmount = useDebounced(amount, 200);
+  const debouncedAmount = useDebounced(amount, 150);
   const numAmount = parseInt(debouncedAmount, 10) || 0;
   const totalCost = numAmount * confidence;
   const b = market.b || 100;
-  const currentPrice = position
-    ? getPrice(market.q_yes, market.q_no, b, position)
-    : 0.5;
+
+  const currentPrice = position ? getPrice(market.q_yes, market.q_no, b, position) : null;
 
   const projectedShares = useMemo(() => {
     if (!position || numAmount < 10) return 0;
     return calculateShares(market.q_yes, market.q_no, b, position, totalCost);
   }, [market.q_yes, market.q_no, b, position, totalCost]);
 
-  const isExpired = market.closes_at && new Date(market.closes_at) <= new Date();
   const hasEnoughCoins = user?.coins >= totalCost;
-  const isValid = position && numAmount >= 10 && hasEnoughCoins && !isExpired;
+  const isValid = position && numAmount >= 10 && hasEnoughCoins;
+
+  // Warn if user already holds the OPPOSITE side on this market
+  const opposingHolding = position
+    ? pendingPredictions.find((p) => p.position !== position && p.result === 'pending')
+    : null;
+
+  const handleAddAmount = (val) =>
+    setAmount((prev) => (parseInt(prev, 10) || 0) + val);
+
+  const handleSetMax = () => {
+    if (user?.coins) setAmount(Math.min(user.coins, 10000));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!isValid || isPending) return;
-
     mutate(
-      {
-        market_id: market.id,
-        position,
-        coins: numAmount,
-        confidence,
-      },
+      { market_id: market.id, position, coins: numAmount, confidence },
       {
         onSuccess: () => {
           setPosition(null);
-          setAmount('');
-          setConfidence(1);
+          setAmount(0);
           onSuccess?.();
         },
       }
     );
   };
 
+  const potentialPayout = Math.round(projectedShares);
+  const potentialProfit = potentialPayout - totalCost;
+
+  const positionButton = (pos) => {
+    const isYes = pos === 'yes';
+    const selected = position === pos;
+    const price = isYes ? market.yes_price : market.no_price;
+    const priceDisplay = `${Math.round(price * 100)}¢`;
+
+    const selectedBg = isYes
+      ? 'linear-gradient(135deg, #16a34a, #22c55e)'
+      : 'linear-gradient(135deg, #b91c1c, #ef4444)';
+    const selectedShadow = isYes
+      ? '0 4px 14px rgba(34,197,94,0.35)'
+      : '0 4px 14px rgba(239,68,68,0.35)';
+
+    return (
+      <button
+        key={pos}
+        type="button"
+        onClick={() => setPosition(pos)}
+        aria-pressed={selected}
+        className="bet-position-btn"
+        style={{
+          background: selected ? selectedBg : isYes ? 'var(--color-yes-muted)' : 'var(--color-no-muted)',
+          border: selected ? 'none' : `1.5px solid ${isYes ? 'var(--color-yes-border)' : 'var(--color-no-border)'}`,
+          color: selected ? '#fff' : isYes ? 'var(--color-yes)' : 'var(--color-no)',
+          boxShadow: selected ? selectedShadow : 'none',
+          transform: selected ? 'translateY(-1px)' : 'none',
+        }}
+      >
+        <span className="bet-position-label">{isYes ? 'Yes' : 'No'}</span>
+        <span className="bet-position-price">{priceDisplay}</span>
+      </button>
+    );
+  };
+
+  return (
+    <form onSubmit={handleSubmit} id="bet-buy-form" style={{ display: 'contents' }}>
+      {/* Yes / No */}
+      <div className="bet-position-row" role="group" aria-label="Choose position">
+        {positionButton('yes')}
+        {positionButton('no')}
+      </div>
+
+      {/* Opposing-position warning */}
+      {opposingHolding && (
+        <div className="bet-hedge-warning" role="alert">
+          <span className="bet-hedge-warning-icon">⚠</span>
+          <div className="bet-hedge-warning-body">
+            <p className="bet-hedge-warning-title">
+              You already hold {opposingHolding.shares.toFixed(1)} {opposingHolding.position.toUpperCase()} shares here.
+            </p>
+            <p className="bet-hedge-warning-detail">
+              Buying the opposite side costs extra in spread — you'll pay twice to move the market both ways. Consider selling your {opposingHolding.position.toUpperCase()} position first from the <strong>Sell</strong> tab instead.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Amount */}
+      <div className="bet-amount-section">
+        <div className="bet-amount-row">
+          <span className="bet-amount-label">Amount</span>
+          <div className="bet-amount-display">
+            <input
+              id="bet-amount-input"
+              type="number"
+              min={0}
+              max={10000}
+              value={amount === 0 ? '' : amount}
+              onChange={(e) => {
+                const v = parseInt(e.target.value, 10);
+                setAmount(isNaN(v) ? 0 : Math.min(v, 10000));
+              }}
+              placeholder="0"
+              className="bet-amount-input"
+              aria-label="Bet amount in coins"
+            />
+            <span className="bet-amount-unit">coins</span>
+          </div>
+        </div>
+        <div className="bet-quick-row">
+          {QUICK_ADD.map((val) => (
+            <button key={val} type="button" className="bet-quick-btn" onClick={() => handleAddAmount(val)}>
+              +{val}
+            </button>
+          ))}
+          <button type="button" className="bet-quick-btn bet-quick-max" onClick={handleSetMax}>
+            Max
+          </button>
+        </div>
+        {numAmount > 0 && numAmount < 10 && (
+          <p className="bet-error-msg">Minimum bet is 10 coins</p>
+        )}
+        {!hasEnoughCoins && numAmount > 0 && (
+          <p className="bet-error-msg">Not enough coins — you have {formatCoins(user?.coins || 0)}</p>
+        )}
+      </div>
+
+      {/* Order summary */}
+      {position && numAmount >= 10 && (
+        <div className="bet-summary">
+          <div className="bet-summary-row">
+            <span className="bet-summary-label">Avg price</span>
+            <span className="bet-summary-value">~{formatPrice(currentPrice)}</span>
+          </div>
+          <div className="bet-summary-row">
+            <span className="bet-summary-label">Shares</span>
+            <span className="bet-summary-value">~{Math.round(projectedShares)}</span>
+          </div>
+          <div className="bet-summary-row">
+            <span className="bet-summary-label">Potential payout</span>
+            <span className="bet-summary-value" style={{ color: 'var(--color-yes)' }}>
+              {formatCoins(potentialPayout)} coins
+            </span>
+          </div>
+          {potentialProfit > 0 && (
+            <div className="bet-summary-row">
+              <span className="bet-summary-label">Potential profit</span>
+              <span className="bet-summary-value" style={{ color: 'var(--color-yes)' }}>
+                +{formatCoins(potentialProfit)} coins
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {mutationError && <p className="bet-error-msg">{mutationError.message}</p>}
+
+      <button
+        id="bet-trade-btn"
+        type="submit"
+        disabled={!isValid || isPending}
+        className="bet-trade-btn"
+        style={{
+          background: isValid
+            ? position === 'yes'
+              ? 'linear-gradient(135deg, #16a34a, #22c55e)'
+              : 'linear-gradient(135deg, #b91c1c, #ef4444)'
+            : undefined,
+          boxShadow: isValid
+            ? position === 'yes'
+              ? '0 4px 18px rgba(34,197,94,0.3)'
+              : '0 4px 18px rgba(239,68,68,0.3)'
+            : undefined,
+        }}
+      >
+        {isPending ? 'Placing bet…' : !position ? 'Select YES or NO' : numAmount < 10 ? 'Enter amount (min 10)' : !hasEnoughCoins ? 'Insufficient coins' : `Trade ${position.toUpperCase()}`}
+      </button>
+    </form>
+  );
+}
+
+/* ─── Sell Tab ─────────────────────────────────────────────────── */
+function SellTab({ market, predictions, onSuccess }) {
+  const b = market.b || 100;
+  const { mutate, isPending, error: sellError } = useSell();
+
+  // Which prediction the user picked
+  const [selectedId, setSelectedId] = useState(() => predictions[0]?.id ?? null);
+  const [sharesToSell, setSharesToSell] = useState(0);
+
+  const prediction = predictions.find((p) => p.id === selectedId) ?? predictions[0];
+
+  // Reset shares when prediction changes
+  useEffect(() => {
+    setSharesToSell(0);
+  }, [selectedId]);
+
+  const numShares = parseFloat(sharesToSell) || 0;
+
+  const revenue = useMemo(() => {
+    if (!prediction || numShares <= 0 || numShares > prediction.shares) return 0;
+    return calculateSellRevenue(market.q_yes, market.q_no, b, prediction.position, numShares);
+  }, [market.q_yes, market.q_no, b, prediction, numShares]);
+
+  const isValid = prediction && numShares > 0 && numShares <= prediction.shares && !isPending;
+
+  const handleSellFraction = (fraction) => {
+    if (!prediction) return;
+    // Use the exact DB value for MAX (fraction === 1) to avoid floating-point
+    // rounding causing the SQL check (p_shares_to_sell > v_prediction.shares) to fire.
+    setSharesToSell(fraction === 1 ? prediction.shares : parseFloat((prediction.shares * fraction).toFixed(2)));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!isValid) return;
+    mutate(
+      { prediction_id: prediction.id, shares_to_sell: numShares },
+      { onSuccess: () => { setSharesToSell(0); onSuccess?.(); } }
+    );
+  };
+
+  if (!predictions || predictions.length === 0) {
+    return (
+      <div className="bet-empty-sell">
+        <p>You have no open positions to sell on this market.</p>
+      </div>
+    );
+  }
+
+  const isYes = prediction?.position === 'yes';
+  const positionColor = isYes ? 'var(--color-yes)' : 'var(--color-no)';
+
+  return (
+    <form onSubmit={handleSubmit} id="bet-sell-form" style={{ display: 'contents' }}>
+      {/* Position selector — only show if multiple predictions */}
+      {predictions.length > 1 && (
+        <div className="bet-sell-position-select">
+          <span className="bet-amount-label" style={{ marginBottom: '0.5rem', display: 'block' }}>Your positions</span>
+          <div className="bet-position-row">
+            {predictions.map((p) => {
+              const sel = p.id === selectedId;
+              const pIsYes = p.position === 'yes';
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  className="bet-position-btn"
+                  onClick={() => setSelectedId(p.id)}
+                  aria-pressed={sel}
+                  style={{
+                    background: sel
+                      ? pIsYes ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#b91c1c,#ef4444)'
+                      : pIsYes ? 'var(--color-yes-muted)' : 'var(--color-no-muted)',
+                    border: sel ? 'none' : `1.5px solid ${pIsYes ? 'var(--color-yes-border)' : 'var(--color-no-border)'}`,
+                    color: sel ? '#fff' : pIsYes ? 'var(--color-yes)' : 'var(--color-no)',
+                    boxShadow: sel ? (pIsYes ? '0 4px 14px rgba(34,197,94,0.35)' : '0 4px 14px rgba(239,68,68,0.35)') : 'none',
+                  }}
+                >
+                  <span className="bet-position-label">{p.position.toUpperCase()}</span>
+                  <span className="bet-position-price">{p.shares.toFixed(2)} sh</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Position summary chip */}
+      {predictions.length === 1 && prediction && (
+        <div className="bet-sell-chip" style={{ borderColor: isYes ? 'var(--color-yes-border)' : 'var(--color-no-border)', background: isYes ? 'var(--color-yes-muted)' : 'var(--color-no-muted)' }}>
+          <span className="bet-sell-chip-label" style={{ color: positionColor }}>
+            {prediction.position.toUpperCase()}
+          </span>
+          <span className="bet-sell-chip-detail">
+            {prediction.shares.toFixed(2)} shares @ {Math.round(prediction.entry_price * 100)}¢
+          </span>
+        </div>
+      )}
+
+      {/* Shares to sell */}
+      {prediction && (
+        <>
+          <div className="bet-amount-section">
+            <div className="bet-amount-row">
+              <span className="bet-amount-label">Shares to sell</span>
+              <div className="bet-amount-display">
+                <input
+                  id="bet-sell-shares-input"
+                  type="number"
+                  min={0}
+                  max={prediction.shares}
+                  step={0.01}
+                  value={sharesToSell === 0 ? '' : sharesToSell}
+                  onChange={(e) => {
+                    const v = parseFloat(e.target.value);
+                    setSharesToSell(isNaN(v) ? 0 : Math.min(v, prediction.shares));
+                  }}
+                  placeholder="0"
+                  className="bet-amount-input"
+                  aria-label="Shares to sell"
+                />
+                <span className="bet-amount-unit">/ {prediction.shares.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {/* Fraction quick-sell buttons */}
+            <div className="bet-quick-row">
+              {[0.25, 0.5, 0.75].map((frac) => (
+                <button key={frac} type="button" className="bet-quick-btn" onClick={() => handleSellFraction(frac)}>
+                  {frac * 100}%
+                </button>
+              ))}
+              <button type="button" className="bet-quick-btn bet-quick-max" onClick={() => handleSellFraction(1)}>
+                Max
+              </button>
+            </div>
+
+            {numShares > prediction.shares && (
+              <p className="bet-error-msg">You only hold {prediction.shares.toFixed(2)} shares</p>
+            )}
+          </div>
+
+          {/* Revenue summary */}
+          {numShares > 0 && numShares <= prediction.shares && (
+            <div className="bet-summary">
+              <div className="bet-summary-row">
+                <span className="bet-summary-label">Shares selling</span>
+                <span className="bet-summary-value">{numShares.toFixed(2)}</span>
+              </div>
+              <div className="bet-summary-row">
+                <span className="bet-summary-label">Est. return</span>
+                <span className="bet-summary-value" style={{ color: 'var(--color-yes)' }}>
+                  ~{formatCoins(Math.floor(revenue))} coins
+                </span>
+              </div>
+              <div className="bet-summary-row">
+                <span className="bet-summary-label">Originally spent</span>
+                <span className="bet-summary-value">{formatCoins(prediction.coins_spent)} coins</span>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {sellError && <p className="bet-error-msg">{sellError.message}</p>}
+
+      <button
+        id="bet-sell-btn"
+        type="submit"
+        disabled={!isValid}
+        className="bet-trade-btn"
+        style={{
+          background: isValid
+            ? isYes
+              ? 'linear-gradient(135deg, #16a34a, #22c55e)'
+              : 'linear-gradient(135deg, #b91c1c, #ef4444)'
+            : undefined,
+          boxShadow: isValid
+            ? isYes
+              ? '0 4px 18px rgba(34,197,94,0.3)'
+              : '0 4px 18px rgba(239,68,68,0.3)'
+            : undefined,
+        }}
+      >
+        {isPending
+          ? 'Selling…'
+          : numShares <= 0
+            ? 'Enter shares to sell'
+            : `Sell ${prediction?.position?.toUpperCase() ?? ''}`}
+      </button>
+    </form>
+  );
+}
+
+/* ─── Main BetSlip (shell with tabs) ─────────────────────────── */
+export function PredictionForm({ market, onSuccess, pendingPredictions = [] }) {
+  const isExpired = market.closes_at && new Date(market.closes_at) <= new Date();
+  const [tab, setTab] = useState('buy');
+
   if (isExpired) {
     return (
-      <div className="flex flex-col gap-3 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-5">
+      <div className="bet-slip-card">
         <h3 className="font-heading text-lg font-semibold uppercase tracking-[0.04em]">Market Closed</h3>
         <p className="text-sm text-[var(--text-muted)]">This market is no longer accepting predictions.</p>
       </div>
     );
   }
 
-  const positionButton = (pos) => {
-    const yes = pos === 'yes';
-    const selected = position === pos;
-    const color = yes ? 'var(--color-yes)' : 'var(--color-no)';
-    const border = yes ? 'var(--color-yes-border)' : 'var(--color-no-border)';
-    const muted = yes ? 'var(--color-yes-muted)' : 'var(--color-no-muted)';
-    const price = yes ? market.yes_price : market.no_price;
-
-    return (
-      <button
-        type="button"
-        className={`flex w-full cursor-pointer flex-col items-center gap-0.5 rounded-[3px] border px-4 py-2.5 font-heading font-bold uppercase tracking-[0.1em] transition-all duration-150 ${
-          selected
-            ? 'border-transparent text-white shadow-[var(--shadow-sm)]'
-            : ''
-        }`}
-        style={{
-          background: selected ? color : muted,
-          borderColor: selected ? color : border,
-          color: selected ? '#fff' : color,
-        }}
-        onClick={() => setPosition(pos)}
-        aria-pressed={selected}
-      >
-        <span className="text-base leading-none">{yes ? 'Yes' : 'No'}</span>
-        <span className="font-mono text-sm font-bold tabular-nums" style={{ color: selected ? '#fff' : color }}>
-          {formatPrice(price)}
-        </span>
-      </button>
-    );
-  };
-
   return (
-    <form className="flex flex-col gap-4 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-5" onSubmit={handleSubmit}>
-      <div className="flex items-center justify-between">
-        <h3 className="font-heading text-lg font-bold uppercase tracking-[0.06em]">Bet Slip</h3>
-        <span className="eyebrow">Buy shares</span>
-      </div>
-
-      <div>
-        <span className="eyebrow mb-1.5 block">Your position</span>
-        <div className="flex gap-2">
-          {positionButton('yes')}
-          {positionButton('no')}
+    <div className="bet-slip-card">
+      {/* Header: Buy | Sell tabs + Market badge */}
+      <div className="bet-slip-header">
+        <div className="bet-slip-tabs">
+          <button
+            type="button"
+            className={tab === 'buy' ? 'bet-tab-active' : 'bet-tab-inactive'}
+            onClick={() => setTab('buy')}
+            id="bet-tab-buy"
+          >
+            Buy
+          </button>
+          <button
+            type="button"
+            className={tab === 'sell' ? 'bet-tab-active' : 'bet-tab-inactive'}
+            onClick={() => setTab('sell')}
+            id="bet-tab-sell"
+          >
+            Sell
+          </button>
         </div>
+        <span className="bet-market-badge">Market</span>
       </div>
 
-      <div>
-        <span className="eyebrow mb-1.5 block">Amount (coins)</span>
-        <div className="flex items-center gap-2 rounded-[3px] border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 transition-[border-color,box-shadow] duration-150 focus-within:border-[var(--border-focus)] focus-within:shadow-[0_0_0_3px_rgba(245,165,36,0.13)]">
-          <Coins size={15} className="shrink-0 text-[var(--color-warning)]" />
-          <input
-            className="flex-1 bg-transparent py-2.5 font-mono text-base text-[var(--text-primary)] outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-            type="number"
-            min={10}
-            max={10000}
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="10 – 10,000"
-          />
-        </div>
-        {numAmount > 0 && numAmount < 10 && (
-          <p className="mt-1 text-xs text-[var(--color-no)]">Minimum: 10 coins</p>
-        )}
-      </div>
-
-      <div>
-        <span className="eyebrow mb-1.5 block">Confidence</span>
-        <ToggleGroup
-          type="single"
-          value={String(confidence)}
-          onValueChange={(v) => v && setConfidence(Number(v))}
-          className="w-full"
-        >
-          {CONFIDENCE_OPTIONS.map((opt) => (
-            <ToggleGroupItem
-              key={opt.value}
-              value={String(opt.value)}
-              variant="outline"
-              className="flex-1 rounded-[3px] bg-[var(--bg-input)] font-heading text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-secondary)] data-[state=on]:bg-[var(--accent-amber)] data-[state=on]:text-[var(--primary-foreground)]"
-            >
-              {opt.label}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
-        <p className="mt-1 text-right font-mono text-[11px] text-[var(--text-muted)]">Max spend: {formatCoins(totalCost)} coins</p>
-      </div>
-
-      {position && numAmount >= 10 && (
-        <div className="flex flex-col gap-2 border-t border-[var(--border-subtle)] pt-3">
-          <div className="flex items-center justify-between">
-            <span className="eyebrow">You receive</span>
-            <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">
-              ~{Math.round(projectedShares)} shares
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="eyebrow">Total cost</span>
-            <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">
-              {formatCoins(totalCost)} coins
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="eyebrow">Entry price</span>
-            <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">
-              ~{formatPrice(currentPrice)}
-            </span>
-          </div>
-        </div>
+      {tab === 'buy' ? (
+        <BuyTab market={market} onSuccess={onSuccess} pendingPredictions={pendingPredictions} />
+      ) : (
+        <SellTab market={market} predictions={pendingPredictions} onSuccess={onSuccess} />
       )}
-
-      {!hasEnoughCoins && numAmount > 0 && (
-        <p className="text-xs text-[var(--color-no)]">
-          Insufficient coins. You have {formatCoins(user?.coins || 0)}.
-        </p>
-      )}
-
-      {mutationError && (
-        <p className="text-xs text-[var(--color-no)]">{mutationError.message}</p>
-      )}
-
-      <Button
-        type="submit"
-        variant="primary"
-        size="lg"
-        loading={isPending}
-        disabled={!isValid || isPending}
-        className="w-full"
-      >
-        {isPending
-          ? 'Placing…'
-          : position
-            ? `Buy ${position.toUpperCase()} ${formatPrice(currentPrice)}`
-            : 'Select a Position'}
-      </Button>
-    </form>
+    </div>
   );
 }

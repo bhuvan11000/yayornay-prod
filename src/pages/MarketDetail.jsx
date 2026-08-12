@@ -70,7 +70,7 @@ export default function MarketDetail() {
   const renderRightColumn = () => {
     switch (market.status) {
       case 'open':
-        return <PredictionForm market={market} onSuccess={handlePredictionSuccess} />;
+        return <PredictionForm market={market} onSuccess={handlePredictionSuccess} pendingPredictions={pendingPredictions} />;
       case 'closed':
         return (
           <div className={`${PANEL} flex flex-col gap-3`}>
