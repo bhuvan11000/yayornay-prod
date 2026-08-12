@@ -63,6 +63,24 @@ export default function MarketDetail() {
   const pendingPredictions = userPredictions?.filter((p) => p.result === 'pending') || [];
   const hasPredicted = pendingPredictions.length > 0;
 
+  // Aggregate all pending predictions by position for the banner.
+  // A player may have bought the same side multiple times → sum shares,
+  // compute weighted-average entry price.
+  const positionSummary = pendingPredictions.reduce((acc, p) => {
+    if (!acc[p.position]) acc[p.position] = { shares: 0, weightedCost: 0 };
+    acc[p.position].weightedCost += p.entry_price * p.shares;
+    acc[p.position].shares += p.shares;
+    return acc;
+  }, {});
+  // Build a sorted array: YES first, then NO
+  const positionEntries = ['yes', 'no']
+    .filter((pos) => positionSummary[pos])
+    .map((pos) => ({
+      position: pos,
+      shares: positionSummary[pos].shares,
+      avgEntryPrice: positionSummary[pos].weightedCost / positionSummary[pos].shares,
+    }));
+
   const handlePredictionSuccess = () => {
     refetch();
   };
@@ -219,13 +237,20 @@ export default function MarketDetail() {
 
       {hasPredicted && (
         <div className="flex items-center justify-between gap-3 rounded-[var(--radius-sm)] border border-[var(--accent-amber)] bg-[var(--accent-amber-muted)] px-4 py-3 text-sm text-[var(--text-primary)]">
-          <span>
-            You hold{' '}
-            <strong className={pendingPredictions[0].position === 'yes' ? 'text-yes' : 'text-no'}>
-              {pendingPredictions[0].position.toUpperCase()}
-            </strong>
-            {' — '}
-            <span className="font-mono">{pendingPredictions[0].shares.toFixed(1)} shares @ {Math.round(pendingPredictions[0].entry_price * 100)}c</span>
+          <span className="flex flex-wrap gap-x-3 gap-y-1">
+            {positionEntries.map((entry, i) => (
+              <span key={entry.position}>
+                {i > 0 && <span className="text-[var(--text-muted)] mr-3">·</span>}
+                {'You hold '}
+                <strong className={entry.position === 'yes' ? 'text-yes' : 'text-no'}>
+                  {entry.position.toUpperCase()}
+                </strong>
+                {' — '}
+                <span className="font-mono">
+                  {entry.shares.toFixed(2)} shares @ {Math.round(entry.avgEntryPrice * 100)}c avg
+                </span>
+              </span>
+            ))}
           </span>
           <span className="eyebrow hidden md:block">In play</span>
         </div>
