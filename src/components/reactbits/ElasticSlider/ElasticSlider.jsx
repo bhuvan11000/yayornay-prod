@@ -1,9 +1,26 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from 'framer-motion';
 
 const MAX_OVERFLOW = 50;
 
+/**
+ * ElasticSlider — fully-controlled when `value` prop is provided,
+ * uncontrolled (defaultValue) otherwise.
+ *
+ * Props:
+ *   value?        — controlled value; overrides internal state when supplied
+ *   defaultValue  — initial value for uncontrolled mode
+ *   startingValue — minimum value
+ *   maxValue      — maximum value
+ *   isStepped     — snap to stepSize increments
+ *   stepSize      — step size when isStepped is true
+ *   onChange      — (newValue: number) => void
+ *   leftIcon      — React node rendered to the left of the track
+ *   rightIcon     — React node rendered to the right of the track
+ *   className     — applied to the outer wrapper div
+ */
 const ElasticSlider = ({
+  value: controlledValue,
   defaultValue = 50,
   startingValue = 0,
   maxValue = 100,
@@ -15,8 +32,9 @@ const ElasticSlider = ({
   rightIcon = <>+</>,
 }) => {
   return (
-    <div className={`flex flex-col items-center justify-center gap-4 w-48 ${className}`}>
+    <div className={`flex flex-col items-center justify-center gap-4 w-full ${className}`}>
       <Slider
+        value={controlledValue}
         defaultValue={defaultValue}
         startingValue={startingValue}
         maxValue={maxValue}
@@ -31,6 +49,7 @@ const ElasticSlider = ({
 };
 
 const Slider = ({
+  value: controlledValue,
   defaultValue,
   startingValue,
   maxValue,
@@ -40,16 +59,43 @@ const Slider = ({
   leftIcon,
   rightIcon,
 }) => {
-  const [value, setValue] = useState(defaultValue);
+  const isControlled = controlledValue !== undefined;
+
+  const [internalValue, setInternalValue] = useState(
+    isControlled ? controlledValue : defaultValue
+  );
+
+  // Sync internal state when controlled value changes from outside
+  useEffect(() => {
+    if (isControlled) {
+      setInternalValue(controlledValue);
+    }
+  }, [isControlled, controlledValue]);
+
+  // Sync internal state when defaultValue changes (uncontrolled re-key)
+  useEffect(() => {
+    if (!isControlled) {
+      setInternalValue(defaultValue);
+    }
+  }, [isControlled, defaultValue]);
+
+  const value = isControlled ? controlledValue : internalValue;
+
   const sliderRef = useRef(null);
   const [region, setRegion] = useState('middle');
   const clientX = useMotionValue(0);
   const overflow = useMotionValue(0);
   const scale = useMotionValue(1);
 
-  useEffect(() => {
-    setValue(defaultValue);
-  }, [defaultValue]);
+  const clampAndStep = useCallback(
+    (raw) => {
+      let v = isStepped ? Math.round(raw / stepSize) * stepSize : raw;
+      v = Math.min(Math.max(v, startingValue), maxValue);
+      // Round to avoid floating-point noise
+      return Math.round(v * 10000) / 10000;
+    },
+    [isStepped, stepSize, startingValue, maxValue]
+  );
 
   useMotionValueEvent(clientX, 'change', (latest) => {
     if (sliderRef.current) {
@@ -72,13 +118,10 @@ const Slider = ({
   const handlePointerMove = (e) => {
     if (e.buttons > 0 && sliderRef.current) {
       const { left, width } = sliderRef.current.getBoundingClientRect();
-      let newValue = startingValue + ((e.clientX - left) / width) * (maxValue - startingValue);
-      if (isStepped) {
-        newValue = Math.round(newValue / stepSize) * stepSize;
-      }
-      newValue = Math.min(Math.max(newValue, startingValue), maxValue);
-      setValue(newValue);
-      onChange?.(newValue);
+      const raw = startingValue + ((e.clientX - left) / width) * (maxValue - startingValue);
+      const next = clampAndStep(raw);
+      if (!isControlled) setInternalValue(next);
+      onChange?.(next);
       clientX.jump(e.clientX);
     }
   };
@@ -95,7 +138,7 @@ const Slider = ({
   const getRangePercentage = () => {
     const totalRange = maxValue - startingValue;
     if (totalRange === 0) return 0;
-    return ((value - startingValue) / totalRange) * 100;
+    return Math.min(100, Math.max(0, ((value - startingValue) / totalRange) * 100));
   };
 
   return (
@@ -124,7 +167,7 @@ const Slider = ({
 
       <div
         ref={sliderRef}
-        className="relative flex w-full max-w-xs flex-grow cursor-grab touch-none select-none items-center py-4"
+        className="relative flex w-full flex-grow cursor-grab touch-none select-none items-center py-4"
         onPointerMove={handlePointerMove}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
@@ -179,9 +222,7 @@ const Slider = ({
 };
 
 function decay(value, max) {
-  if (max === 0) {
-    return 0;
-  }
+  if (max === 0) return 0;
   const entry = value / max;
   const sigmoid = 2 * (1 / (1 + Math.exp(-entry)) - 0.5);
   return sigmoid * max;

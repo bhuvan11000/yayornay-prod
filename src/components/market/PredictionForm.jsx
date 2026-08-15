@@ -328,44 +328,33 @@ function SellTab({ market, predictions, onSuccess }) {
       {prediction && (
         <>
           <div className="bet-amount-section">
+            {/* Amount display — driven by slider */}
             <div className="bet-amount-row">
               <span className="bet-amount-label">Shares to sell</span>
               <div className="bet-amount-display">
-                <input
-                  id="bet-sell-shares-input"
-                  type="number"
-                  min={0}
-                  max={prediction.shares}
-                  step={0.01}
-                  value={sharesToSell === 0 ? '' : sharesToSell}
-                  onChange={(e) => {
-                    const v = parseFloat(e.target.value);
-                    setSharesToSell(isNaN(v) ? 0 : Math.min(v, prediction.shares));
-                  }}
-                  placeholder="0"
-                  className="bet-amount-input"
-                  aria-label="Shares to sell"
-                />
+                <span className="bet-amount-input" style={{ cursor: 'default' }}>
+                  {numShares > 0 ? numShares.toFixed(2) : '0'}
+                </span>
                 <span className="bet-amount-unit">/ {prediction.shares.toFixed(2)}</span>
               </div>
             </div>
 
-            {/* Elastic slider — same component as Your Positions */}
+            {/* Fully-controlled elastic slider */}
             <ElasticSlider
               key={sliderKey}
-              className="w-full mt-1"
-              defaultValue={typeof sharesToSell === 'number' ? sharesToSell : 0}
+              className="!w-[75%] mx-auto"
+              value={numShares}
               startingValue={0}
               maxValue={prediction.shares}
               isStepped
               stepSize={0.01}
-              onChange={(v) => setSharesToSell(v === 0 ? 0 : v)}
+              onChange={(v) => setSharesToSell(v)}
               leftIcon={
                 <span
                   className="cursor-pointer font-heading text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                   onClick={() => setSharesToSell(0)}
                 >
-                  Min
+                  0%
                 </span>
               }
               rightIcon={
@@ -378,9 +367,17 @@ function SellTab({ market, predictions, onSuccess }) {
               }
             />
 
-            {numShares > prediction.shares && (
-              <p className="bet-error-msg">You only hold {prediction.shares.toFixed(2)} shares</p>
-            )}
+            {/* Fraction quick-buttons */}
+            <div className="bet-quick-row">
+              {[0.25, 0.5, 0.75].map((frac) => (
+                <button key={frac} type="button" className="bet-quick-btn" onClick={() => handleSellFraction(frac)}>
+                  {frac * 100}%
+                </button>
+              ))}
+              <button type="button" className="bet-quick-btn bet-quick-max" onClick={() => handleSellFraction(1)}>
+                Max
+              </button>
+            </div>
           </div>
 
           {/* Revenue summary */}
