@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { ArrowUp, Search } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { useLeaderboard } from '../hooks/useLeaderboard';
+import { useSeasons } from '../hooks/useSeasons';
 import { LeaderboardTable } from '../components/leaderboard/LeaderboardTable';
 import { Tabs } from '../components/ui/Tabs';
 import { Skeleton } from '../components/ui/Skeleton';
@@ -39,6 +40,8 @@ export default function Leaderboard() {
     page,
     limit: LIMIT,
   });
+  const { data: season } = useSeasons();
+  const seasonNumber = season?.season_number ?? 1;
 
   const players = data?.players || [];
   const totalCount = data?.totalCount || 0;
@@ -90,7 +93,7 @@ export default function Leaderboard() {
             Global Leaderboard
           </GradientText>
           <p className="mt-1 text-sm text-[var(--text-muted)]">
-            Season <span id="season-number">1</span> — Compete to reach the top
+            Season {seasonNumber} · Compete to reach the top
           </p>
         </div>
       </div>
