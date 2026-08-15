@@ -58,12 +58,7 @@ function SectionHeader({ eyebrow, title, to }) {
   );
 }
 
-function TodayCardContent({ market }) {
-  return null;
-}
-
-export default function Home() {
-  const user = useAuthStore((s) => s.user);
+export default function Home() {  const user = useAuthStore((s) => s.user);
   const [reduceMotion] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
@@ -203,7 +198,7 @@ export default function Home() {
             Failed to load the board. <button className="btn-ghost btn-sm" onClick={() => window.location.reload()}>Retry</button>
           </p>
         ) : trendingMarkets.length === 0 ? (
-          <p className="text-sm text-[var(--text-muted)]">Board is quiet right now — new markets drop at 08:00 UTC.</p>
+          <p className="text-sm text-[var(--text-muted)]">Board is quiet right now. New markets drop at 08:00 UTC.</p>
         ) : (
           <div className="rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)]/50 p-4">
             <Carousel opts={{ align: 'start', loop: true }} plugins={[autoplay]} className="w-full">
@@ -265,7 +260,7 @@ export default function Home() {
         ) : (
           <div className="flex flex-col gap-1 rounded-[var(--radius-sm)] border border-dashed border-[var(--border-subtle)] px-4 py-6 text-center">
             <p className="text-sm text-[var(--text-secondary)]">
-              No quests in progress — check the <Link to="/quests" className="text-[var(--accent-amber)]">Quest Board</Link> to start one.
+              No quests in progress. Check the <Link to="/quests" className="text-[var(--accent-amber)]">Quest Board</Link> to start one.
             </p>
           </div>
         )}
