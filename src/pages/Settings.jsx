@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 import { Save, LogOut, User, Mail, Calendar, Hash, Award } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { RankBadge } from '../components/gamification/RankBadge';
@@ -25,7 +26,7 @@ export default function Settings() {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
-      alert(err.message || 'Failed to update username');
+      toast.error(err.message || 'Failed to update username');
     } finally {
       setSaving(false);
     }
@@ -95,12 +96,12 @@ export default function Settings() {
         <div className="flex items-center gap-2 text-sm">
           <Mail size={14} className="shrink-0 text-[var(--text-muted)]" />
           <span className="w-20 shrink-0 text-[var(--text-muted)]">Email</span>
-          <span className="text-[var(--text-primary)]">{user.email || '—'}</span>
+          <span className="text-[var(--text-primary)]">{user.email || 'N/A'}</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Calendar size={14} className="shrink-0 text-[var(--text-muted)]" />
           <span className="w-20 shrink-0 text-[var(--text-muted)]">Joined</span>
-          <span className="text-[var(--text-primary)]">{user.created_at ? formatDate(user.created_at) : '—'}</span>
+          <span className="text-[var(--text-primary)]">{user.created_at ? formatDate(user.created_at) : 'N/A'}</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Hash size={14} className="shrink-0 text-[var(--text-muted)]" />

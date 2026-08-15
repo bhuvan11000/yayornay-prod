@@ -6,6 +6,8 @@ import { supabase, isSupabaseConfigured } from '../config/supabase';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { Toaster } from '../components/ui/sonner';
+import { toast } from 'sonner';
 import Beams from '../components/reactbits/Beams/Beams';
 import TargetCursor from '../components/reactbits/TargetCursor/TargetCursor';
 
@@ -94,7 +96,9 @@ export default function Auth() {
       if (authError) throw authError;
       setError('');
       setTab('login');
-      alert('Check your email for the confirmation link!');
+      toast.success('Check your email', {
+        description: 'A confirmation link is on its way.',
+      });
     } catch (err) {
       setError(err.message || 'Failed to sign up');
     } finally {
@@ -275,7 +279,11 @@ export default function Auth() {
                         setLoading(false);
                         if (resetErr) setError(resetErr.message);
                         else setError('');
-                        if (!resetErr) alert('Check your email for the reset link!');
+                        if (!resetErr) {
+                          toast.success('Check your email', {
+                            description: 'A password reset link is on its way.',
+                          });
+                        }
                       }}
                     >
                       Forgot password?
@@ -369,6 +377,7 @@ export default function Auth() {
         cursorColorOnTarget="#22c55e"
         spinDuration={2.4}
       />
+      <Toaster position="top-right" richColors closeButton />
     </div>
   );
 }
