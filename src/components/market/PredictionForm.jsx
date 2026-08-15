@@ -122,7 +122,7 @@ function BuyTab({ market, onSuccess, pendingPredictions = [] }) {
               You already hold {opposingHolding.shares.toFixed(1)} {opposingHolding.position.toUpperCase()} shares here.
             </p>
             <p className="bet-hedge-warning-detail">
-              Buying the opposite side costs extra in spread — you'll pay twice to move the market both ways. Consider selling your {opposingHolding.position.toUpperCase()} position first from the <strong>Sell</strong> tab instead.
+              Buying the opposite side costs extra in spread. You'll pay twice to move the market both ways. Consider selling your {opposingHolding.position.toUpperCase()} position first from the <strong>Sell</strong> tab instead.
             </p>
           </div>
         </div>
@@ -164,7 +164,7 @@ function BuyTab({ market, onSuccess, pendingPredictions = [] }) {
           <p className="bet-error-msg">Minimum bet is 10 coins</p>
         )}
         {!hasEnoughCoins && numAmount > 0 && (
-          <p className="bet-error-msg">Not enough coins — you have {formatCoins(user?.coins || 0)}</p>
+          <p className="bet-error-msg">Not enough coins. You have {formatCoins(user?.coins || 0)}</p>
         )}
       </div>
 

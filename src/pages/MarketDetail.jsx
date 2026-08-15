@@ -245,7 +245,7 @@ export default function MarketDetail() {
                 <strong className={entry.position === 'yes' ? 'text-yes' : 'text-no'}>
                   {entry.position.toUpperCase()}
                 </strong>
-                {' — '}
+                {', '}
                 <span className="font-mono">
                   {entry.shares.toFixed(2)} shares @ {Math.round(entry.avgEntryPrice * 100)}c avg
                 </span>

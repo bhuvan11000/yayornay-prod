@@ -19,7 +19,7 @@ export function RankBadge({ rank, size = 'md', showLabel = true, className = '' 
   return (
     <span
       className={`inline-flex items-center gap-1 whitespace-nowrap ${isOmniscient ? 'omniscient-badge' : ''} ${className}`}
-      title={`${label}${threshold ? ` — ${threshold.minCoins.toLocaleString()} coins required` : ''}`}
+      title={`${label}${threshold ? ` (${threshold.minCoins.toLocaleString()} coins required)` : ''}`}
     >
       <span
         className={`rounded-[3px] flex-shrink-0 ${isOmniscient ? 'omniscient-dot' : ''}`}

@@ -207,7 +207,7 @@ export function ProposeForm({ onSuccess }) {
         <Coins size={16} />
         <span>
           Stake: <strong className="font-mono text-[var(--color-warning)]">{formatCoins(stake)} coins</strong>{' '}
-          (rank-scaled — {rank})
+          (rank-scaled to {rank})
         </span>
       </div>
 

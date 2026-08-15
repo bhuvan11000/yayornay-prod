@@ -19,7 +19,7 @@ export function PlayerRow({ player, rank, metric, isCurrentUser }) {
   const getMetricValue = () => {
     switch (metric) {
       case 'accuracy':
-        return player.accuracy != null ? formatPercent(player.accuracy) : '—';
+        return player.accuracy != null ? formatPercent(player.accuracy) : 'N/A';
       case 'profit':
         return `${player.net_profit >= 0 ? '+' : ''}${formatCoins(player.net_profit || 0)}`;
       case 'streak':

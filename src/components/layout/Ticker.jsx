@@ -68,7 +68,7 @@ export function Ticker() {
           )
         ) : isLoading ? null : (
           <span className="flex h-full items-center px-4 font-heading text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
-            Board quiet — new markets drop at 08:00 UTC
+            Board quiet. New markets drop at 08:00 UTC
           </span>
         )}
 

@@ -105,7 +105,7 @@ export default function Profile() {
                   <TiltedCard
                     key={badge.id}
                     imageSrc="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f59e0b' stop-opacity='0.5'/%3E%3Cstop offset='1' stop-color='%23f5a524' stop-opacity='0.2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='14' fill='url(%23g)'/%3E%3C/svg%3E"
-                    altText={`Season ${badge.season_number} — ${badge.badge_type}`}
+                    altText={`Season ${badge.season_number}, ${badge.badge_type}`}
                     containerHeight="44px"
                     containerWidth="44px"
                     imageHeight="44px"

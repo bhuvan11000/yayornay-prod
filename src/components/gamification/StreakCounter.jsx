@@ -36,7 +36,7 @@ export function StreakCounter({ streak = 0, longest, size = 'md' }) {
   return (
     <div
       className={`inline-flex items-center ${SIZE_GAP_CLASSES[size]}`}
-      title={`Betting streak: ${streak} day${streak !== 1 ? 's' : ''}${longest != null ? ` — Longest: ${longest}` : ''}`}
+      title={`Betting streak: ${streak} day${streak !== 1 ? 's' : ''}${longest != null ? ` (longest ${longest})` : ''}`}
     >
       <div className="relative flex items-center justify-center leading-none">
         <Flame size={size === 'sm' ? 14 : size === 'lg' ? 22 : 18} className={tierClass} />

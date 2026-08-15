@@ -38,7 +38,7 @@ export function formatPercent(n) {
  * @returns {string}
  */
 export function formatDate(d) {
-  if (!d) return '—';
+  if (!d) return 'N/A';
   const date = new Date(d);
   return date.toLocaleDateString('en-US', {
     month: 'short',
@@ -53,7 +53,7 @@ export function formatDate(d) {
  * @returns {string}
  */
 export function formatDateTime(d) {
-  if (!d) return '—';
+  if (!d) return 'N/A';
   const date = new Date(d);
   return date.toLocaleDateString('en-US', {
     month: 'short',
@@ -71,7 +71,7 @@ export function formatDateTime(d) {
  * @returns {string}
  */
 export function formatTimeRemaining(isoDate) {
-  if (!isoDate) return '—';
+  if (!isoDate) return 'N/A';
 
   const now = new Date();
   const target = new Date(isoDate);
@@ -118,7 +118,7 @@ export function pluralize(n, word, plural) {
  * @returns {string}
  */
 export function formatPrice(price) {
-  if (price == null || isNaN(price)) return '—';
+  if (price == null || isNaN(price)) return 'N/A';
   return `${Math.round(price * 100)}c`;
 }
 
