@@ -178,7 +178,7 @@ export default function MyPredictions() {
 
       {/* Summary cards */}
       <div className="mb-5 grid grid-cols-3 gap-2 md:gap-3">
-        <Link to="?filter=attention" className={`flex flex-col items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-[var(--text-primary)] no-underline transition-all duration-150 hover:-translate-y-px hover:border-[var(--border-focus)] md:p-4 border-l-[3px] border-l-[var(--color-warning)]`} onClick={(e) => { e.preventDefault(); setFilter('attention'); }}>
+        <Link to="?filter=attention" className={`relative flex flex-col items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-[var(--text-primary)] no-underline transition-all duration-150 hover:-translate-y-px hover:border-[var(--border-focus)] md:p-4 border-l-[3px] border-l-[var(--color-warning)]`} onClick={(e) => { e.preventDefault(); setFilter('attention'); }}>
           <AlertTriangle size={20} />
           <span className="font-mono text-lg font-bold md:text-2xl">{counts.attention}</span>
           <span className="text-xs text-[var(--text-muted)]">Need Attention</span>
