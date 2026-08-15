@@ -25,6 +25,33 @@ export function useMarket(marketId) {
         .eq('market_id', marketId)
         .eq('result', 'pending');
 
+      const { data: rawActivity } = await supabase
+        .from('predictions')
+        .select('id, user_id, position, shares, created_at')
+        .eq('market_id', marketId)
+        .eq('result', 'pending')
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      // Look up usernames separately — same pattern used in Community.jsx
+      let recentActivity = rawActivity || [];
+      if (recentActivity.length > 0) {
+        const userIds = [...new Set(recentActivity.map((p) => p.user_id))];
+        const { data: activityUsers } = await supabase
+          .from('users')
+          .select('id, username')
+          .in('id', userIds);
+
+        const userMap = {};
+        for (const u of activityUsers || []) {
+          userMap[u.id] = u;
+        }
+        recentActivity = recentActivity.map((p) => ({
+          ...p,
+          user: userMap[p.user_id] || null,
+        }));
+      }
+
       const distMap = {};
       let totalPlayers = 0;
       let totalShares = 0;
@@ -44,6 +71,7 @@ export function useMarket(marketId) {
         market,
         priceHistory: priceHistory || [],
         distribution: distribution || [],
+        recentActivity: recentActivity || [],
       };
     },
     enabled: !!marketId,

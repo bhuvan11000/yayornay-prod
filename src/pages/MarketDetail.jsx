@@ -9,6 +9,7 @@ import { MarketStatus } from '../components/market/MarketStatus';
 import { PriceChart } from '../components/market/PriceChart';
 import { PredictionForm } from '../components/market/PredictionForm';
 import { SellForm } from '../components/market/SellForm';
+import { ParticipantActivity } from '../components/market/ParticipantActivity';
 import { PageSkeleton } from '../components/ui/Skeleton';
 import {
   AlertDialog,
@@ -50,7 +51,7 @@ export default function MarketDetail() {
     );
   }
 
-  const { market, priceHistory, distribution } = data;
+  const { market, priceHistory, distribution, recentActivity } = data;
 
   const yesDist = distribution?.find((d) => d.position === 'yes');
   const noDist = distribution?.find((d) => d.position === 'no');
@@ -337,7 +338,7 @@ export default function MarketDetail() {
 
       <section className={`${PANEL} flex flex-col gap-3`}>
         <h3 className="font-heading text-base font-bold uppercase tracking-[0.08em] text-[var(--text-primary)]">Participant Activity</h3>
-        <p className="text-sm text-[var(--text-muted)]">Recent participant activity will appear here.</p>
+        <ParticipantActivity activities={recentActivity} />
       </section>
     </div>
   );
