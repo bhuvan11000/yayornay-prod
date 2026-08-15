@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useMarkets } from '../hooks/useMarkets';
 import { MarketCard } from '../components/market/MarketCard';
-import { CategoryTag } from '../components/ui/CategoryTag';
 import { Skeleton } from '../components/ui/Skeleton';
 
 const CATEGORIES = ['All', 'Sports', 'Tech', 'Pop Culture', 'Politics', 'Memes'];
@@ -87,7 +86,7 @@ export default function Markets() {
               }`}
               onClick={() => handleCategoryClick(cat)}
             >
-              {cat === 'All' ? 'All' : <CategoryTag category={CATEGORY_MAP[cat]} />}
+              {cat}
             </button>
           );
         })}
