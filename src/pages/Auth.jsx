@@ -364,9 +364,17 @@ export default function Auth() {
             )}
           </button>
 
-          {/* Footer text (mobile only) */}
-          <p className="mt-6 text-center font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--text-muted)] lg:hidden">
-            Free to play · No real money · Just reputation
+          {/* Footer text */}
+          <p className="mt-6 text-center font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--text-muted)]">
+            Free to play · No real money
+          </p>
+          <p className="mt-2 text-center">
+            <Link
+              to="/about"
+              className="font-heading text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--accent-amber)]"
+            >
+              About Yay or Nay
+            </Link>
           </p>
         </div>
       </div>

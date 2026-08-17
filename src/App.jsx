@@ -22,6 +22,7 @@ const Profile = lazy(() => import('./pages/Profile'));
 const Quests = lazy(() => import('./pages/Quests'));
 const MyPredictions = lazy(() => import('./pages/MyPredictions'));
 const Settings = lazy(() => import('./pages/Settings'));
+const About = lazy(() => import('./pages/About'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -69,6 +70,19 @@ function AppRoutes() {
             </Suspense>
           }
         />
+
+        <Route
+          path="/about"
+          element={
+            <Suspense fallback={<PageSkeleton />}>
+              <ErrorBoundary>
+                <AppLayout />
+              </ErrorBoundary>
+            </Suspense>
+          }
+        >
+          <Route index element={<LazyPage Component={About} />} />
+        </Route>
 
         <Route
           element={

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Coins, ChevronDown, User, Settings, LogOut } from 'lucide-react';
+import { Coins, ChevronDown, User, Settings, LogOut, Info } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { formatCoins } from '../../lib/format';
 import { getRankColor, getRankLabel } from '../../lib/ranks';
@@ -20,6 +20,7 @@ const NAV_ITEMS = [
   { href: '/community', label: 'Community' },
   { href: '/leaderboard', label: 'Leaderboard' },
   { href: '/quests', label: 'Quests' },
+  { href: '/about', label: 'About' },
 ];
 
 const DROPDOWN_ITEM_BASE =
@@ -155,6 +156,13 @@ export function Header() {
                 >
                   <Settings size={14} />
                   Settings
+                </button>
+                <button
+                  className={DROPDOWN_ITEM_BASE}
+                  onClick={() => { setAvatarDropdownOpen(false); navigate('/about'); }}
+                >
+                  <Info size={14} />
+                  About
                 </button>
                 <div className="h-px bg-[var(--border-subtle)]" />
                 <button
