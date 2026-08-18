@@ -62,7 +62,9 @@ export const useAuthStore = create((set, get) => ({
           set({ user: null, session: null, rewardStatus: null });
         } else if (event === 'TOKEN_REFRESHED') {
           set({ session });
-        } else if (event === 'SIGNED_IN' && session) {
+        } else if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session) {
+          // USER_UPDATED fires when an email confirmation link is clicked.
+          // SIGNED_IN fires on normal login. Both need the same session handling.
           get().handleSession(session);
         }
       });

@@ -92,6 +92,11 @@ export default function Auth() {
       const { error: authError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          // Always land on /auth so the token is processed and the
+          // player is onboarded before being redirected to the home page.
+          emailRedirectTo: `${window.location.origin}/auth`,
+        },
       });
       if (authError) throw authError;
       setError('');
