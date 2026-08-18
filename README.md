@@ -1,4 +1,4 @@
-# Yay or Nay (Predict Arena)
+# Yay or Nay
 
 A gamified prediction market game where you bet virtual coins on real-world outcomes, climb global ranks, and prove you can see the future. No real money, just bragging rights.
 
