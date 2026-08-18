@@ -70,7 +70,7 @@ export default function About() {
         <h2 className="font-heading text-sm font-bold uppercase tracking-[0.08em] text-[var(--accent-amber)]">
           Contact
         </h2>
-        <div className={`${PANEL} mt-3`}>
+        <div className={`${PANEL} mt-3 flex flex-col gap-3`}>
           <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
             Feedback, complaints, suggestions, bug reports: we read everything. Found a market
             that resolved unfairly? Want a new category? Think the app is missing a feature?
@@ -78,11 +78,14 @@ export default function About() {
           </p>
           <a
             href="mailto:yayornay67@gmail.com"
-            className="flex w-fit cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--accent-amber)] px-5 py-3 font-heading text-sm font-semibold text-[#0B0E0C] transition-colors duration-150 hover:bg-[var(--accent-amber-hover)]"
+            className="flex w-fit cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--accent-amber)] px-6 py-3.5 font-heading text-sm font-semibold text-[#0B0E0C] transition-colors duration-150 hover:bg-[var(--accent-amber-hover)]"
           >
             <Mail size={16} />
             yayornay67@gmail.com
           </a>
+          <p className="text-xs leading-relaxed text-[var(--text-muted)]">
+            Please include your username in the email so we can look up your account.
+          </p>
         </div>
       </section>
     </div>

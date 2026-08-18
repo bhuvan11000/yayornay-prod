@@ -20,7 +20,6 @@ const NAV_ITEMS = [
   { href: '/community', label: 'Community' },
   { href: '/leaderboard', label: 'Leaderboard' },
   { href: '/quests', label: 'Quests' },
-  { href: '/about', label: 'About' },
 ];
 
 const DROPDOWN_ITEM_BASE =
