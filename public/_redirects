@@ -1,4 +1,10 @@
 # SPA catch-all — serve index.html for all unmatched routes
 # This file is only processed in production builds (dist/),
 # NOT during `netlify dev` — Vite handles SPA routing in development
+
+# Route API calls to Netlify Functions — must come BEFORE the SPA catch-all
+# (_redirects rules are processed top-to-bottom, first match wins,
+#  and _redirects takes precedence over netlify.toml)
+/api/*  /.netlify/functions/:splat  200
+
 /*  /index.html  200

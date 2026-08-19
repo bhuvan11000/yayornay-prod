@@ -1,0 +1,17 @@
+name: Publish Markets
+on:
+  schedule:
+    - cron: '30 6 * * *'  # 06:30 UTC daily (12:00 PM IST) — after generate-markets (04:00 UTC)
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger market publish
+        run: |
+          curl -X POST "${{ secrets.NETLIFY_SITE_URL }}/api/publish-markets" \
+            -H "Content-Type: application/json" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            --fail-with-body \
+            --max-time 30
