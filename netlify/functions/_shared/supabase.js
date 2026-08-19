@@ -1,4 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
+import { WebSocket as WS } from 'ws';
+
+// Netlify Lambda runs Node 20 which has no native WebSocket.
+// @supabase/realtime-js requires WebSocket at createClient() time.
+// Polyfill it so all functions work without needing Node 22+.
+if (typeof globalThis.WebSocket === 'undefined') {
+  globalThis.WebSocket = WS;
+}
 
 /**
  * Supabase admin client using the service role key.

@@ -1,4 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
+import { WebSocket as WS } from 'ws';
+
+// Polyfill WebSocket for Netlify Lambda (Node 20, no native WebSocket)
+if (typeof globalThis.WebSocket === 'undefined') {
+  globalThis.WebSocket = WS;
+}
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
